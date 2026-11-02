@@ -1,0 +1,6 @@
+---
+title: 'Capsule OS'
+description: 'Apply the settings selected in AME Wizard.'
+privilege: Admin
+actions:
+  - !task: {path: 'Tasks\apply.yml'}

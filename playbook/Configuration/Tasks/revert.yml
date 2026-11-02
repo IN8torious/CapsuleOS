@@ -1,0 +1,137 @@
+---
+title: 'Revert Capsule OS tweaks'
+actions:
+  # Appearance
+  # Windows dark theme [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize', value: 'AppsUseLightTheme', data: '1', type: REG_DWORD, option: 'capsule-dark-theme'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize', value: 'SystemUsesLightTheme', data: '1', type: REG_DWORD, option: 'capsule-dark-theme'}
+  # Turn off transparency [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize', value: 'EnableTransparency', data: '1', type: REG_DWORD, option: 'capsule-no-transparency'}
+  # Turn off window animations [low risk]
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop\WindowMetrics', value: 'MinAnimate', data: '1', type: REG_SZ, option: 'capsule-no-window-animations'}
+  # Left-aligned taskbar [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'TaskbarAl', data: '1', type: REG_DWORD, option: 'capsule-taskbar-left'}
+  # Hide the Chat button [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'TaskbarMn', data: '1', type: REG_DWORD, option: 'capsule-hide-chat'}
+  # Hide the Task View button [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'ShowTaskViewButton', data: '1', type: REG_DWORD, option: 'capsule-hide-task-view'}
+  # Compact File Explorer rows [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'UseCompactMode', data: '0', type: REG_DWORD, option: 'capsule-compact-explorer'}
+  # Privacy
+  # Turn off the advertising ID [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo', value: 'Enabled', data: '1', type: REG_DWORD, option: 'capsule-no-advertising-id'}
+  # No tailored experiences [low risk]
+  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\CloudContent', value: 'DisableTailoredExperiencesWithDiagnosticData', operation: delete, option: 'capsule-no-tailored-experiences'}
+  # Keep web results out of Start search [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Search', value: 'BingSearchEnabled', data: '1', type: REG_DWORD, option: 'capsule-no-bing-search'}
+  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\Explorer', value: 'DisableSearchBoxSuggestions', operation: delete, option: 'capsule-no-bing-search'}
+  # Turn off Windows Copilot [low risk]
+  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\WindowsCopilot', value: 'TurnOffWindowsCopilot', operation: delete, option: 'capsule-no-copilot'}
+  # Turn off AI data analysis (Recall) [low risk]
+  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\WindowsAI', value: 'DisableAIDataAnalysis', operation: delete, option: 'capsule-no-recall'}
+  # Turn off activity history [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\System', value: 'EnableActivityFeed', operation: delete, option: 'capsule-no-activity-history'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\System', value: 'PublishUserActivities', operation: delete, option: 'capsule-no-activity-history'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\System', value: 'UploadUserActivities', operation: delete, option: 'capsule-no-activity-history'}
+  # Minimum diagnostic data [medium risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection', value: 'AllowTelemetry', operation: delete, option: 'capsule-minimum-telemetry'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection', value: 'DoNotShowFeedbackNotifications', operation: delete, option: 'capsule-minimum-telemetry'}
+  # No feedback prompts [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Siuf\Rules', value: 'NumberOfSIUFInPeriod', operation: delete, option: 'capsule-no-feedback-prompts'}
+  # Turn off Windows Error Reporting [medium risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting', value: 'Disabled', data: '0', type: REG_DWORD, option: 'capsule-no-error-reporting'}
+  # No typing and inking collection [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\InputPersonalization', value: 'RestrictImplicitTextCollection', data: '0', type: REG_DWORD, option: 'capsule-no-input-personalization'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\InputPersonalization', value: 'RestrictImplicitInkCollection', data: '0', type: REG_DWORD, option: 'capsule-no-input-personalization'}
+  # Deny location access by default [medium risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location', value: 'Value', data: 'Allow', type: REG_SZ, option: 'capsule-no-location'}
+  # Stop apps running in the background [medium risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications', value: 'GlobalUserDisabled', data: '0', type: REG_DWORD, option: 'capsule-no-background-apps'}
+  # No peer-to-peer update sharing [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config', value: 'DODownloadMode', operation: delete, option: 'capsule-no-delivery-sharing'}
+  # Debloat-lite
+  # No auto-installed promoted apps [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent', value: 'DisableWindowsConsumerFeatures', operation: delete, option: 'capsule-no-consumer-features'}
+  # No Windows Spotlight extras [low risk]
+  - !registryValue: {path: 'HKCU\Software\Policies\Microsoft\Windows\CloudContent', value: 'DisableWindowsSpotlightFeatures', operation: delete, option: 'capsule-no-spotlight'}
+  # No Start menu suggestions [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SystemPaneSuggestionsEnabled', data: '1', type: REG_DWORD, option: 'capsule-no-start-suggestions'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-338388Enabled', data: '1', type: REG_DWORD, option: 'capsule-no-start-suggestions'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-338389Enabled', data: '1', type: REG_DWORD, option: 'capsule-no-start-suggestions'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SilentInstalledAppsEnabled', data: '1', type: REG_DWORD, option: 'capsule-no-start-suggestions'}
+  # No lock screen tips and ads [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'RotatingLockScreenOverlayEnabled', data: '1', type: REG_DWORD, option: 'capsule-no-lock-screen-tips'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-338387Enabled', data: '1', type: REG_DWORD, option: 'capsule-no-lock-screen-tips'}
+  # No suggestions in Settings [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-338393Enabled', data: '1', type: REG_DWORD, option: 'capsule-no-settings-suggestions'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-353694Enabled', data: '1', type: REG_DWORD, option: 'capsule-no-settings-suggestions'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', value: 'SubscribedContent-353696Enabled', data: '1', type: REG_DWORD, option: 'capsule-no-settings-suggestions'}
+  # Turn off the Widgets feed [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Dsh', value: 'AllowNewsAndInterests', operation: delete, option: 'capsule-no-widgets-feed'}
+  # Turn off OneDrive file sync [medium risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive', value: 'DisableFileSyncNGSC', operation: delete, option: 'capsule-no-onedrive-sync'}
+  # Turn off AutoPlay [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers', value: 'DisableAutoplay', data: '0', type: REG_DWORD, option: 'capsule-no-autoplay'}
+  # File Explorer
+  # Show file extensions [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'HideFileExt', data: '1', type: REG_DWORD, option: 'capsule-show-extensions'}
+  # Show hidden files [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'Hidden', data: '2', type: REG_DWORD, option: 'capsule-show-hidden-files'}
+  # Open File Explorer to This PC [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', value: 'LaunchTo', data: '2', type: REG_DWORD, option: 'capsule-explorer-this-pc'}
+  # No recent and frequent lists [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowRecent', data: '1', type: REG_DWORD, option: 'capsule-no-recent-files'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer', value: 'ShowFrequent', data: '1', type: REG_DWORD, option: 'capsule-no-recent-files'}
+  # Full path in the title bar [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState', value: 'FullPath', data: '0', type: REG_DWORD, option: 'capsule-full-path-title'}
+  # Performance
+  # Faster menus [low risk]
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'MenuShowDelay', data: '400', type: REG_SZ, option: 'capsule-fast-menus'}
+  # Faster app shutdown [medium risk]
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'AutoEndTasks', data: '0', type: REG_SZ, option: 'capsule-fast-shutdown'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'HungAppTimeout', data: '5000', type: REG_SZ, option: 'capsule-fast-shutdown'}
+  - !registryValue: {path: 'HKCU\Control Panel\Desktop', value: 'WaitToKillAppTimeout', data: '20000', type: REG_SZ, option: 'capsule-fast-shutdown'}
+  # No startup app delay [low risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize', value: 'StartupDelayInMSec', operation: delete, option: 'capsule-no-startup-delay'}
+  # Visual effects for performance [medium risk]
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects', value: 'VisualFXSetting', data: '0', type: REG_DWORD, option: 'capsule-best-performance-visuals'}
+  # Prioritise foreground apps [medium risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'SystemResponsiveness', data: '20', type: REG_DWORD, option: 'capsule-responsive-multimedia'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile', value: 'NetworkThrottlingIndex', data: '10', type: REG_DWORD, option: 'capsule-responsive-multimedia'}
+  # Gaming
+  # Turn off Game DVR capture [low risk]
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_Enabled', data: '1', type: REG_DWORD, option: 'capsule-no-game-dvr'}
+  - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\GameDVR', value: 'AppCaptureEnabled', data: '1', type: REG_DWORD, option: 'capsule-no-game-dvr'}
+  # Raw mouse input (no acceleration) [low risk]
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseSpeed', data: '1', type: REG_SZ, option: 'capsule-raw-mouse-input'}
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseThreshold1', data: '6', type: REG_SZ, option: 'capsule-raw-mouse-input'}
+  - !registryValue: {path: 'HKCU\Control Panel\Mouse', value: 'MouseThreshold2', data: '10', type: REG_SZ, option: 'capsule-raw-mouse-input'}
+  # No Sticky Keys pop-ups [low risk]
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\StickyKeys', value: 'Flags', data: '510', type: REG_SZ, option: 'capsule-no-sticky-prompts'}
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\Keyboard Response', value: 'Flags', data: '126', type: REG_SZ, option: 'capsule-no-sticky-prompts'}
+  - !registryValue: {path: 'HKCU\Control Panel\Accessibility\ToggleKeys', value: 'Flags', data: '62', type: REG_SZ, option: 'capsule-no-sticky-prompts'}
+  # Classic fullscreen behaviour [medium risk]
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_FSEBehaviorMode', data: '0', type: REG_DWORD, option: 'capsule-fullscreen-optimizations-off'}
+  - !registryValue: {path: 'HKCU\System\GameConfigStore', value: 'GameDVR_DXGIHonorFSEWindowsCompatible', data: '0', type: REG_DWORD, option: 'capsule-fullscreen-optimizations-off'}
+  # Hardware-accelerated GPU scheduling [medium risk, needs admin]
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers', value: 'HwSchMode', operation: delete, option: 'capsule-gpu-scheduling'}
+  # Turn off power throttling [medium risk, needs admin]
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling', value: 'PowerThrottlingOff', operation: delete, option: 'capsule-no-power-throttling'}
+  # Hardening
+  # Turn off Remote Assistance [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SYSTEM\CurrentControlSet\Control\Remote Assistance', value: 'fAllowToGetHelp', data: '1', type: REG_DWORD, option: 'capsule-no-remote-assistance'}
+  # Turn off LLMNR [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient', value: 'EnableMulticast', operation: delete, option: 'capsule-no-llmnr'}
+  # Turn off AutoRun on all drives [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', value: 'NoDriveTypeAutoRun', operation: delete, option: 'capsule-no-autorun'}
+  # Internet
+  # Allow encrypted DNS (DoH) [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient', value: 'DoHPolicy', operation: delete, option: 'capsule-doh-allowed'}
+  # Stop smart multi-homed DNS queries [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient', value: 'DisableSmartNameResolution', operation: delete, option: 'capsule-no-smart-name-resolution'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient', value: 'DisableParallelAandAAAA', operation: delete, option: 'capsule-no-smart-name-resolution'}
+  # Skip the internet connectivity probe [medium risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkConnectivityStatusIndicator', value: 'NoActiveProbe', operation: delete, option: 'capsule-no-connectivity-probe'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkConnectivityStatusIndicator', value: 'DisablePassivePolling', operation: delete, option: 'capsule-no-connectivity-probe'}
+  # No automatic open-hotspot connections [low risk, needs admin]
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config', value: 'AutoConnectAllowedOEM', operation: delete, option: 'capsule-no-wifi-sense-hotspots'}
