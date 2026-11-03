@@ -42,7 +42,9 @@ test('standard build assembles the full offline distribution and APBX stages mod
   assert.match(pkg.scripts['toolbox:build'], /tauri build && node assistant\/package-offline\.cjs/);
   assert.equal(pkg.scripts['package:offline'], 'npm run toolbox:build');
   assert.match(config.build.beforeBuildCommand, /verify:models/);
-  assert.deepEqual(config.bundle.targets, ['nsis']);
+  assert.deepEqual(config.bundle.targets, ['msi', 'nsis']);
+  assert.equal(config.bundle.windows.wix.upgradeCode, 'b6037e6d-a440-560f-a15b-54f669e4b2b8');
+  assert.equal(config.bundle.resources['runtime/'], 'runtime/');
   const exporter = await fs.readFile(path.join(root, 'assistant', 'playbook-export.mjs'), 'utf8');
   assert.match(exporter, /await verifyDistributionModels/);
   assert.match(exporter, /await copyVerifiedModel/);

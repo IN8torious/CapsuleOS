@@ -47,7 +47,7 @@ jobs:
         run: |
           npm run prepare:models
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - name: Build current Tauri Windows app and NSIS setup
+      - name: Build current Tauri Windows app, MSI and NSIS setup
         shell: pwsh
         run: |
           npm exec -- tauri build
@@ -63,13 +63,31 @@ jobs:
           Copy-Item -LiteralPath src-tauri\target\release\capsule_toolbox.exe -Destination native-build
           Get-ChildItem -LiteralPath src-tauri\target\release\bundle\nsis -Filter '*-setup.exe' |
             Copy-Item -Destination native-build
+          $msi = @(Get-ChildItem -LiteralPath src-tauri\target\release\bundle\msi -Filter '*.msi')
+          if ($msi.Count -ne 1) { throw 'Expected exactly one x64 MSI installer.' }
+          $installer = New-Object -ComObject WindowsInstaller.Installer
+          $database = $installer.OpenDatabase($msi[0].FullName, 0)
+          $view = $database.OpenView('SELECT `FileName` FROM `File`')
+          $view.Execute()
+          $files = @()
+          while ($record = $view.Fetch()) { $files += $record.StringData(1) }
+          $view.Close()
+          foreach ($required in @('capsule_toolbox.exe', 'node.exe', 'toolbox-runtime.cjs')) {
+            if (-not ($files | Where-Object { ($_ -split '\|')[-1] -eq $required })) {
+              throw "MSI is missing required application/runtime file: $required"
+            }
+          }
+          Copy-Item -LiteralPath $msi[0].FullName -Destination native-build
           Copy-Item -LiteralPath dist\toolbox\design-audit.json -Destination native-build
           Copy-Item -LiteralPath .design-audit\dark-theme.json -Destination native-build
           @"
           CapsuleOSv2 native build outputs
           Commit: $env:GITHUB_SHA
           These are build outputs, not the complete offline/AME distribution.
-          Setup requires the adjacent Linux runtime and model payload described in TOOLBOX.md.
+          MSI installs the Windows app and its bundled Node/dependency runtime.
+          MSI does not contain model weights or the optional Linux runtime.
+          Approved models must be downloaded explicitly inside the app or supplied separately.
+          NSIS setup requires the adjacent Linux runtime and model payload described in TOOLBOX.md.
           The portable EXE requires its adjacent Windows runtime.
           Do not distribute or run these files as a complete standalone delivery.
           Installed/UAC/AME acceptance has not been performed by this workflow.

@@ -10,7 +10,10 @@ test('Windows CI retains the actual stack, release gates and read-only manual ex
     'npm ci', 'cargo test', '--locked', 'npm run prepare:models',
     'npm exec -- tauri build', 'design-audit.cjs --dark',
     'Get-FileHash', 'actions/upload-artifact@v4',
-    'not the complete offline/AME distribution'
+    'not the complete offline/AME distribution',
+    "bundle\\msi", 'WindowsInstaller.Installer',
+    'MSI is missing required application/runtime file',
+    'MSI does not contain model weights'
   ]) assert.ok(workflow.includes(required), required);
   assert.doesNotMatch(workflow, /pull_request_target|contents: write|secrets\.|CiTool|Set-MpPreference|Disable-SmartAppControl/);
 });
