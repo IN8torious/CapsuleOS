@@ -275,6 +275,7 @@ export const BROWSERS = Object.freeze([
 export const PLAYBOOK_SCRIPTS = Object.freeze([
   'Capsule.Common.psm1', 'Start-CapsuleSession.ps1', 'Restore-CapsuleBaseline.ps1',
   'Install-CapsuleBrowser.ps1', 'Install-CapsulePack.ps1', 'Uninstall-CapsulePack.ps1', 'Apply-CapsuleTweaks.ps1',
+  'Install-CapsulePackageManager.ps1', 'Install-WinGet.cmd', 'Install-Chocolatey.cmd',
   'repair/Install-CapsuleRepair.ps1', 'repair/Uninstall-CapsuleRepair.ps1', 'repair/Repair-Windows.ps1',
   'repair/Repair-Windows.cmd', 'repair/Quick-SFC-Scan.cmd', 'repair/README-Repair.txt',
 ]);
@@ -347,6 +348,10 @@ function actionsYaml(tweaks, mode, includeToolboxInstaller, extras = null) {
   if (mode === 'apply' && extras) {
     lines.push(...scriptAction('Safety first: restore point, baseline of every value below, care scripts. Nothing else runs if this fails.',
       'Start-CapsuleSession.ps1', '', null, 40, 'Halt', 'CapsuleOS could not create a restore point or baseline'));
+    for (const manager of ['winget', 'chocolatey']) {
+      lines.push(...scriptAction(`Optional package manager setup: ${manager}`,
+        'Install-CapsulePackageManager.ps1', `-Manager ${manager}`, `install-manager-${manager}`, 40, 'Halt', `${manager} setup failed`));
+    }
   }
   for (const category of Object.keys(CATEGORIES)) {
     const group = tweaks.filter((entry) => entry.category === category);
@@ -392,6 +397,20 @@ function actionsYaml(tweaks, mode, includeToolboxInstaller, extras = null) {
 function featurePages(tweaks, defaultTweakIds, includeToolboxInstaller, extras = null) {
   const defaults = new Set(defaultTweakIds);
   const pages = [];
+  if (extras) {
+    pages.push(`    <CheckboxPage Description="Optional package manager setup from official online sources. Chocolatey uses WinGet and installs WinGet first if missing. Administrator consent and internet are required; existing managers are checked, not replaced.">
+      <Options>
+        <CheckboxOption IsChecked="false">
+          <Text>Install WinGet (Microsoft App Installer)</Text>
+          <Name>install-manager-winget</Name>
+        </CheckboxOption>
+        <CheckboxOption IsChecked="false">
+          <Text>Install Chocolatey (with WinGet bootstrap if needed)</Text>
+          <Name>install-manager-chocolatey</Name>
+        </CheckboxOption>
+      </Options>
+    </CheckboxPage>`);
+  }
   for (const [category, title] of Object.entries(CATEGORIES)) {
     const group = tweaks.filter((entry) => entry.category === category);
     if (!group.length) continue;
@@ -451,10 +470,10 @@ ${options}
     </CheckboxPage>`);
   }
   if (includeToolboxInstaller) {
-    pages.push(`    <CheckboxPage Description="Optionally install Capsule Toolbox with its local runtime and both approved offline models. The complete payload is included and is skipped unless selected.">
+    pages.push(`    <CheckboxPage Description="${includeToolboxInstaller === 'msi' ? 'Optionally install Capsule Toolbox and its Windows runtime from the bundled MSI. Model weights and the optional Linux runtime are not included. Installation is skipped unless selected.' : 'Optionally install Capsule Toolbox with its local runtime and both approved offline models. The complete payload is included and is skipped unless selected.'}">
       <Options>
         <CheckboxOption IsChecked="false">
-          <Text>Install Capsule Toolbox for my Windows account</Text>
+          <Text>${includeToolboxInstaller === 'msi' ? 'Install Capsule Toolbox for this computer (MSI)' : 'Install Capsule Toolbox for my Windows account'}</Text>
           <Name>install-capsule-toolbox</Name>
         </CheckboxOption>
       </Options>
@@ -485,7 +504,7 @@ ${featurePages(tweaks, defaultTweakIds, includeToolboxInstaller, extras)}
 `;
 }
 
-function unifiedReadme(extras) {
+function unifiedReadme(extras, includeToolboxInstaller) {
   if (!extras) return '';
   const packs = extras.packs.map((pack) => {
     const core = pack.apps.filter((app) => !app.optional).map((app) => app.name).join(', ');
@@ -499,7 +518,7 @@ compare a file with Get-FileHash -Algorithm SHA256 before opening it.
 Open CapsuleOSv2.apbx in AME Wizard in a disposable Windows VM with a snapshot first. Review each
 selected setting and browser; app packs are opt-in. Test apply, account-matched baseline restore,
 package removal and cancellation/failure paths there before considering use on a primary PC.
-The APBX password is "malte". The ZIP is not an installer and does not contain a new desktop executable.
+The APBX password is "malte". ${includeToolboxInstaller === 'msi' ? 'The APBX contains the Toolbox MSI; AME runs it only when its installation checkbox is selected.' : 'The ZIP is not an installer and does not contain a new desktop executable.'}
 
 ## Safety first
 The first action, Executables/Start-CapsuleSession.ps1, runs before anything else and halts the playbook if it fails:
@@ -517,6 +536,19 @@ The revert YAML restores selected options from this baseline instead of guessing
 Restoring all captured values can overwrite subsequent edits to those values: review -WhatIf first.
 Package and session operations write receipts to %ProgramData%\\CapsuleOS\\Receipts; registry values are
 recorded in the session baseline, not a separate receipt for each individual registry action.
+
+## Package manager setup
+Two unchecked AME options install WinGet and Chocolatey before browser/app-pack actions.
+For standalone setup, extract the complete ZIP and double-click Package-Managers/Install-WinGet.cmd
+or Package-Managers/Install-Chocolatey.cmd. Keep their PowerShell script and shared module alongside them.
+UAC consent and internet are required. WinGet uses Microsoft's documented Microsoft.WinGet.Client
+bootstrap from the official PowerShell Gallery. Chocolatey uses its official WinGet package and
+bootstraps WinGet first when missing. Existing managers are version-checked, not upgraded.
+No execution policy, Application Control rule or repository trust setting is changed.
+Standalone launchers respect PowerShell execution policy; a blocked script requires supported policy-owner approval.
+Receipts record success or failure; blocked installation stops with an error.
+Baseline restore does not remove package managers. Chocolatey's bootstrap MSI is install-only;
+use Chocolatey's supported management instructions afterwards.
 
 ## Browser choice
 ${extras.browsers.map((browser) => `- ${browser.name}`).join('\n')}
@@ -544,7 +576,7 @@ creates shortcuts only. Uninstall-CapsuleRepair.ps1 removes it.
 ## Fixed scripts
 Only fixed scripts are shipped; manifest.json lists payload SHA-256 hashes. App installers are downloaded by
 winget or an already-installed Chocolatey. These packs need internet access and App Installer or Chocolatey.
-No AI models, Toolbox executable or new native Windows application is bundled in this lean playbook.
+${includeToolboxInstaller === 'msi' ? 'The Toolbox MSI and Windows runtime are bundled. AI model weights and the optional Linux runtime are not bundled. Installing the app does not establish model inference or WSL acceptance.' : 'No AI models, Toolbox executable or new native Windows application is bundled in this lean playbook.'}
 Archive checks and mocked script tests do not establish AME Wizard acceptance, elevated install/restore
 success or support for every Windows build. Validate those flows in a disposable Windows VM before release.
 `;
@@ -566,9 +598,9 @@ are removed during apply. Configuration/Tasks/apply.yml sets the values; Configu
 Medium-risk tweaks and any marked "needs admin" change machine-wide settings. Review the list and keep a restore
 point. The YAML follows AME Wizard's documented registry action style and must be tried in AME Wizard before you
 rely on it. The archive is a password-protected 7z file (password "malte", which AME Wizard requires).
-${includeToolboxInstaller ? '\nThe optional Capsule Toolbox installer and both approved local models are bundled in Executables and run only if you check the AME Wizard option. Keep Executables/models beside setup. Its fixed verification script runs as the signed-in user via currentUserElevated, checks the setup exit code, installed executable, bundled runtime and pinned model hashes, and halts on failure. No Browser app, system Node or model download is needed; Windows WebView2 is still required. WSL2 requires separate Linux prerequisites.' : ''}
+${includeToolboxInstaller === 'msi' ? '\nThe optional Capsule Toolbox MSI is bundled in Executables and runs only if selected. The fixed script verifies its SHA-256, invokes Windows Installer with /qn /norestart and a verbose log, and checks registered installed app/runtime components. Failures halt the playbook; exit 3010 is reported as reboot required without restarting Windows. Registry baseline restore does not uninstall the Toolbox; use Windows Installed apps for removal. Existing NSIS installations are not automatically removed or migrated. WebView2 is required; models must be provisioned separately through approved downloads. This is not the full offline distribution.' : includeToolboxInstaller ? '\nThe optional Capsule Toolbox installer and both approved local models are bundled in Executables and run only if you check the AME Wizard option. Keep Executables/models beside setup. Its fixed verification script runs as the signed-in user via currentUserElevated, checks the setup exit code, installed executable, bundled runtime and pinned model hashes, and halts on failure. No Browser app, system Node or model download is needed; Windows WebView2 is still required. WSL2 requires separate Linux prerequisites.' : ''}
 The Capsule playbook icon is included as playbook.png at the archive root.
-${unifiedReadme(extras)}
+${unifiedReadme(extras, includeToolboxInstaller)}
 ${sections}`;
 }
 
@@ -620,7 +652,8 @@ export function buildPlaybook(options = {}) {
   if (!Array.isArray(defaultTweakIds) || defaultTweakIds.some((id) => !tweakIds.has(id))) {
     throw new Error('Default tweaks must be an array of included tweak ids.');
   }
-  const includeToolboxInstaller = options.includeToolboxInstaller === true;
+  const includeToolboxInstaller = options.includeToolboxInstaller === true
+    ? (options.toolboxInstallerFormat === 'msi' ? 'msi' : true) : false;
   const extras = resolveExtras(options);
   const applyYaml = actionsYaml(tweaks, 'apply', includeToolboxInstaller, extras);
   const files = {
@@ -638,7 +671,7 @@ export function buildPlaybook(options = {}) {
     preset: options.preset || null,
     tweaks: tweaks.map((entry) => entry.id),
     defaultTweaks: [...defaultTweakIds],
-    toolboxInstallerIncluded: includeToolboxInstaller,
+    toolboxInstallerIncluded: Boolean(includeToolboxInstaller),
     needsAdmin: tweaks.some(needsAdmin),
     mediumRisk: tweaks.filter((entry) => entry.risk === 'medium').length,
   };

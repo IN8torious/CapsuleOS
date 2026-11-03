@@ -10,7 +10,8 @@ const AdmZip = require('adm-zip');
 const hash = (content) => crypto.createHash('sha256').update(content).digest('hex');
 const root = path.resolve(__dirname, '..');
 
-test('lean export delivers a verified APBX and ZIP with complete payload hashes', () => {
+for (const includeMsi of [false, true]) {
+test(`${includeMsi ? 'MSI' : 'lean'} export delivers a verified APBX and ZIP with complete payload hashes`, () => {
   const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'capsule-delivery-test-'));
   const run = (command, args) => {
     const result = spawnSync(command, args, { encoding: 'utf8', timeout: 60000 });
@@ -20,10 +21,17 @@ test('lean export delivers a verified APBX and ZIP with complete payload hashes'
   };
   try {
     const output = path.join(folder, 'CapsuleOS-Playbook.apbx');
-    run(process.execPath, [path.join(root, 'assistant', 'playbook-unified-export.mjs'), output]);
+    // Inert bytes exercise archive integrity only, never MSI installation.
+    const msi = path.join(folder, 'fixture.msi'), msiBytes = Buffer.from('inert MSI packaging fixture');
+    fs.writeFileSync(msi, msiBytes);
+    const exportArgs = [path.join(root, 'assistant', 'playbook-unified-export.mjs'), output,
+      ...(includeMsi ? ['--msi', msi, '--msi-sha256', hash(msiBytes)] : [])];
+    run(process.execPath, exportArgs);
     const zip = new AdmZip(path.join(folder, 'CapsuleOS-Playbook.zip'));
     assert.deepEqual(zip.getEntries().map(entry => entry.entryName).sort(),
-      ['CapsuleOS-Playbook.apbx', 'README.md', 'SHA256SUMS.txt', 'manifest.json']);
+      ['CapsuleOS-Playbook.apbx', 'Package-Managers/', 'Package-Managers/Capsule.Common.psm1',
+        'Package-Managers/Install-CapsulePackageManager.ps1', 'Package-Managers/Install-Chocolatey.cmd',
+        'Package-Managers/Install-WinGet.cmd', 'README.md', 'SHA256SUMS.txt', 'manifest.json']);
     assert.deepEqual(zip.readFile('CapsuleOS-Playbook.apbx'), fs.readFileSync(output));
     for (const line of zip.readAsText('SHA256SUMS.txt').trim().split('\n')) {
       const [expected, name] = line.split('  ');
@@ -46,8 +54,28 @@ test('lean export delivers a verified APBX and ZIP with complete payload hashes'
     for (const [name, expected] of Object.entries(manifest.files)) {
       assert.equal(hash(fs.readFileSync(path.join(extracted, ...name.split('/')))), expected, name);
     }
-    assert.equal(manifest.toolboxInstallerIncluded, false);
+    assert.equal(manifest.toolboxInstallerIncluded, includeMsi);
     assert.ok(payload.every(name => !/models\/|\.exe$/i.test(name)));
+    if (includeMsi) {
+      assert.deepEqual(fs.readFileSync(path.join(extracted, 'Executables', 'CapsuleToolbox.msi')), msiBytes);
+      assert.equal(manifest.toolboxInstaller.sha256, hash(msiBytes));
+      const readme = zip.readAsText('README.md');
+      assert.match(readme, /Toolbox MSI/);
+      assert.doesNotMatch(readme, /both approved local models are bundled|No AI models, Toolbox executable/);
+      const conf = fs.readFileSync(path.join(extracted, 'playbook.conf'), 'utf8');
+      assert.match(conf, /Install Capsule Toolbox for this computer \(MSI\)/);
+      assert.doesNotMatch(conf, /both approved offline models/);
+      const yaml = fs.readFileSync(path.join(extracted, 'Configuration', 'Tasks', 'apply.yml'), 'utf8');
+      assert.match(yaml, /Install-CapsuleToolbox\.ps1/);
+      assert.match(yaml, /option: "install-capsule-toolbox"/);
+      const before = hash(fs.readFileSync(output));
+      fs.writeFileSync(msi, 'tampered fixture');
+      const refused = spawnSync(process.execPath, exportArgs, { encoding: 'utf8' });
+      assert.notEqual(refused.status, 0);
+      assert.match(refused.stderr, /SHA-256 mismatch/);
+      assert.equal(hash(fs.readFileSync(output)), before);
+      fs.writeFileSync(msi, msiBytes);
+    }
     assert.ok(fs.statSync(output).size < 1024 * 1024, 'Lean playbook must stay below 1 MB');
     for (const browser of manifest.browsers) {
       const icon = fs.readFileSync(path.join(extracted, 'Images', `${browser}.png`));
@@ -70,9 +98,25 @@ test('lean export delivers a verified APBX and ZIP with complete payload hashes'
       assert.match(restored.stdout, /restored:capsule-/);
     }
     // Exporting over an earlier delivery must work, not leave temporary archive candidates.
-    run(process.execPath, [path.join(root, 'assistant', 'playbook-unified-export.mjs'), output]);
+    run(process.execPath, exportArgs);
     assert.ok(fs.readdirSync(folder).every(name => !name.startsWith('.')));
   } finally {
     fs.rmSync(folder, { recursive: true, force: true });
+  }
+});
+}
+
+test('MSI installation script parses and preserves failure, logging and no-restart boundaries', () => {
+  const script = path.join(root, 'assistant', 'Install-CapsuleToolboxMsi.ps1');
+  const source = fs.readFileSync(script, 'utf8');
+  for (const required of ['Get-FileHash', 'SHA256', '/qn /norestart /L*v', '@(0, 3010)', 'ComponentPath',
+    'capsule_toolbox.exe', 'node.exe', 'toolbox-runtime.cjs', 'Receipts', 'WindowsIdentity']) {
+    assert.ok(source.includes(required), required);
+  }
+  assert.doesNotMatch(source, /Win32_Product|Restart-Computer|Start-Process.*CapsuleToolboxSetup/);
+  if (process.platform === 'win32') {
+    const command = `$errors = $null; [System.Management.Automation.Language.Parser]::ParseFile('${script.replace(/'/g, "''")}', [ref]$null, [ref]$errors) | Out-Null; if ($errors.Count) { throw ($errors | Out-String) }`;
+    const result = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(command, 'utf16le').toString('base64')], { encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
   }
 });

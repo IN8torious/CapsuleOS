@@ -2,6 +2,18 @@
 
 ## Windows MSI
 
+The unified APBX also has unchecked WinGet/Chocolatey setup options before app
+installation. Its companion ZIP includes `Package-Managers\Install-WinGet.cmd`
+and `Install-Chocolatey.cmd`: extract the entire folder, double-click the desired
+launcher and approve UAC. Internet is required. WinGet follows Microsoft's
+PowerShell Gallery repair/bootstrap instructions; Chocolatey uses its official
+WinGet package, installing WinGet first if absent. Existing managers are kept.
+No security policy or repository trust is changed. These installers have source
+and PowerShell syntax checks only until target-machine setup is exercised.
+Local script execution is currently restricted; the launchers do not override
+that policy. A policy block stops with an error and requires the policy owner's
+supported approval rather than changing security controls.
+
 The Windows build now targets a native x64 WiX `.msi` alongside the existing
 NSIS setup EXE. The MSI installs CapsuleOSv2 and its bundled Windows Node and
 production dependency runtime; it is not an EXE wrapped in an MSI. Its upgrade

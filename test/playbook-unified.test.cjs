@@ -47,7 +47,7 @@ test('every page option has actions and every action option has a page', async (
   const { files } = await unified();
   const conf = files['playbook.conf'];
   const apply = files['Configuration/Tasks/apply.yml'];
-  const pageOptions = new Set([...conf.matchAll(/<Name>((?:capsule|browser|pack)-[^<]+)<\/Name>/g)].map((m) => m[1]));
+  const pageOptions = new Set([...conf.matchAll(/<Name>((?:capsule|browser|pack|install-manager)-[^<]+)<\/Name>/g)].map((m) => m[1]));
   const actionOptions = new Set([...apply.matchAll(/option: '([^']+)'/g)].map((m) => m[1]));
   assert.deepEqual([...pageOptions].sort(), [...actionOptions].sort());
   for (const pack of packCatalog.packs) assert.ok(pageOptions.has(`pack-${pack.id}`), pack.id);
