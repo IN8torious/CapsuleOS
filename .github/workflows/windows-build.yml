@@ -31,7 +31,7 @@ jobs:
         run: |
           rustup default stable-x86_64-pc-windows-msvc
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - name: Source and native regressions
+      - name: Source regressions
         shell: pwsh
         run: |
           $canonicalTemp = node -e "require('node:fs/promises').realpath(require('node:os').tmpdir()).then(p => console.log(p))"
@@ -42,8 +42,6 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           npm test
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          cargo test --manifest-path src-tauri\Cargo.toml --lib --locked --quiet
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Prepare pinned models required by the existing build gate
         shell: pwsh
         run: |
@@ -53,6 +51,8 @@ jobs:
         shell: pwsh
         run: |
           npm exec -- tauri build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo test --manifest-path src-tauri\Cargo.toml --lib --locked --quiet
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node assistant\design-audit.cjs --dark
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
