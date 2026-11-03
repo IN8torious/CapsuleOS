@@ -1,0 +1,2 @@
+# Preserve exact bytes for integrity-pinned data and embedded kernel sources.
+* -text
