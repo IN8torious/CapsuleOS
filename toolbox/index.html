@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; script-src 'self' blob: 'sha256-hr95mfY3mpyEpzFL3bbW2x9sdZ1YDGSlxgog/Cf9HCw='; img-src 'self' blob: data:; connect-src 'self' blob: data: ipc: http://ipc.localhost; font-src 'self' blob: data:; media-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'self' about:"
+    >
+    <meta name="theme-color" content="#f6f4ee">
+    <title>CapsuleOSv2 · Home</title>
+    <link id="capsule-favicon" rel="icon" type="image/png">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/bible.css">
+    <link rel="stylesheet" href="/capsule-v2.css">
+    <link rel="stylesheet" href="/capsule-dark.css">
+    <script type="module" src="/startup.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar glass-bezel">
+        <a class="brand" href="#" aria-label="CapsuleOSv2 home">
+          <span class="brand-mark" aria-hidden="true">
+            <img id="capsule-brand-icon" width="28" height="28" alt="">
+          </span>
+          <span><strong>CapsuleOS<span class="brand-version">v2</span></strong><small>Your Windows, thoughtfully.</small></span>
+        </a>
+        <button id="directory-toggle" class="directory-toggle" type="button" aria-label="Open app directory" title="App directory (/)" aria-expanded="false" aria-controls="page-directory">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="4" height="4" rx="1"/><rect x="10" y="3" width="4" height="4" rx="1"/><rect x="17" y="3" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="17" y="10" width="4" height="4" rx="1"/><rect x="3" y="17" width="4" height="4" rx="1"/><rect x="10" y="17" width="4" height="4" rx="1"/><rect x="17" y="17" width="4" height="4" rx="1"/></svg>
+          <span id="directory-proposal-count" class="notification-count" aria-hidden="true" hidden></span>
+        </button>
+        <nav class="header-shortcuts" aria-label="Quick navigation">
+          <button type="button" class="header-shortcut" data-shortcut-view="world" aria-label="Voxel World" title="Voxel World">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="m8 2 6 3.5v7L8 16l-6-3.5v-7Zm0 7 6-3.5M8 9 2 5.5M8 9v7m8-5 6 3.5v6L16 24l-6-3.5v-6Zm0 7 6-3.5M16 18l-6-3.5m6 3.5v6"/></svg>
+          </button>
+          <button type="button" class="header-shortcut" data-shortcut-view="scene-studio" aria-label="Scene Studio" title="Scene Studio">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7Zm0 10 9-5M12 12 3 7m9 5v10M7.5 4.5l9 5"/></svg>
+          </button>
+          <button type="button" class="header-shortcut bible-shortcut" data-shortcut-view="bible" aria-label="Toolbox Bible" title="Toolbox Bible · Read, pray and reflect">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5C9 3 6 3 3 4v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1Zm0 0v15M7 7v7M5 10h4"/></svg>
+          </button>
+          <button type="button" class="header-shortcut" data-shortcut-view="settings" aria-label="Toolbox settings" title="Toolbox settings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="m10 3-.5 2-2 .9-1.9-.6-2 3.4 1.5 1.4v2.3l-1.5 1.4 2 3.4 1.9-.6 2 .9.5 2h4l.5-2 2-.9 1.9.6 2-3.4-1.5-1.4v-2.3l1.5-1.4-2-3.4-1.9.6-2-.9L14 3Z"/><circle cx="12" cy="11.5" r="3"/></svg>
+          </button>
+        </nav>
+        <button id="proposal-notifications" type="button" class="header-shortcut proposal-notifications" data-shortcut-view="auditor" aria-label="Notifications & changes" title="Notifications & changes">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5ZM10 21h4M12 2v2"/></svg>
+          <span id="header-proposal-count" class="notification-count" aria-hidden="true" hidden></span>
+        </button>
+        <div class="directory-location"><small id="directory-section">WORKSPACE</small><strong id="directory-page">Cockpit</strong></div>
+        <div class="runtime-health">
+          <span class="live-dot" id="link-dot"></span>
+          <span id="link-status">CONNECTING TO BROWSER</span>
+          <i></i>
+          <span id="engine-version">CONTRACT v2 · CHECKING</span>
+        </div>
+        <span class="build-pill">PRE-RELEASE</span>
+      </header>
+
+      <aside id="page-directory" class="navigation-rail glass-bezel" aria-label="Toolbox directory" hidden>
+        <div class="directory-heading"><div><div class="eyebrow">YOUR WORKSPACE</div><h2>Explore Capsule</h2></div><button id="directory-close" class="button quiet" type="button" aria-label="Close directory">Close</button></div>
+        <label class="nav-search">
+          <span>FIND A PAGE</span>
+          <input id="nav-search" type="search" maxlength="60" placeholder="Search pages" autocomplete="off">
+        </label>
+        <div id="nav-empty" class="nav-empty" hidden>No matching page.</div>
+        <div class="directory-groups">
+        <details class="nav-group" open>
+          <summary>WORKSPACE</summary>
+          <div class="nav-apps">
+          <button class="nav-item" data-view="cockpit" data-caption="Your Windows workspace"><span aria-hidden="true">⌂</span> Home</button>
+          <button class="nav-item" data-view="apps" data-caption="winget &amp; Chocolatey"><span aria-hidden="true">▦</span> Apps</button>
+          <button class="nav-item" data-view="world" data-caption="Shape your planet"><span aria-hidden="true">◍</span> Voxel Globe</button>
+          <button class="nav-item" data-view="scene-studio" data-caption="HTML &amp; 3D scenes"><span aria-hidden="true">▣</span> Scene Studio</button>
+          <button class="nav-item" data-view="agents" data-caption="Agents &amp; workflow activity"><span aria-hidden="true">⌘</span> Workspace graph</button>
+          <button class="nav-item" data-view="workflows" data-caption="Compose reusable outlines"><span aria-hidden="true">▤</span> Workflows</button>
+          </div>
+        </details>
+        <details class="nav-group" open>
+          <summary>TOOLS &amp; REVIEW</summary>
+          <div class="nav-apps">
+          <button class="nav-item" data-view="bible" data-caption="Read, pray &amp; reflect"><span aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5C9 3 6 3 3 4v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1Zm0 0v15M7 7v7M5 10h4"/></svg></span> Toolbox Bible</button>
+          <button class="nav-item" data-view="mod-forge" data-caption="Inspect packages &amp; ideas"><span aria-hidden="true">⬡</span> Mod Forge <i>INERT</i></button>
+          <button class="nav-item" data-view="kernel-library" data-caption="Your kernel designs"><span aria-hidden="true">◉</span> Kernel library <i>REFERENCE</i></button>
+          <button class="nav-item" data-view="auditor" data-caption="Updates, activity &amp; history"><span aria-hidden="true">◈</span> Notifications &amp; changes <i id="agent-proposal-nav-count" hidden></i></button>
+          </div>
+        </details>
+        <details class="nav-group">
+          <summary>WINDOWS SETTINGS</summary>
+          <div class="nav-apps">
+          <button class="nav-item" data-view="performance" data-caption="Evidence-led tuning"><span aria-hidden="true">◈</span> Performance advisor</button>
+          <button class="nav-item" data-view="playbook" data-caption="Supported Windows tweaks"><span aria-hidden="true">❖</span> Tweak+ </button>
+          <button class="nav-item" data-view="internet" data-caption="Connection &amp; DNS"><span aria-hidden="true">◍</span> Internet</button>
+          <button class="nav-item" data-view="repair" data-caption="Windows repair &amp; security"><span aria-hidden="true">✚</span> Repair</button>
+          <button class="nav-item" data-view="windows" data-caption="Appearance &amp; preferences"><span aria-hidden="true">◐</span> Windows settings</button>
+          <button class="nav-item" data-view="settings" data-caption="Models, storage &amp; theme"><span aria-hidden="true">⚙</span> Toolbox settings</button>
+          <button class="nav-item" data-view="wsl" data-caption="Linux hosts &amp; routing"><span aria-hidden="true">▰</span> WSL management</button>
+          <button class="nav-item" data-view="memory" data-caption="Your local preferences"><span aria-hidden="true">◉</span> Private memory</button>
+          </div>
+        </details>
+        <details class="nav-group">
+          <summary>CREATE &amp; EXPLORE</summary>
+          <div class="nav-apps">
+          <button class="nav-item" data-view="capsules" data-caption="Portable workspace concepts"><span aria-hidden="true">⬡</span> Capsule library</button>
+          <button class="nav-item" data-view="marketplace" data-caption="Explore future extensions"><span aria-hidden="true">✦</span> Marketplace <i>PREVIEW</i></button>
+          </div>
+        </details>
+        </div>
+        <div class="rail-divider"></div>
+        <div class="rail-principle">
+          <span class="principle-emblem">D7</span>
+          <strong>Scoped autonomy. Your control.</strong>
+          <p>Workspace grants cover routine edits. Windows changes use exact-action consent and UAC.</p>
+        </div>
+        <div class="rail-footer">
+          <span class="shield-mark">◈</span>
+          <div><strong>ISOLATED COMPANION</strong><small>WEBSITE PAGES CANNOT REACH THIS APP</small></div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <section class="view" data-view="bible"></section>
+        <section class="view" data-view="world"></section>
+        <section class="view" data-view="cockpit">
+          <div class="page-heading">
+            <div>
+              <div class="eyebrow">CAPSULEOSv2 <span>/</span> HOME</div>
+              <h1>A little more order.<br>A lot more possibility.</h1>
+              <p>A considered home for your Windows tools, apps and ideas. Choose where to begin.</p>
+            </div>
+            <button id="open-performance-advisor" class="button secondary" type="button" title="Inspect Windows settings and review proposals; nothing applies automatically">Performance advisor</button>
+          </div>
+
+          <div class="v2-home-grid">
+            <button type="button" class="v2-home-card featured" data-shortcut-view="apps"><span class="v2-card-icon" aria-hidden="true">▦</span><small>MAKE IT YOURS</small><strong>The right apps.<br>One place.</strong><p>Explore 13 curated packs with winget and Chocolatey. Review what goes on your device.</p><span class="v2-card-link">Explore apps <span aria-hidden="true">↗</span></span></button>
+            <button type="button" class="v2-home-card" data-shortcut-view="windows"><span class="v2-card-icon" aria-hidden="true">◐</span><small>YOUR WINDOWS</small><strong>A quieter workspace.</strong><p>Review supported preferences with exact-action approval and recovery.</p><span class="v2-card-link">Windows settings <span aria-hidden="true">↗</span></span></button>
+            <button type="button" class="v2-home-card" data-shortcut-view="bible"><span class="v2-card-icon" aria-hidden="true">✦</span><small>A MOMENT OF STILLNESS</small><strong>Read. Reflect. Return.</strong><p>Your complete Bible reader, with passages and bookmarks kept on this device.</p><span class="v2-card-link">Open the Bible <span aria-hidden="true">↗</span></span></button>
+            <button type="button" class="v2-home-card" data-shortcut-view="world"><span class="v2-card-icon" aria-hidden="true">◍</span><small>ROOM TO CREATE</small><strong>A world to shape.</strong><p>Orbit a voxel planet, build a little, or start with a fresh seed.</p><span class="v2-card-link">Explore the globe <span aria-hidden="true">↗</span></span></button>
+          </div>
+          <div class="v2-home-note"><span aria-hidden="true">◇</span><div><strong>Helpful by design. Yours by choice.</strong><p>No automatic installs. No embedded browser. Windows changes still require your review.</p></div></div>
+          <details class="v2-diagnostics"><summary>Engine diagnostics &amp; activity <span>Optional connection details and receipts</span></summary>
+          <div class="stat-grid glass-bezel" aria-label="Connected browser metrics">
+            <article class="stat-card"><span>AGENTS</span><strong id="stat-agents">—</strong><small>Configured for this workspace</small></article>
+            <article class="stat-card"><span>WORKFLOWS</span><strong id="stat-tasks">—</strong><small>Available in this workspace</small></article>
+            <article class="stat-card receipt-ticket-card"><span>RECEIPTS</span><div class="receipt-ticket"><strong id="stat-receipts" aria-label="0 receipt tickets">#0000</strong><button id="receipt-ticket-reset" type="button" aria-label="Reset receipt ticket display without deleting the ledger" title="Reset ticket display only; audit ledger is preserved">↺</button></div><small>Session tickets; resetting never erases receipts</small></article>
+            <article class="stat-card"><span>KERNEL HEALTH</span><strong id="stat-health">—</strong><small id="stat-health-label">Awaiting connected state</small></article>
+          </div>
+
+          <article id="live-performance" class="live-performance panel glass-bezel" data-performance-dashboard>
+            <div class="panel-heading"><h2>Live performance</h2><button class="header-shortcut" type="button" data-resource-rollback aria-label="Undo the last Toolbox settings batch with confirmation and UAC" title="Undo last settings batch; does not undo browsing or model usage"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 9M4 4v6h6"/></svg></button></div>
+            <div class="resource-values"><span>CPU <strong data-cpu-value>SAMPLING</strong></span><span>RAM <strong data-memory-value>SAMPLING</strong></span><small>Actual Windows readings, not an optimization score</small></div>
+            <div class="inline-status" data-resource-status role="status">Waiting for native resource counters.</div>
+            <details class="resource-trends"><summary>Resource history &amp; settings comparisons</summary>
+              <p>CPU/RAM pressure is not measured application speed or kernel health. Compare the same workload; higher usage can reflect useful work rather than damage. The last minute before a Toolbox batch is compared with samples during the following minute, requiring at least five on each side. Other apps, temperature, restarts and delayed policy activation can affect results.</p>
+              <div class="resource-legend"><span>CPU</span><span>RAM</span></div>
+              <svg class="resource-chart" viewBox="0 0 400 80" preserveAspectRatio="none" role="img" aria-label="Measured CPU and RAM percentages, from zero at the bottom to one hundred at the top"><path data-cpu-line fill="none" stroke="#f6b471" stroke-width="1.5"/><path data-memory-line fill="none" stroke="#83c7ff" stroke-width="1.5"/></svg>
+              <p data-chart-summary>No measured history yet.</p><div data-resource-comparisons></div>
+              <p>History is local: up to 1,440 sampled minutes in the last 24 hours and 20 settings comparisons. No process names, page content or browsing history are collected. Collection pauses while the app is hidden. Rollback restores only the last supported settings batch and refuses newer conflicting registry values.</p>
+            </details>
+            <div class="inline-status" data-history-status role="status"></div>
+            <details data-resource-error-panel hidden><summary>Connection details</summary><pre data-resource-error></pre></details>
+          </article>
+          <div class="cockpit-grid">
+            <article class="panel graph-panel glass-bezel">
+              <div class="panel-heading">
+                <h2>Engine activity</h2>
+                <div class="legend"><span class="legend-live"></span> RECENT ACTIVITY<span class="legend-dim"></span> WORKSPACE ITEM</div>
+              </div>
+              <div id="agent-graph" class="activity-graph" role="group" aria-label="Interactive 3D agent and workflow scene"></div>
+              <div class="graph-footer"><span id="graph-summary">Waiting for Capsule OS Browser to connect…</span><span id="graph-updated">NO LIVE DATA</span></div>
+              <details id="graph-connection-error" class="connection-details" hidden><summary>Connection details</summary><p id="graph-connection-message"></p></details>
+            </article>
+          </div>
+          <details class="cockpit-details glass-bezel">
+            <summary>Task activity <span>Starter routes and recent receipts</span></summary>
+            <div class="side-stack">
+            <article class="panel recent-panel glass-bezel">
+              <div class="panel-heading"><div><div class="eyebrow">PROVENANCE LEDGER</div><h2>Recent receipts</h2></div><span class="count-pill" id="receipt-pill">00</span></div>
+              <div id="recent-receipts" class="receipt-stack"><div class="empty-card">The browser ledger will appear when it is running.</div></div>
+            </article>
+            <article class="panel routes-panel glass-bezel">
+              <div class="panel-heading"><div><div class="eyebrow">STARTER ROUTES</div><h2>Try a sample task</h2></div><span class="read-only-label">DEMO</span></div>
+              <div id="task-grid" class="task-grid"><div class="empty-card">Waiting for the shared task catalog…</div></div>
+              <div id="route-status" class="inline-status" role="status">No task routed in this session.</div>
+            </article>
+            </div>
+          </details>
+          </details>
+        </section>
+
+        <section class="view" data-view="agents">
+          <div class="page-heading"><div><div class="eyebrow">CAPSULEOSv2 / WORKSPACE</div><h1>Your workspace, connected.</h1><p>Explore the roles and workflows in your workspace. Select an item to inspect it; the graph never grants execution permission.</p></div></div>
+          <article class="panel graph-panel glass-bezel agent-page-graph"><div class="panel-heading"><div><div class="eyebrow">WORKSPACE MAP</div><h2>Agents &amp; workflows</h2></div><span class="read-only-label" data-graph-source>REFERENCE TOPOLOGY</span></div><div id="agent-graph-expanded" class="activity-graph activity-graph-large" role="group" aria-label="Interactive expanded 3D agent and workflow scene"></div><div class="workspace-graph-guide"><span>Drag to rotate. Select the canvas before scrolling to zoom.</span><span>Agent roles <b>·</b> Saved workflows <b>·</b> Receipt-backed activity</span></div></article>
+          <details class="panel glass-bezel workspace-roster"><summary>Explore the crew <span data-roster-count></span></summary><p data-roster-source></p><label class="workspace-roster-search">Find a role<input type="search" data-roster-search placeholder="Search role, purpose or capability"></label><div id="agent-directory" class="agent-directory"></div></details>
+          <details class="panel glass-bezel"><summary>Learning &amp; knowledge</summary><div data-learning-home aria-label="Learning and knowledge review"></div></details>
+          <div class="notice-card"><strong>A map, not a performance meter.</strong> Motion and coherence are visual simulations. Only connected receipts indicate recorded work; the reference crew is not evidence that local models are loaded or agents are running.</div>
+        </section>
+
+        <section class="view" data-view="workflows">
+          <div class="page-heading"><div><div class="eyebrow">YOUR WORKSPACE / LOCAL ONLY</div><h1>Your workflows<span class="heading-period">.</span></h1><p>Create and personalize reusable workflow outlines. They appear in both engine graphs and remain data-only in this preview.</p></div><span class="local-only-badge">ON THIS DEVICE · NO SYNC</span></div>
+          <article class="panel workflow-editor glass-bezel">
+            <div class="panel-heading"><div><div class="eyebrow">WORKFLOW COMPOSER</div><h2 id="workflow-form-title">Create a workflow</h2></div><span class="read-only-label">NO EXECUTION · NO PACKAGE IMPORT</span></div>
+            <form id="workflow-form">
+              <label for="workflow-name">Workflow name</label>
+              <input id="workflow-name" maxlength="80" required placeholder="For example: Prepare a study session">
+              <label for="workflow-description">Purpose <span class="label-hint">Optional · 240 characters maximum</span></label>
+              <textarea id="workflow-description" rows="2" maxlength="240" placeholder="What should this workflow help you accomplish?"></textarea>
+              <label for="workflow-steps">Steps <span class="label-hint">One step per line · up to 20 steps</span></label>
+              <textarea id="workflow-steps" rows="6" required placeholder="Gather the relevant notes&#10;Organize the key topics&#10;Review the result"></textarea>
+              <div class="workflow-actions"><button id="workflow-cancel" class="button quiet" type="button" hidden>Cancel edit</button><button id="workflow-save" class="button primary" type="submit">SAVE WORKFLOW</button></div>
+              <div id="workflow-status" class="inline-status" role="status">Saved on this device. These descriptions do not execute or change system settings.</div>
+            </form>
+          </article>
+          <article class="panel workflow-library glass-bezel">
+            <div class="panel-heading"><div><div class="eyebrow">SAVED LOCALLY</div><h2>Your workflow library</h2></div><span class="local-only-badge">MAX 100</span></div>
+            <div id="workflow-library" class="workflow-library-list"><div class="empty-card">Loading local workflows…</div></div>
+          </article>
+        </section>
+
+        <section class="view" data-view="mod-forge">
+          <div class="page-heading"><div><div class="eyebrow">TOOLBOX / PACKAGE REVIEW</div><h1>Mod Forge<span class="heading-period">.</span></h1><p>Review mod packages and save useful findings. HTML editing and component reuse live together in Scene Studio.</p></div><button class="button secondary" type="button" data-settings-view="scene-studio">OPEN SCENE STUDIO</button></div>
+          <article class="guardrail-card"><span>◈</span><div><strong>Source never runs here.</strong><p>Imported scripts and linked assets stay inert. Local-model suggestions are not proof; review citations and exact source before approval. Retaining components or saving a copy never trains the model or changes Windows.</p></div></article>
+            <article class="panel mod-forge-card glass-bezel">
+              <div class="panel-heading"><h2>Inspect a package</h2><button class="button quiet" type="button" data-settings-view="settings">MODEL SETTINGS</button></div>
+              <div class="mod-inline-controls"><button id="mod-package-select" class="button primary" type="button">CHOOSE PACKAGE</button><button id="mod-package-analyze" class="button secondary" type="button" disabled>REVIEW PACKAGE</button></div>
+              <div id="mod-package-status" class="inline-status" role="status">No package selected.</div>
+              <div id="mod-report" class="mod-report" hidden></div>
+              <div id="mod-package-evidence" class="mod-evidence"></div>
+            </article>
+          <article id="mod-analysis-panel" class="panel mod-forge-card glass-bezel" hidden>
+            <div class="panel-heading"><div><div class="eyebrow">03 / ROLE-BASED REVIEW</div><h2>Evidence and useful ideas</h2></div><span class="read-only-label">VERIFY CITATIONS</span></div>
+            <p class="mod-caution">Local-model output may be wrong. Check each cited path and line range in the original package before reusing a finding.</p>
+            <div id="mod-analysis-results" class="mod-analysis-results"></div>
+            <div class="mod-inline-controls"><button id="mod-guide-draft" class="button secondary" type="button">DRAFT DATA-ONLY WORKFLOW</button><button id="mod-auditor-save" class="button primary" type="button">SAVE TO AGENT PROPOSALS</button></div>
+            <div id="mod-auditor-status" class="inline-status" role="status">No references sent.</div>
+          </article>
+          <article class="panel mod-forge-card glass-bezel" id="approved-learning-panel">
+            <div class="panel-heading"><div><div class="eyebrow">PERSONAL ENGINE / ON THIS DEVICE</div><h2>Approved learning</h2></div><button id="learning-refresh" class="button secondary" type="button">REFRESH</button></div>
+            <p class="mod-caution">Approved notes inform future reviews and graph memory stars. Forgetting a note removes it from future context, not earlier outputs or saved drafts.</p>
+            <div id="approved-learning-status" class="inline-status" role="status">Open Mod Forge to load approved lessons.</div>
+            <div id="approved-learning-list"></div>
+          </article>
+          <article id="mod-kernel-panel" class="panel mod-forge-card glass-bezel" hidden>
+            <div class="panel-heading"><div><div class="eyebrow">04 / VERSIONED PROPOSALS</div><h2>Kernel evolution</h2></div><span class="read-only-label">PROPOSAL ONLY</span></div>
+            <p class="mod-caution">Agents may propose inert kernel revisions. They cannot edit the active kernel or its identity; proposals require separate review and approval.</p>
+            <div class="mod-inline-controls"><label for="mod-kernel-name">Proposal name</label><input id="mod-kernel-name" maxlength="100" value="Kernel proposal"><label for="mod-kernel-parent">Lineage</label><select id="mod-kernel-parent"><option value="">Start a new v1 proposal</option></select><button id="mod-kernel-create" class="button secondary" type="button">ASK AGENTS TO DRAFT</button></div>
+            <div id="mod-kernel-status" class="inline-status" role="status">No proposal generated.</div>
+            <div id="mod-kernel-library" class="mod-kernel-library"></div>
+          </article>
+        </section>
+
+        <section class="view" data-view="kernel-library">
+          <div class="page-heading"><div><div class="eyebrow">KERNEL RESEARCH / CURATED REFERENCES</div><h1>Kernel library<span class="heading-period">.</span></h1><p>Explore architecture ideas and turn a selected checklist into an editable, data-only workflow. These are references—not runnable kernels, downloads, or system capabilities.</p></div><span class="local-only-badge">INERT · NO INSTALLATION</span></div>
+          <article class="guardrail-card"><span>◈</span><div><strong>Your kernel projects.</strong><p id="kernel-source-note">Original projects supplied by their creator for Toolbox integration. This library records their designs, source provenance and workflow templates; it does not boot or execute archived files. Source checks, supplied build evidence and live Toolbox acceptance are recorded separately.</p><small id="kernel-source-hash" class="kernel-source-hash"></small></div></article>
+          <div id="kernel-library-grid" class="kernel-library-grid"><div class="empty-card">Loading curated kernel references…</div></div>
+        </section>
+
+        <section class="view" data-view="auditor">
+          <div class="page-heading"><div><div class="eyebrow">LOCAL REVIEW / DEVELOPMENT HISTORY</div><h1>Notifications &amp; changes<span class="heading-period">.</span></h1><p>Toolbox updates, agent activity and release history.</p></div><span class="local-only-badge">ON THIS DEVICE</span></div>
+          <div class="notification-tabs" role="tablist" aria-label="Notifications">
+            <button type="button" id="notification-activity-tab" role="tab" data-notification-tab="activity" aria-controls="notification-activity-panel" aria-selected="true">Activity</button>
+            <button type="button" id="notification-release-tab" role="tab" data-notification-tab="releases" aria-controls="notification-release-panel" aria-selected="false" tabindex="-1">Release Notes</button>
+          </div>
+          <div id="notification-activity-panel" data-notification-panel="activity" role="tabpanel" aria-labelledby="notification-activity-tab">
+          <article class="panel glass-bezel notification-section"><div class="panel-heading"><div><div class="eyebrow">01 / TOOLBOX UPDATES</div><h2>What changed</h2></div><span class="read-only-label">SOURCE UPDATE</span></div><p>Recent changes to the Toolbox itself. Older changes and delivery status live in Release Notes.</p><div data-development-updates></div></article>
+          <article class="panel glass-bezel" id="orchestrator-panel">
+            <div class="panel-heading"><div><div class="eyebrow">02 / AGENT WORKSPACE</div><h2>Automatic work</h2></div><button class="button quiet" type="button" data-orchestrator-refresh>Refresh</button></div>
+            <p>Give the local agents a focused goal. Authorized document edits get checkpoints and Undo.</p>
+            <details><summary>Workspace permission &amp; Undo</summary>
+              <p>Choose a project folder for existing top-level HTML, CSS, Markdown and text documents. The local model can read up to eight documents and edit one per refinement. No scripts run, no files are deleted and nothing is sent outside the Toolbox. The newest ten edit checkpoints are kept automatically; Undo refuses to overwrite newer external changes.</p>
+              <p data-workspace-status role="status">No folder permission loaded.</p>
+              <div class="mod-inline-controls"><button class="button secondary" type="button" data-workspace-grant>Authorize a folder</button><button class="button quiet" type="button" data-workspace-revoke disabled>Pause edits</button><button class="button quiet" type="button" data-workspace-undo disabled>Undo last edit</button></div>
+            </details>
+            <div class="orchestrator-compose">
+              <label class="orchestrator-goal">What should improve?<textarea data-orchestrator-goal maxlength="600" rows="3" placeholder="Describe one small improvement…"></textarea></label>
+              <div class="orchestrator-controls">
+                <label class="orchestrator-budget"><span>Run budget</span><select data-orchestrator-cycles><option value="1">1 pass · 2 model calls</option><option value="2">2 passes · 4 model calls</option><option value="3">3 passes · 6 model calls</option></select></label>
+                <div class="orchestrator-run-actions"><button class="button primary" type="button" data-orchestrator-start><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="m4 2 10 6-10 6Z"/></svg>Start work</button><button class="button quiet" type="button" data-orchestrator-stop disabled>Stop</button></div>
+              </div>
+              <small class="orchestrator-hint">Builder drafts; Sentinel checks. A run schedules work for up to 10 minutes. Stop prevents new steps; an active call or save may finish.</small>
+            </div>
+            <p class="inline-status" data-orchestrator-status role="status">Open notifications to read persisted development history.</p>
+            <div data-orchestrator-history aria-label="Development event history"></div>
+          </article>
+          <article class="panel auditor-library glass-bezel">
+            <div class="panel-heading"><div><div class="eyebrow">03 / SAVED PROPOSALS</div><h2>Ideas &amp; evidence</h2></div><button id="auditor-refresh" class="button quiet" type="button">Refresh</button></div>
+            <p>Reference material, not a required to-do list. Imported packages remain inert; a model review does not grant system permissions or prove tests passed.</p>
+            <label class="proposal-filter">Show proposals <select id="proposal-history-filter"><option value="all">All history</option><option value="pending">Pending</option><option value="reviewed">Reviewed</option><option value="dismissed">Dismissed</option></select></label>
+            <div id="auditor-status" class="inline-status" role="status">Loading saved agent proposals…</div>
+            <div id="auditor-proposals" class="auditor-proposal-list"></div>
+          </article>
+          </div>
+          <div id="notification-release-panel" data-notification-panel="releases" role="tabpanel" aria-labelledby="notification-release-tab" hidden>
+            <article class="panel glass-bezel"><h2>Release Notes</h2><p>Current development and older delivery records, with source, package and installed evidence kept distinct. Runtime proposal refinements appear in Activity, not as invented software releases.</p><div data-release-notes></div></article>
+          </div>
+        </section>
+
+        <section class="view" data-view="settings">
+          <div class="page-heading"><div><div class="eyebrow">YOUR TOOLBOX / YOUR CHOICES</div><h1>Toolbox settings<span class="heading-period">.</span></h1><p>Personalize the interface, load approved local agent models, and manage storage. Windows changes remain separately reviewed.</p></div></div>
+          <article class="panel mod-forge-card glass-bezel">
+            <div class="panel-heading"><div><div class="eyebrow">INTERFACE / LOCAL PREFERENCE</div><h2>Appearance</h2></div></div>
+            <label for="toolbox-theme">Toolbox theme</label>
+            <select id="toolbox-theme"><option value="light">Light</option><option value="dark">Dark</option><option value="system">Follow Windows</option></select>
+            <div id="toolbox-theme-status" class="inline-status" role="status">Saved on this device. This does not change the Windows theme.</div>
+            <p class="mod-caution">Choose a swatch or open the spectrum to choose any color. Changes Toolbox accents only, not Windows theme, Capsule artwork, or the meaning of graph colors. Saved on this device. Motion follows your system reduced-motion preference.</p>
+            <div id="color-profile-options" class="color-profile-options" role="group" aria-label="Toolbox accent colors"></div>
+            <div id="color-profile-status" class="inline-status" role="status"></div>
+            <label for="surface-material">Toolbox surfaces</label>
+            <select id="surface-material"><option value="system">Follow Windows transparency preference</option><option value="frosted">Frosted glass (Toolbox only)</option><option value="solid">Solid surfaces</option></select>
+            <div id="surface-material-status" class="inline-status" role="status">This preference changes only Toolbox visuals, never Windows settings.</div>
+            <div class="mod-inline-controls"><button id="settings-agent-sound" class="button secondary" type="button" aria-pressed="false">ENABLE AGENT SOUND</button><span class="mod-caution">Session-only. Short motifs play for highlighted agents, not a looping soundtrack.</span></div>
+            <div id="settings-sound-status" class="inline-status" role="status"></div>
+          </article>
+          <article class="panel mod-forge-card glass-bezel">
+            <div class="panel-heading"><div><div class="eyebrow">AGENTS / APPROVED ONNX CATALOG</div><h2>Local models</h2></div><span class="read-only-label">BUNDLED OFFLINE</span></div>
+            <p class="mod-caution">Both approved models and the Windows runtime ship with the complete Toolbox folder. Load starts one shared local worker; Unload stops it. No Browser app or system Node is required. Only catalog models are supported; download is a recovery option.</p>
+            <label for="mod-model-select">Approved local ONNX model</label>
+            <div id="included-model-catalog" class="included-model-catalog"></div>
+            <div class="mod-inline-controls"><select id="mod-model-select" aria-label="Approved local ONNX model"></select><button id="mod-model-load" class="button primary" type="button" disabled>LOAD MODEL</button><button id="mod-model-unload" class="button secondary" type="button" disabled>UNLOAD</button><button id="mod-model-download" class="button secondary" type="button" hidden>DOWNLOAD</button><button id="mod-model-cancel" class="button quiet" type="button" hidden>CANCEL</button><button id="mod-model-refresh" class="button secondary" type="button">RETRY STATUS</button></div>
+            <progress id="mod-download-progress" max="100" value="0" aria-label="Local model download progress"></progress>
+            <div id="mod-model-status" class="inline-status" role="status">No model is loaded. Checking bundled model availability…</div>
+            <button type="button" class="button quiet" data-settings-view="mod-forge">RETURN TO SOURCE REVIEW &amp; LEARNING</button>
+          </article>
+          <article class="panel mod-forge-card glass-bezel" id="agent-runtime-settings">
+            <div class="panel-heading"><h2>Inference runtime</h2><button type="button" class="button secondary" data-settings-view="wsl">MANAGE WSL &amp; ROUTING</button></div>
+            <p class="mod-caution">Windows is the default. Manage optional Linux hosts, offline setup and routing together on the WSL page.</p>
+            <div class="inline-status" data-runtime-live role="status" aria-live="polite"></div>
+          </article>
+          <article class="panel mod-forge-card glass-bezel">
+            <div class="panel-heading"><div><div class="eyebrow">STORAGE / DISPOSABLE DATA</div><h2>Review cache</h2></div><span class="local-only-badge">2 GB MAX · ON THIS DEVICE</span></div>
+            <p class="mod-caution">Persistent cache for imported source reports and local-model review results. Maximum 2 GiB (2,147,483,648 bytes); space is used as needed, not reserved. Least-recently-used entries are evicted when full. Items unused for seven days expire on the next cleanup during Toolbox use, including a check every five minutes. The bundled runtime owns this cache separately from Browser data.</p>
+            <progress id="review-cache-usage" max="2147483648" value="0" aria-label="Review cache usage"></progress>
+            <div id="review-cache-status" class="inline-status" role="status">Open settings to inspect cache usage.</div>
+            <div class="mod-inline-controls"><button id="review-cache-refresh" class="button secondary" type="button">REFRESH USAGE</button><button id="review-cache-clear" class="button quiet" type="button">CLEAR CACHE</button></div>
+            <p class="mod-caution">Clearing cache never deletes approved lessons, workflows, model weights, settings receipts or original files. Files are stored locally without application-level encryption; do not import secrets. Forgetting lessons is separate, in Mod Forge → Approved learning.</p>
+          </article>
+          <article class="panel mod-forge-card glass-bezel">
+            <div class="panel-heading"><h2>Find another tool</h2><button type="button" class="button secondary" data-directory-open>Open directory</button></div>
+            <p>One searchable directory for every workspace. Use the header grid or press <kbd>/</kbd> outside a text field.</p>
+          </article>
+          <details id="windows-security-guidance" class="panel mod-forge-card glass-bezel">
+            <summary>Windows blocked an app or build?</summary>
+            <p>Your approval matters, but it does not override Windows security. Capsule consent approves a specific Toolbox action; Windows UAC permits elevation; Application Control separately decides which executables may run. Approving one does not approve the others.</p>
+            <h3>Review the Windows block</h3>
+            <p>Record the blocked file, publisher, time and exact error. Error 4551 means an Application Control policy blocked execution; it is not proof that the file is malicious or safe.</p>
+            <p>Open Windows Security and review Protection history if an entry is available. For Application Control details, open Event Viewer, then Applications and Services Logs &gt; Microsoft &gt; Windows &gt; CodeIntegrity &gt; Operational. Event 3077 can identify the blocked file and policy ID. Viewing some details may require administrator access.</p>
+            <h3>Use the supported approval process</h3>
+            <p>On a managed device, give your administrator the event details and obtain approval through the organization's signing or Application Control policy process. On a personal device, review App &amp; browser control in Windows Security to identify the protection involved; available options depend on the policy and Windows version. Some protections do not offer a per-file exception.</p>
+            <p>For a developer build, use approved tooling and signed artifacts where required, or an approved Windows build environment. Running as administrator alone does not override Application Control.</p>
+            <p class="mod-caution">Capsule cannot grant a Windows security exception. Do not disable protection, rename or relocate blocked executables to evade enforcement, or run an unverified replacement. This guidance does not read logs, change policies, install certificates or execute commands.</p>
+          </details>
+          <details class="panel mod-forge-card glass-bezel">
+            <summary>About Capsule Toolbox</summary>
+            <p>A local-first Toolbox from N8torious AI, with SI Core governance and explicitly reviewed device actions.</p>
+            <p><a data-about-site href="https://www.n8toriousai.com/" target="_blank" rel="noopener noreferrer">www.n8toriousai.com</a></p>
+            <p>AI-assisted building will connect your chosen AI to the Toolbox and the local storage you authorize. Routine work should run automatically within your granted scope, with checkpoints and Undo for supported document edits. Destructive changes, private-data transfers and administrator changes remain individually approved; administrator actions also require Windows UAC.</p>
+            <p class="mod-caution">The external-AI account/local-storage connector is still in development. The browser homepage alone is not a connected build session.</p>
+          </details>
+        </section>
+
+        <section class="view" data-view="wsl">
+          <div class="page-heading"><div><div class="eyebrow">LINUX HOSTS / WINDOWS STAYS WINDOWS</div><h1>WSL management<span class="heading-period">.</span></h1><p>Inspect existing WSL2 distributions and manage their lifecycle. Agent inference is optional; the SI Kernel remains the governance layer, not a Linux kernel replacement.</p></div></div>
+          <article class="panel mod-forge-card glass-bezel">
+            <div class="panel-heading"><h2>Registered Linux hosts</h2><button class="button secondary" type="button" data-wsl-refresh>REFRESH INVENTORY</button></div>
+            <p class="mod-caution">Refresh reads registered WSL2 hosts without starting them. WSL1 and Docker-managed hosts are excluded; running state does not prove inference readiness.</p>
+            <div data-wsl-list><p>Open this page or choose Refresh to read the current host inventory.</p></div>
+            <div class="inline-status" data-wsl-status role="status" aria-live="polite"></div>
+            <p class="mod-caution">Start launches Linux without a model. Stop ends <strong>all processes in that distro</strong>, including work outside Capsule; save first. Offline setup requires separate approval.</p>
+          </article>
+          <article class="panel mod-forge-card glass-bezel">
+            <div class="panel-heading"><h2>Agent workload routing</h2><button type="button" class="button secondary" data-settings-view="settings">LOAD A MODEL</button></div>
+            <label for="agent-runtime-policy">Inference routing</label>
+            <select id="agent-runtime-policy" data-runtime-policy><option value="windows">Windows only</option><option value="prefer-wsl">Prefer WSL2, with Windows fallback</option></select>
+            <label for="agent-runtime-distro">Existing Linux distribution</label>
+            <select id="agent-runtime-distro" data-runtime-distro disabled><option value="">Refresh to find existing WSL2 distributions</option></select>
+            <div class="mod-inline-controls"><button class="button primary" type="button" data-runtime-save>SAVE RUNTIME CHOICE</button></div>
+            <div class="inline-status" data-runtime-status role="status" aria-live="polite"></div>
+            <div class="inline-status" data-runtime-live role="status" aria-live="polite">Waiting for the bundled local runtime's actual status.</div>
+            <details class="setting-evidence"><summary>Runtime requirements &amp; fallback</summary><p>One shared, on-demand Linux worker uses the approved models on ext4 under <code>~/.local/share/capsule-agent</code>. Review offline setup on a host card to provision the bundled Node/ONNX runtime and models, or use an already prepared host. Missing prerequisites trigger a visible Windows fallback; failed in-flight requests are not replayed. No GPU acceleration, Linux root, Windows administration, distro installation or automatic routing change is implied.</p></details>
+          </article>
+          <details class="panel mod-forge-card glass-bezel">
+            <summary>Need a Linux host? Installation options</summary>
+            <p><strong>Ubuntu LTS:</strong> recommended starting point for beginners; the official GitHub project links to supported installation documentation.</p>
+            <button type="button" class="button secondary" data-agent-host-page="ubuntu">UBUNTU OFFICIAL GITHUB &amp; SETUP</button>
+            <p><strong>Pengwin:</strong> Debian-based and tailored for WSL. Complete its first launch, then Refresh above. Publisher pricing and terms apply.</p>
+            <button type="button" class="button secondary" data-agent-host-page="pengwin">PENGWIN STORE PAGE</button>
+            <p><strong>Pistachio Linux:</strong> third-party WSL option from your supplied Store listing. Compatibility with Capsule inference remains unverified.</p>
+            <button type="button" class="button secondary" data-agent-host-page="pistachio">PISTACHIO STORE PAGE</button>
+            <p>These links open publisher information only. Install and initialize your chosen distribution yourself, then Refresh above.</p>
+          </details>
+        </section>
+
+        <section class="view" data-view="windows">
+          <div class="page-heading"><div><div class="eyebrow">WINDOWS 11 / REVIEWED SETTINGS</div><h1>Windows settings<span class="heading-period">.</span></h1><p>Stage appearance preferences below, or expand a tweak group to select individual catalog settings. Nothing changes until exact-value review, confirmation and UAC.</p></div><div class="admin-badge">UAC ON APPLY</div></div>
+          <article class="panel appearance-panel glass-bezel">
+            <div class="panel-heading"><div><div class="eyebrow">CURRENT WINDOWS USER</div><h2>Visual preferences</h2></div><span class="read-only-label">FIXED ALLOWLIST</span></div>
+            <div class="appearance-switch-list">
+              <article class="appearance-setting">
+                <div><strong>Dark theme</strong><p>Switches Windows app and system light/dark preferences together.</p><small id="theme-current">READING WINDOWS…</small></div>
+                <button id="theme-switch" class="switch-control" type="button" role="switch" aria-checked="false" aria-label="Use the Windows dark theme" disabled><span></span></button>
+              </article>
+              <article class="appearance-setting">
+                <div><strong>Transparency effects</strong><p>Controls the Windows personalization transparency preference.</p><small id="transparency-current">READING WINDOWS…</small></div>
+                <button id="transparency-switch" class="switch-control" type="button" role="switch" aria-checked="false" aria-label="Enable Windows transparency effects" disabled><span></span></button>
+              </article>
+              <article class="appearance-setting">
+                <div><strong>Window minimize and restore animation</strong><p>Controls the classic animation for minimizing and restoring windows—not every Windows motion effect.</p><small id="window-animations-current">READING WINDOWS…</small></div>
+                <button id="window-animations-switch" class="switch-control" type="button" role="switch" aria-checked="false" aria-label="Enable window minimize and restore animation" disabled><span></span></button>
+              </article>
+            </div>
+            <div class="settings-action-bar"><span id="appearance-pending">No pending changes.</span><button id="appearance-undo" class="button secondary" type="button">Undo last batch</button><button id="appearance-discard" class="button secondary" type="button" disabled>Discard</button><button id="appearance-apply" class="primary-button" type="button" disabled>Apply settings</button></div>
+            <div id="theme-status" class="inline-status" role="status">Reading current Windows preferences…</div>
+            <div class="appearance-ledger-heading"><strong>Earlier individual changes</strong><span>NEW CHANGES USE UNDO LAST BATCH</span></div>
+            <div id="windows-receipt" class="windows-receipts"><div class="empty-card">No appearance changes recorded.</div></div>
+            <details class="setting-evidence">
+              <summary>Show the exact settings</summary>
+              <p>Dark theme: <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize</code> values <code>AppsUseLightTheme</code> and <code>SystemUsesLightTheme</code>.</p>
+              <p>Transparency: the same current-user key, value <code>EnableTransparency</code>. Window animation: <code>HKCU\Control Panel\Desktop\WindowMetrics\MinAnimate</code>.</p>
+            </details>
+          </article>
+          <article class="panel appearance-agent-panel glass-bezel">
+            <div class="panel-heading"><div><div class="eyebrow">OPTIONAL · LOCAL MODEL</div><h2>Ask SI Core for a suggestion</h2></div><span class="read-only-label">PROPOSALS ONLY</span></div>
+            <p>Describe what you prefer. The local model can suggest only transparency or the named window animation; it cannot change settings. Review and apply each suggestion yourself.</p>
+            <label for="appearance-goal">Your preference</label>
+            <div class="appearance-agent-controls"><input id="appearance-goal" maxlength="240" placeholder="For example: reduce window motion"><button id="appearance-suggest" class="button secondary" type="button">GET SUGGESTION</button><button id="appearance-open-forge" class="button quiet" type="button">OPEN MODEL SETUP</button></div>
+            <div id="appearance-agent-status" class="inline-status" role="status">Load an approved local model in Toolbox Settings to request suggestions. Manual switches work without a model.</div>
+            <div id="appearance-suggestions" class="appearance-suggestions"></div>
+            <p>Want proposals for actual performance settings instead? <button id="appearance-open-performance" class="button secondary" type="button">Open performance advisor</button></p>
+          </article>
+          <article class="guardrail-card"><span>◈</span><div><strong>Bounded and reversible.</strong><p>These preferences stay in your current-user settings. Windows UAC elevates only the fixed settings helper after confirmation. No arbitrary scripts or shell are exposed. Undo last batch restores the most recent shared settings batch; Windows may need sign-out or restart to reflect a preference.</p></div></article>
+          <div id="windows-tweak-groups"></div>
+        </section>
+
+        <section class="view" data-view="memory">
+          <div class="page-heading"><div><div class="eyebrow">ON THIS DEVICE / USER CONTROLLED</div><h1>Private memory<span class="heading-period">.</span></h1><p>Review, edit, or erase preferences saved locally for Capsule OS personalization.</p></div><span class="local-only-badge">LOCAL ONLY · NO WEIGHT TRAINING</span></div>
+          <article class="panel memory-card glass-bezel"><div class="panel-heading"><div><div class="eyebrow">APPROVED PREFERENCES</div><h2>Your Capsule notes</h2></div><span class="read-only-label">MAX 20 · 240 CHARS EACH</span></div><p>Only add preferences you want Capsule OS to remember. This data is stored in this Windows user’s local application data and is never read from website browsing history.</p><label for="memory-list">One preference per line</label><textarea id="memory-list" rows="8" maxlength="5000" placeholder="For example: Show concise summaries before detailed notes."></textarea><label for="memory-reason">Why should Capsule OS remember this? <span class="label-hint">Saved in the memory receipt; never includes preference text</span></label><input id="memory-reason" maxlength="240" placeholder="Reason for this explicit memory change"><div class="memory-actions"><button id="memory-erase" class="button quiet">ERASE LOCAL MEMORY</button><button id="memory-save" class="button primary">SAVE APPROVED PREFERENCES</button></div><div id="memory-status" class="inline-status" role="status">Loading local preferences…</div></article>
+          <article class="panel memory-ledger glass-bezel"><div class="panel-heading"><div><div class="eyebrow">AUDIT TRAIL · NO CONTENT CAPTURE</div><h2>Memory ledger</h2></div><span class="local-only-badge">MAX 200</span></div><p>Receipts record only change type, item count, your reason, and time—not the preference text. Erasing preferences preserves the audit trail.</p><div id="memory-receipts" class="memory-receipts"></div></article>
+          <div class="notice-card">These preferences are available for inspection and editing now. Predictive FIM suggestions and local model integration in this companion are a separate future feature; no automatic model-weight training or passive learning occurs.</div>
+        </section>
+
+        <section class="view" data-view="performance"></section>
+        <section class="view" data-view="playbook"></section>
+        <section class="view" data-view="internet"></section>
+        <section class="view" data-view="repair"></section>
+        <section class="view" data-view="apps"></section>
+
+        <section class="view" data-view="scene-studio">
+          <div class="page-heading"><div><div class="eyebrow">CAPSULES / CREATE</div><h1>Scene Studio<span class="heading-period">.</span></h1><p>Build data-only shape scenes or load HTML and 3D model assets into an explicitly started, isolated preview.</p></div></div>
+          <div class="scene-mode-tabs" role="group" aria-label="Scene workspace"><button type="button" data-scene-tab="shapes" aria-pressed="true">Shape editor</button><button type="button" data-scene-tab="html" aria-pressed="false">HTML &amp; model assets</button></div>
+          <div data-scene-mode="shapes">
+          <div class="scene-layout">
+            <aside class="panel glass-bezel scene-side">
+              <label class="scene-field">Scene name<input id="scene-name" type="text" maxlength="60" /></label>
+              <label class="scene-field">Background<input id="scene-bg" type="color" value="#0b1220" /></label>
+              <div class="scene-add" role="group" aria-label="Add a shape">
+                <button type="button" data-shape="box">Box</button>
+                <button type="button" data-shape="sphere">Sphere</button>
+                <button type="button" data-shape="cylinder">Cylinder</button>
+                <button type="button" data-shape="cone">Cone</button>
+                <button type="button" data-shape="torus">Torus</button>
+              </div>
+              <div class="scene-list-head"><span>START FROM</span></div>
+              <div class="scene-add" role="group" aria-label="Starter scenes">
+                <button type="button" data-template="tower">Tower</button>
+                <button type="button" data-template="snowman">Snowman</button>
+                <button type="button" data-template="steps">Steps</button>
+              </div>
+              <p class="scene-hint">Keys: arrows move · PageUp/Down raise · Del delete · Ctrl+Z undo · Ctrl+D duplicate</p>
+              <div class="scene-list-head"><span>OBJECTS</span><b id="scene-count">0 / 200</b></div>
+              <div id="scene-list" class="scene-list"></div>
+            </aside>
+            <div class="scene-stage glass-bezel"><canvas id="scene-canvas" aria-label="3D scene preview. Drag to orbit, scroll to zoom, click a shape to select it."></canvas></div>
+            <aside class="panel glass-bezel scene-side">
+              <p id="scene-inspector-empty" class="scene-hint">Add a shape, then click it to change its look.</p>
+              <div id="scene-inspector" hidden>
+                <label class="scene-field">Name<input id="scene-obj-name" type="text" maxlength="60" /></label>
+                <label class="scene-field">Color<input id="scene-obj-color" type="color" /></label>
+                <fieldset class="scene-vec"><legend>Position</legend>
+                  <input data-vec="position" data-axis="0" type="number" step="0.25" aria-label="Position X" /><input data-vec="position" data-axis="1" type="number" step="0.25" aria-label="Position Y" /><input data-vec="position" data-axis="2" type="number" step="0.25" aria-label="Position Z" /></fieldset>
+                <fieldset class="scene-vec"><legend>Rotation (degrees)</legend>
+                  <input data-vec="rotation" data-axis="0" type="number" step="15" aria-label="Rotation X" /><input data-vec="rotation" data-axis="1" type="number" step="15" aria-label="Rotation Y" /><input data-vec="rotation" data-axis="2" type="number" step="15" aria-label="Rotation Z" /></fieldset>
+                <fieldset class="scene-vec"><legend>Size</legend>
+                  <input data-vec="scale" data-axis="0" type="number" step="0.25" min="0.01" aria-label="Size X" /><input data-vec="scale" data-axis="1" type="number" step="0.25" min="0.01" aria-label="Size Y" /><input data-vec="scale" data-axis="2" type="number" step="0.25" min="0.01" aria-label="Size Z" /></fieldset>
+                <div class="scene-actions"><button type="button" id="scene-duplicate">Duplicate</button><button type="button" id="scene-delete">Delete</button></div>
+              </div>
+              <details class="scene-ai">
+                <summary>Edit with any AI</summary>
+                <p class="scene-hint">1. Copy the instructions and paste them into any AI. 2. Paste its reply below. 3. Review, then accept. Nothing changes until you accept.</p>
+                <button type="button" id="scene-ai-copy">Copy AI instructions</button>
+                <textarea id="scene-ai-manual" rows="5" readonly hidden aria-label="Scene AI instructions for manual copying"></textarea>
+                <textarea id="scene-ai-input" rows="5" spellcheck="false" aria-label="AI edit reply" placeholder="Paste the AI's JSON reply here"></textarea>
+                <button type="button" id="scene-ai-preview">Review changes</button>
+                <ul id="scene-ai-summary" class="scene-ai-summary"></ul>
+                <div class="scene-actions"><button type="button" id="scene-ai-accept" hidden>Accept</button><button type="button" id="scene-ai-reject" hidden>Reject</button></div>
+              </details>
+              <div class="scene-actions scene-file">
+                <button type="button" id="scene-undo">Undo</button>
+                <button type="button" id="scene-new">New</button>
+                <button type="button" id="scene-save">Save scene</button>
+                <button id="scene-open" class="scene-open" type="button">Open scene</button>
+                <input id="scene-load" type="file" accept=".json,application/json" hidden />
+              </div>
+              <p id="scene-status" class="scene-hint" role="status" aria-live="polite"></p>
+            </aside>
+          </div>
+          </div>
+          <div id="scene-html-studio" data-scene-mode="html" hidden></div>
+        </section>
+
+        <section class="view" data-view="capsules">
+          <div class="page-heading"><div><div class="eyebrow">PORTABLE WORKSPACES / CAPSULE FORMAT</div><h1>Capsule library<span class="heading-period">.</span></h1><p>Visual-native workspaces should carry structure and state, not trusted host authority.</p></div></div>
+          <article class="panel capsule-concept glass-bezel"><div class="capsule-orbit"><div class="capsule-core">CAPSULE</div><span>DATA</span><span>INTERFACE</span><span>WORKFLOW</span><span>STATE</span><span>AGENT CONTEXT</span></div><div class="capsule-copy"><div class="eyebrow">CAPSULE RUNTIME · FORMAT NOT YET ENABLED</div><h2>A workspace is more than a page.</h2><p>Portable Capsule files can evolve to bundle notes, visuals, calculations, workflow state, and agent context into one compact artifact.</p><p class="safety-copy">Capsule documents will be treated as untrusted input. Imported content cannot silently run scripts, read local memory, access websites, or change Windows. Each capability must be granted by the user.</p><div class="version-row"><span>COMPANION CONTRACT <b>v2.0</b></span><span>WINDOWS TWEAKS <b>FIXED ALLOWLIST</b></span><span>AUTOMATIC UPDATES <b>NOT CONFIGURED</b></span></div></div></article>
+          <div class="notice-card">Signed updates require a trusted publishing endpoint, key management, staged rollout, and rollback policy. This prototype does not download or silently install updates.</div>
+        </section>
+
+        <section class="view" data-view="marketplace">
+          <div class="page-heading"><div><div class="eyebrow">CAPSULE OS / COMMUNITY CATALOG</div><h1>Marketplace<span class="heading-period">.</span></h1><p>Discover visual-native workspaces, agent kits, models, and extensions—once the Capsule format and trust model are ready.</p></div><div class="free-preview-badge"><span>✦</span> FREE DURING PREVIEW</div></div>
+          <article class="market-hero glass-bezel"><div class="market-orbit"><span class="market-glyph">✦</span><i></i><i></i><i></i></div><div><div class="eyebrow">TRUST BEFORE TRANSACTIONS</div><h2>Make something worth sharing.</h2><p>First prove that Capsules are worth opening, sharing, and remixing. Discovery starts free; reputation and any future creator pricing come later, only when the format and trust model can support them. This preview has no live listings, downloads, sellers, or payments.</p><div class="market-promise"><span>FREE TO PROVE THE FORMAT</span><span>INSPECT BEFORE IMPORT</span><span>USER APPROVES CAPABILITIES</span></div></div></article>
+          <div class="market-roadmap" aria-label="Capsule ecosystem rollout">
+            <article class="market-phase glass-bezel"><span class="phase-number">01 / PROVE</span><h3>Make Capsules useful</h3><p>Open → Work → Save → Share. Build the habit of making something worth sending, forking, and remixing.</p><span class="phase-status">CURRENT FOCUS · RUNTIME NOT YET BUILT</span></article>
+            <article class="market-phase glass-bezel"><span class="phase-number">02 / REPUTATION</span><h3>Earn community trust</h3><p>Only after sharing works: opt-in downloads, forks, favorites, remixes, collections, and contributor credit.</p><span class="phase-status">AFTER CAPSULES · NO HIDDEN TRACKING</span></article>
+            <article class="market-phase glass-bezel"><span class="phase-number">03 / MARKETPLACE</span><h3>Let creators choose</h3><p>Launch discovery free. Later options could include free, pay-what-you-want, $1/$5 one-time prices, subscriptions, or enterprise licensing—after trust protections are ready.</p><span class="phase-status">FUTURE · NO PRICING DECIDED</span></article>
+          </div>
+          <div class="market-section-heading"><div><div class="eyebrow">THE FUTURE CAPSULE GARDEN</div><h2>Built to remix</h2></div><span class="catalog-status">CATALOG NOT YET CONNECTED</span></div>
+          <div class="market-categories">
+            <article class="market-category glass-bezel"><div class="category-mark">⬡</div><span class="category-tag">SHAREABLE WORKSPACES</span><h3>Capsules</h3><p>Lessons, project workspaces, visual notes, simulations, and portable state.</p><span class="planned-label">IMPORT / EXPORT FIRST</span></article>
+            <article class="market-category glass-bezel"><div class="category-mark">⌘</div><span class="category-tag">HUMAN-GOVERNED BEHAVIORS</span><h3>Agent kits</h3><p>Inspect, fork, and configure role cards, workflow graphs, and capability declarations.</p><span class="planned-label">NO HIDDEN AUTHORITY</span></article>
+            <article class="market-category glass-bezel"><div class="category-mark">◉</div><span class="category-tag">USER-SELECTED INTELLIGENCE</span><h3>Models</h3><p>Discover local, hybrid, or cloud model packages with clear provenance and licensing.</p><span class="planned-label">NO AUTO-DOWNLOADS</span></article>
+            <article class="market-category glass-bezel"><div class="category-mark">▧</div><span class="category-tag">EXTENSIBLE COMPONENTS</span><h3>Extensions</h3><p>Add visual components and connectors without giving imported packages silent host access.</p><span class="planned-label">SANDBOX REQUIRED</span></article>
+          </div>
+          <article class="market-trust glass-bezel"><div class="eyebrow">FREE FIRST · PRICING LATER, IF IT EARNS TRUST</div><p>Any future paid listings wait until capsules are inspectable and safely importable, authorship and licenses are verifiable, moderation works, and users can remove or roll back an install. Early-access status does not guarantee future pricing or make marketplace packages trusted.</p></article>
+        </section>
+      </main>
+      <footer class="footer glass-bezel"><span>CAPSULE OS <b>·</b> VISUAL-NATIVE COMPUTING</span><span id="footer-contract">COMPANION LINK · NEGOTIATING CONTRACT</span><span>YOUR DEVICE <b>·</b> YOUR AUTHORITY</span></footer>
+    </div>
+  </body>
+</html>

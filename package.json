@@ -1,0 +1,50 @@
+{
+  "name": "capsule-os-browser",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Capsule OS Chromium browser with a separate governed Capsule Toolbox companion.",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "npm run build:browser && electron .",
+    "start:browser": "npm run build:browser && electron .",
+    "build:browser": "vite build --config vite.browser.config.js",
+    "predev:toolbox": "node assistant/build-scene-frame.mjs",
+    "dev:toolbox": "vite --host 127.0.0.1 --port 5174 --strictPort toolbox",
+    "build:toolbox": "vite build --config vite.toolbox.config.js",
+    "audit:design": "node assistant/design-audit.cjs",
+    "audit:design:verify": "node assistant/design-audit.cjs --verify",
+    "test:design-audit": "node --test test/design-audit.test.cjs",
+    "prebuild:toolbox": "node assistant/build-tweak-catalog.mjs && node assistant/build-scene-frame.mjs",
+    "toolbox:dev": "tauri dev",
+    "toolbox:build": "tauri build && node assistant/package-offline.cjs",
+    "build:kernel": "node kernel/build.mjs",
+    "prepare:models": "node assistant/prepare-models.cjs",
+    "prepare:linux-runtime": "node assistant/build-linux-runtime.cjs",
+    "verify:models": "node assistant/prepare-models.cjs --verify",
+    "build:runtime": "node assistant/build-toolbox-runtime.cjs",
+    "package:offline": "npm run toolbox:build",
+    "export:apbx": "node assistant/playbook-export.mjs",
+    "export:playbook": "node assistant/playbook-unified-export.mjs",
+    "check:kernel": "node kernel/build.mjs --check",
+    "test": "node --test",
+    "test:kernel": "node kernel/test-kernel.mjs"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.4",
+    "electron": "^45.2.1",
+    "vite": "^7.3.7"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.3.2",
+    "@tauri-apps/api": "^2.12.4",
+    "@tauri-apps/plugin-dialog": "^2.8.4",
+    "adm-zip": "^0.6.1",
+    "parse5": "8.0.0",
+    "three": "0.160.0"
+  },
+  "allowScripts": {
+    "onnxruntime-node@1.30.0": true,
+    "esbuild@0.28.2": true
+  }
+}

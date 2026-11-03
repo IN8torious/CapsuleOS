@@ -1,0 +1,1699 @@
+[
+  {
+    "id": "dark-theme",
+    "category": "appearance",
+    "title": "Windows dark theme",
+    "description": "Dark theme for apps and the system.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        "name": "AppsUseLightTheme",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        "name": "SystemUsesLightTheme",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "no-transparency",
+    "category": "appearance",
+    "title": "Turn off transparency",
+    "description": "Disable translucent window and taskbar effects.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        "name": "EnableTransparency",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "no-window-animations",
+    "category": "appearance",
+    "title": "Turn off window animations",
+    "description": "Disable minimize and maximize animations.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Desktop\\WindowMetrics",
+        "name": "MinAnimate",
+        "type": "REG_SZ",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "taskbar-left",
+    "category": "appearance",
+    "title": "Left-aligned taskbar",
+    "description": "Windows 11: align taskbar icons to the left.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "TaskbarAl",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "hide-chat",
+    "category": "appearance",
+    "title": "Hide the Chat button",
+    "description": "Windows 11: remove the Teams chat button from the taskbar.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "TaskbarMn",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "hide-task-view",
+    "category": "appearance",
+    "title": "Hide the Task View button",
+    "description": "Remove the Task View button from the taskbar.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "ShowTaskViewButton",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "compact-explorer",
+    "category": "appearance",
+    "title": "Compact File Explorer rows",
+    "description": "Windows 11: reduce spacing in File Explorer lists.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "UseCompactMode",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "0"
+      }
+    ]
+  },
+  {
+    "id": "no-advertising-id",
+    "category": "privacy",
+    "title": "Turn off the advertising ID",
+    "description": "Stop apps using a per-user advertising identifier.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
+        "name": "Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "no-tailored-experiences",
+    "category": "privacy",
+    "title": "No tailored experiences",
+    "description": "Do not use diagnostic data to personalise tips and ads.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableTailoredExperiencesWithDiagnosticData",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-bing-search",
+    "category": "privacy",
+    "title": "Keep web results out of Start search",
+    "description": "Search only your PC from the Start menu.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+        "name": "BingSearchEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\Explorer",
+        "name": "DisableSearchBoxSuggestions",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-copilot",
+    "category": "privacy",
+    "title": "Turn off Windows Copilot",
+    "description": "Disable the Copilot sidebar via the user policy.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\WindowsCopilot",
+        "name": "TurnOffWindowsCopilot",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-recall",
+    "category": "privacy",
+    "title": "Turn off AI data analysis (Recall)",
+    "description": "Stop Windows saving snapshots of your activity for AI features.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\WindowsAI",
+        "name": "DisableAIDataAnalysis",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-activity-history",
+    "category": "privacy",
+    "title": "Turn off activity history",
+    "description": "Stop Windows recording and syncing activity history.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "name": "EnableActivityFeed",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "name": "PublishUserActivities",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "name": "UploadUserActivities",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "minimum-telemetry",
+    "category": "privacy",
+    "title": "Minimum diagnostic data",
+    "description": "Ask Windows to send only required diagnostic data (the lowest level your edition honours).",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "AllowTelemetry",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "DoNotShowFeedbackNotifications",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-feedback-prompts",
+    "category": "privacy",
+    "title": "No feedback prompts",
+    "description": "Stop Windows asking for feedback.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Siuf\\Rules",
+        "name": "NumberOfSIUFInPeriod",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-error-reporting",
+    "category": "privacy",
+    "title": "Turn off Windows Error Reporting",
+    "description": "Do not send crash reports to Microsoft.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting",
+        "name": "Disabled",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "0"
+      }
+    ]
+  },
+  {
+    "id": "no-input-personalization",
+    "category": "privacy",
+    "title": "No typing and inking collection",
+    "description": "Stop collecting typing and handwriting samples.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\InputPersonalization",
+        "name": "RestrictImplicitTextCollection",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "0"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\InputPersonalization",
+        "name": "RestrictImplicitInkCollection",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "0"
+      }
+    ]
+  },
+  {
+    "id": "no-location",
+    "category": "privacy",
+    "title": "Deny location access by default",
+    "description": "Block location for apps unless you allow it per app.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CapabilityAccessManager\\ConsentStore\\location",
+        "name": "Value",
+        "type": "REG_SZ",
+        "apply": "Deny",
+        "revert": "Allow"
+      }
+    ]
+  },
+  {
+    "id": "no-background-apps",
+    "category": "privacy",
+    "title": "Stop apps running in the background",
+    "description": "Prevent Store apps from running while closed.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications",
+        "name": "GlobalUserDisabled",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "0"
+      }
+    ]
+  },
+  {
+    "id": "no-delivery-sharing",
+    "category": "privacy",
+    "title": "No peer-to-peer update sharing",
+    "description": "Download updates only from Microsoft, not other PCs.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DeliveryOptimization\\Config",
+        "name": "DODownloadMode",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-consumer-features",
+    "category": "clean",
+    "title": "No auto-installed promoted apps",
+    "description": "Stop Windows installing suggested apps and promotions.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableWindowsConsumerFeatures",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-spotlight",
+    "category": "clean",
+    "title": "No Windows Spotlight extras",
+    "description": "Remove Spotlight promotions and tips.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableWindowsSpotlightFeatures",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-start-suggestions",
+    "category": "clean",
+    "title": "No Start menu suggestions",
+    "description": "Remove suggested apps and promotions from Start.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SystemPaneSuggestionsEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-338388Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-338389Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SilentInstalledAppsEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "no-lock-screen-tips",
+    "category": "clean",
+    "title": "No lock screen tips and ads",
+    "description": "Remove tips, tricks and promotions from the lock screen.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "RotatingLockScreenOverlayEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-338387Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "no-settings-suggestions",
+    "category": "clean",
+    "title": "No suggestions in Settings",
+    "description": "Remove suggested content from the Settings app.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-338393Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-353694Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-353696Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "no-widgets-feed",
+    "category": "clean",
+    "title": "Turn off the Widgets feed",
+    "description": "Disable the news and interests feed by policy.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Dsh",
+        "name": "AllowNewsAndInterests",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-onedrive-sync",
+    "category": "clean",
+    "title": "Turn off OneDrive file sync",
+    "description": "Stop OneDrive syncing (the app stays installed).",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\OneDrive",
+        "name": "DisableFileSyncNGSC",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-autoplay",
+    "category": "clean",
+    "title": "Turn off AutoPlay",
+    "description": "Do not auto-open removable drives and discs.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\AutoplayHandlers",
+        "name": "DisableAutoplay",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "0"
+      }
+    ]
+  },
+  {
+    "id": "show-extensions",
+    "category": "explorer",
+    "title": "Show file extensions",
+    "description": "Always show file extensions in names.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "HideFileExt",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "show-hidden-files",
+    "category": "explorer",
+    "title": "Show hidden files",
+    "description": "Show hidden files and folders.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "Hidden",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "2"
+      }
+    ]
+  },
+  {
+    "id": "explorer-this-pc",
+    "category": "explorer",
+    "title": "Open File Explorer to This PC",
+    "description": "Start File Explorer at This PC instead of Home.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "LaunchTo",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "2"
+      }
+    ]
+  },
+  {
+    "id": "no-recent-files",
+    "category": "explorer",
+    "title": "No recent and frequent lists",
+    "description": "Stop File Explorer listing recent files and frequent folders.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+        "name": "ShowRecent",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+        "name": "ShowFrequent",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "full-path-title",
+    "category": "explorer",
+    "title": "Full path in the title bar",
+    "description": "Show the whole folder path in File Explorer.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CabinetState",
+        "name": "FullPath",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "0"
+      }
+    ]
+  },
+  {
+    "id": "fast-menus",
+    "category": "performance",
+    "title": "Faster menus",
+    "description": "Remove the delay before menus open.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Desktop",
+        "name": "MenuShowDelay",
+        "type": "REG_SZ",
+        "apply": "0",
+        "revert": "400"
+      }
+    ]
+  },
+  {
+    "id": "fast-shutdown",
+    "category": "performance",
+    "title": "Faster app shutdown",
+    "description": "Close hung apps sooner at sign-out and shutdown.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Desktop",
+        "name": "AutoEndTasks",
+        "type": "REG_SZ",
+        "apply": "1",
+        "revert": "0"
+      },
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Desktop",
+        "name": "HungAppTimeout",
+        "type": "REG_SZ",
+        "apply": "3000",
+        "revert": "5000"
+      },
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Desktop",
+        "name": "WaitToKillAppTimeout",
+        "type": "REG_SZ",
+        "apply": "5000",
+        "revert": "20000"
+      }
+    ]
+  },
+  {
+    "id": "no-startup-delay",
+    "category": "performance",
+    "title": "No startup app delay",
+    "description": "Launch startup apps immediately after sign-in.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Serialize",
+        "name": "StartupDelayInMSec",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "best-performance-visuals",
+    "category": "performance",
+    "title": "Visual effects for performance",
+    "description": "Use the \"adjust for best performance\" visual effects preset.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
+        "name": "VisualFXSetting",
+        "type": "REG_DWORD",
+        "apply": "2",
+        "revert": "0"
+      }
+    ]
+  },
+  {
+    "id": "responsive-multimedia",
+    "category": "performance",
+    "title": "Prioritise foreground apps",
+    "description": "Reserve less CPU for background multimedia tasks and lift network throttling.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile",
+        "name": "SystemResponsiveness",
+        "type": "REG_DWORD",
+        "apply": "10",
+        "revert": "20"
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile",
+        "name": "NetworkThrottlingIndex",
+        "type": "REG_DWORD",
+        "apply": "4294967295",
+        "revert": "10"
+      }
+    ]
+  },
+  {
+    "id": "no-game-dvr",
+    "category": "gaming",
+    "title": "Turn off Game DVR capture",
+    "description": "Stop background game recording overhead.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "System\\GameConfigStore",
+        "name": "GameDVR_Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR",
+        "name": "AppCaptureEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "raw-mouse-input",
+    "category": "gaming",
+    "title": "Raw mouse input (no acceleration)",
+    "description": "Turn off pointer acceleration for 1:1 aiming.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Mouse",
+        "name": "MouseSpeed",
+        "type": "REG_SZ",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Mouse",
+        "name": "MouseThreshold1",
+        "type": "REG_SZ",
+        "apply": "0",
+        "revert": "6"
+      },
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Mouse",
+        "name": "MouseThreshold2",
+        "type": "REG_SZ",
+        "apply": "0",
+        "revert": "10"
+      }
+    ]
+  },
+  {
+    "id": "no-sticky-prompts",
+    "category": "gaming",
+    "title": "No Sticky Keys pop-ups",
+    "description": "Stop the accessibility shortcut prompts interrupting games.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Accessibility\\StickyKeys",
+        "name": "Flags",
+        "type": "REG_SZ",
+        "apply": "506",
+        "revert": "510"
+      },
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Accessibility\\Keyboard Response",
+        "name": "Flags",
+        "type": "REG_SZ",
+        "apply": "122",
+        "revert": "126"
+      },
+      {
+        "root": "HKCU",
+        "path": "Control Panel\\Accessibility\\ToggleKeys",
+        "name": "Flags",
+        "type": "REG_SZ",
+        "apply": "58",
+        "revert": "62"
+      }
+    ]
+  },
+  {
+    "id": "fullscreen-optimizations-off",
+    "category": "gaming",
+    "title": "Classic fullscreen behaviour",
+    "description": "Disable fullscreen optimizations system-wide.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "System\\GameConfigStore",
+        "name": "GameDVR_FSEBehaviorMode",
+        "type": "REG_DWORD",
+        "apply": "2",
+        "revert": "0"
+      },
+      {
+        "root": "HKCU",
+        "path": "System\\GameConfigStore",
+        "name": "GameDVR_DXGIHonorFSEWindowsCompatible",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "0"
+      }
+    ]
+  },
+  {
+    "id": "gpu-scheduling",
+    "category": "gaming",
+    "title": "Hardware-accelerated GPU scheduling",
+    "description": "Let a supported GPU manage its own memory scheduling. Needs a restart.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers",
+        "name": "HwSchMode",
+        "type": "REG_DWORD",
+        "apply": "2",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-power-throttling",
+    "category": "gaming",
+    "title": "Turn off power throttling",
+    "description": "Stop Windows throttling background apps to save power. Uses more battery.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SYSTEM\\CurrentControlSet\\Control\\Power\\PowerThrottling",
+        "name": "PowerThrottlingOff",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-remote-assistance",
+    "category": "hardening",
+    "title": "Turn off Remote Assistance",
+    "description": "Do not allow inbound Remote Assistance requests.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SYSTEM\\CurrentControlSet\\Control\\Remote Assistance",
+        "name": "fAllowToGetHelp",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "no-llmnr",
+    "category": "hardening",
+    "title": "Turn off LLMNR",
+    "description": "Disable a legacy name-resolution protocol used in spoofing attacks.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\DNSClient",
+        "name": "EnableMulticast",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-autorun",
+    "category": "hardening",
+    "title": "Turn off AutoRun on all drives",
+    "description": "Never run programs automatically from drives.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+        "name": "NoDriveTypeAutoRun",
+        "type": "REG_DWORD",
+        "apply": "255",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "doh-allowed",
+    "category": "network",
+    "title": "Allow encrypted DNS (DoH)",
+    "description": "Let Windows use DNS over HTTPS with servers it knows support it.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\DNSClient",
+        "name": "DoHPolicy",
+        "type": "REG_DWORD",
+        "apply": "2",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-smart-name-resolution",
+    "category": "network",
+    "title": "Stop smart multi-homed DNS queries",
+    "description": "Do not send a lookup to every network adapter at once, which can leak names to the wrong network.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\DNSClient",
+        "name": "DisableSmartNameResolution",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows NT\\DNSClient",
+        "name": "DisableParallelAandAAAA",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-connectivity-probe",
+    "category": "network",
+    "title": "Skip the internet connectivity probe",
+    "description": "Stop contacting a Microsoft server to test the connection. The network icon may then show limited access.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\NetworkConnectivityStatusIndicator",
+        "name": "NoActiveProbe",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\NetworkConnectivityStatusIndicator",
+        "name": "DisablePassivePolling",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-wifi-sense-hotspots",
+    "category": "network",
+    "title": "No automatic open-hotspot connections",
+    "description": "Do not auto-connect to suggested open Wi-Fi hotspots.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\WcmSvc\\wifinetworkmanager\\config",
+        "name": "AutoConnectAllowedOEM",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "hide-widgets-button",
+    "category": "appearance",
+    "title": "Hide the Widgets button",
+    "description": "Windows 11: remove the Widgets button from the taskbar.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "TaskbarDa",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "hide-meet-now",
+    "category": "appearance",
+    "title": "Hide Meet Now",
+    "description": "Remove the legacy Meet Now button from the notification area.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+        "name": "HideSCAMeetNow",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "search-icon-only",
+    "category": "appearance",
+    "title": "Search as an icon",
+    "description": "Show taskbar search as a compact icon instead of a box.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+        "name": "SearchboxTaskbarMode",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": "2"
+      }
+    ]
+  },
+  {
+    "id": "no-ceip",
+    "category": "privacy",
+    "title": "Leave the Customer Experience Program",
+    "description": "Opt out of the legacy CEIP and its App-V, Internet Explorer and Messenger variants.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\SQMClient\\Windows",
+        "name": "CEIPEnable",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\AppV\\CEIP",
+        "name": "CEIPEnable",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Internet Explorer\\SQM",
+        "name": "DisableCustomerImprovementProgram",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Messenger\\Client",
+        "name": "CEIP",
+        "type": "REG_DWORD",
+        "apply": "2",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-app-telemetry",
+    "category": "privacy",
+    "title": "No application inventory telemetry",
+    "description": "Stop the inventory collector, steps recorder and application telemetry. The compatibility assistant stays on.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+        "name": "AITEnable",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+        "name": "DisableInventory",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\AppCompat",
+        "name": "DisableUAR",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "limit-diagnostic-data",
+    "category": "privacy",
+    "title": "Limit diagnostic extras",
+    "description": "Keep the device name, crash dumps and extra diagnostic logs out of diagnostic data.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "AllowDeviceNameInTelemetry",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "LimitDiagnosticLogCollection",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "LimitDumpCollection",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+        "name": "DisableTelemetryOptInChangeNotification",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "private-error-reports",
+    "category": "privacy",
+    "title": "Private error reports",
+    "description": "Error reporting stays available but never sends extra data or approves dumps automatically.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting",
+        "name": "DontSendAdditionalData",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting",
+        "name": "AutoApproveOSDumps",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-handwriting-sharing",
+    "category": "privacy",
+    "title": "Keep handwriting on this PC",
+    "description": "Do not share handwriting samples or handwriting error reports.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\TabletPC",
+        "name": "PreventHandwritingDataSharing",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\HandwritingErrorReports",
+        "name": "PreventHandwritingErrorReports",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-help-feedback",
+    "category": "privacy",
+    "title": "No help-experience feedback",
+    "description": "Turn off online assistance ratings and implicit feedback in Windows Help.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Assistance\\Client\\1.0",
+        "name": "NoOnlineAssist",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Assistance\\Client\\1.0",
+        "name": "NoExplicitFeedback",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Assistance\\Client\\1.0",
+        "name": "NoImplicitFeedback",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-cloud-search",
+    "category": "privacy",
+    "title": "Search without the cloud",
+    "description": "Windows Search stays local: no cloud content, web results or location.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+        "name": "AllowCloudSearch",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+        "name": "AllowSearchToUseLocation",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+        "name": "ConnectedSearchUseWeb",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+        "name": "DisableWebSearch",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-message-sync",
+    "category": "privacy",
+    "title": "Keep text messages off the cloud",
+    "description": "Do not back up text messages to Microsoft services.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\Messaging",
+        "name": "AllowMessageSync",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-preinstalled-promos",
+    "category": "clean",
+    "title": "No promoted app installs",
+    "description": "Stop Windows and OEM promotions from installing suggested apps.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "PreInstalledAppsEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "PreInstalledAppsEverEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "OemPreInstalledAppsEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      }
+    ]
+  },
+  {
+    "id": "no-tips",
+    "category": "clean",
+    "title": "No tips and welcome tours",
+    "description": "Turn off Windows tips, the welcome experience and soft-landing prompts.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SoftLandingEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": "1"
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+        "name": "SubscribedContent-310093Enabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableSoftLanding",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-third-party-suggestions",
+    "category": "clean",
+    "title": "No third-party suggestions",
+    "description": "Keep Spotlight and partner suggestions out of Settings, notifications and the welcome screen.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableThirdPartySuggestions",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableWindowsSpotlightOnActionCenter",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableWindowsSpotlightOnSettings",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableWindowsSpotlightWindowsWelcomeExperience",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-cloud-optimized-content",
+    "category": "clean",
+    "title": "No cloud-optimized content",
+    "description": "Stop Windows downloading promoted taskbar and Start content.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+        "name": "DisableCloudOptimizedContent",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-setup-nag",
+    "category": "clean",
+    "title": "No \"finish setting up\" nag",
+    "description": "Stop the full-screen prompt to finish setting up your device with Microsoft services.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\UserProfileEngagement",
+        "name": "ScoobeSystemSettingEnabled",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-feature-balloons",
+    "category": "clean",
+    "title": "No feature advertisement balloons",
+    "description": "Hide notification-area balloons that advertise Windows features.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Policies\\Microsoft\\Windows\\Explorer",
+        "name": "NoBalloonFeatureAdvertisements",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-sync-provider-ads",
+    "category": "explorer",
+    "title": "No OneDrive ads in File Explorer",
+    "description": "Hide sync-provider notifications inside File Explorer.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+        "name": "ShowSyncProviderNotifications",
+        "type": "REG_DWORD",
+        "apply": "0",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-web-wizards",
+    "category": "explorer",
+    "title": "No web-service wizards",
+    "description": "Remove legacy publish-to-web, online print ordering and \"look for an app online\" prompts.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+        "name": "NoWebServices",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+        "name": "NoPublishingWizard",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+        "name": "NoOnlinePrintsWizard",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer",
+        "name": "NoInternetOpenWith",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "classic-photo-viewer",
+    "category": "explorer",
+    "title": "Offer Windows Photo Viewer",
+    "description": "Add the classic Photo Viewer to \"Open with\" for common image types. Your default app is not changed.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".jpg",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".jpeg",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".jpe",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".jfif",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".png",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".gif",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".bmp",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".dib",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      },
+      {
+        "root": "HKLM",
+        "path": "SOFTWARE\\Microsoft\\Windows Photo Viewer\\Capabilities\\FileAssociations",
+        "name": ".ico",
+        "type": "REG_SZ",
+        "apply": "PhotoViewer.FileAssoc.Tiff",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "calls-keep-volume",
+    "category": "gaming",
+    "title": "Calls do not lower other sounds",
+    "description": "Keep game and media volume unchanged during voice calls.",
+    "risk": "low",
+    "values": [
+      {
+        "root": "HKCU",
+        "path": "Software\\Microsoft\\Multimedia\\Audio",
+        "name": "UserDuckingPreference",
+        "type": "REG_DWORD",
+        "apply": "3",
+        "revert": null
+      }
+    ]
+  },
+  {
+    "id": "no-firmware-executables",
+    "category": "hardening",
+    "title": "Block firmware-injected programs",
+    "description": "Do not run programs that PC firmware asks Windows to install (WPBT). OEM utilities that rely on it must be installed normally.",
+    "risk": "medium",
+    "values": [
+      {
+        "root": "HKLM",
+        "path": "SYSTEM\\CurrentControlSet\\Control\\Session Manager",
+        "name": "DisableWpbtExecution",
+        "type": "REG_DWORD",
+        "apply": "1",
+        "revert": null
+      }
+    ]
+  }
+]

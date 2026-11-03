@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+  <title>Capsule OS Browser</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./renderer.js"></script>
+</head>
+<body>
+  <header class="browser-chrome">
+    <div class="toolbar">
+      <a class="brand" href="#" aria-label="Capsule OS home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg class="capsule-polyhedron browser-polyhedron" viewBox="0 0 40 40" focusable="false">
+            <rect x="1" y="1" width="38" height="38" rx="11" fill="#100d13" stroke="#62303d" stroke-width=".8"/>
+            <path d="M20 5 30 10 34 20 29 30 19 34 9 28 6 18 11 9Z" fill="#35121c" stroke="#ff7183" stroke-width=".9"/>
+            <path d="m20 5 1 15-10-11Z" fill="#f35a6d"/>
+            <path d="m20 5 10 5-9 10Z" fill="#a91d37"/>
+            <path d="m11 9 10 11-15-2Z" fill="#9b2940"/>
+            <path d="m30 10 4 10-13 0Z" fill="#6e1d30"/>
+            <path d="m6 18 15 2-12 8Z" fill="#681b2d"/>
+            <path d="m21 20 13 0-5 10Z" fill="#c82843"/>
+            <path d="m21 20 8 10-10 4Z" fill="#e24a5e"/>
+            <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#f4dce3" stroke-opacity=".76" stroke-width="1" transform="rotate(-32 20 20)"/>
+            <circle cx="34.2" cy="10.2" r="1.5" fill="#fff1f4"/>
+            <path d="m11 9 19 1M6 18l28 2M9 28l20 2M20 5l1 15" fill="none" stroke="#ffd3d9" stroke-opacity=".4" stroke-width=".55"/>
+          </svg>
+        </span>
+        <span class="brand-name">CAPSULE<span> OS</span></span>
+      </a>
+      <div class="navigation" aria-label="Browser navigation">
+        <button id="back" class="icon-button" type="button" aria-label="Go back" title="Back" disabled>‹</button>
+        <button id="forward" class="icon-button" type="button" aria-label="Go forward" title="Forward" disabled>›</button>
+        <button id="reload" class="icon-button" type="button" aria-label="Reload page" title="Reload">↻</button>
+        <button id="home" class="icon-button home-button" type="button" aria-label="Capsule OS home" title="Capsule OS home">⌂</button>
+      </div>
+      <button id="toolbox-toggle" class="toolbox-toggle" type="button" aria-expanded="true" aria-controls="engine-dock">
+        <span aria-hidden="true">◈</span> ENGINE
+      </button>
+      <form id="address-form" class="address-form">
+        <label class="sr-only" for="address">Website address</label>
+        <span class="address-lock" aria-hidden="true">◎</span>
+        <input id="address" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Enter a website address">
+        <button class="go-button" type="submit">GO</button>
+      </form>
+    </div>
+    <div class="statusbar">
+      <span id="page-status">CAPSULE OS · SI CORE 3D HOME</span>
+      <span id="status-message" role="status" aria-live="polite"></span>
+    </div>
+  </header>
+  <main id="home-stage" class="home-stage" aria-label="Capsule engine home">
+    <div id="engine-graph" class="activity-graph" role="group" aria-label="Interactive 3D Capsule OS agent and workflow scene"></div>
+    <div class="home-title"><div class="eyebrow">CAPSULE OS · ENGINE</div><h1>Capsule engine <span id="engine-state" class="state-chip">CONNECTING</span></h1></div>
+  </main>
+  <button id="drawer-tab" class="drawer-tab" type="button" aria-expanded="true" aria-controls="engine-dock" title="Workspace activity">
+    <span aria-hidden="true">›</span>
+  </button>
+  <aside id="engine-dock" class="engine-dock" aria-label="Workspace activity">
+    <div class="engine-dock-heading">
+      <div class="eyebrow">WORKSPACE ACTIVITY</div>
+    </div>
+    <div class="dock-stats">
+      <div><span>AGENTS</span><strong id="dock-agents">00</strong></div>
+      <div><span>WORKFLOWS</span><strong id="dock-routes">00</strong></div>
+      <div><span>RECEIPTS</span><strong id="dock-receipts">00</strong></div>
+    </div>
+    <div class="dock-section-heading">LATEST ENGINE RECEIPTS <span id="dock-ledger-state">WAITING</span></div>
+    <div id="dock-receipts-list" class="dock-receipts-list"><p>Waiting for the shared SI Core kernel…</p></div>
+    <div class="dock-link-card">
+      <span class="dock-link-mark">⬡</span>
+      <div><strong>CAPSULE TOOLBOX</strong><small>SEPARATE WINDOWS COMPANION</small></div>
+      <span class="dock-link-state" id="companion-link-state">LINKING</span>
+    </div>
+    <div class="dock-safety">WEB PAGES ARE ISOLATED · NO HOST TOOL BRIDGE</div>
+  </aside></body>
+</html>

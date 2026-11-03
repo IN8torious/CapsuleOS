@@ -1,0 +1,107 @@
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  color: #e5e6e9;
+  background: #171a20;
+  --surface: #22262e;
+  --surface-raised: #2b3039;
+  --muted: #b6bac3;
+  --line: #3a404b;
+  --border: #3a404b;
+  --text: #e5e6e9;
+  --v2-ink: #e5e6e9;
+  --v2-gold: #d7bc82;
+}
+[data-theme="dark"] body {
+  background: radial-gradient(ellipse at 92% 10%, #35312b55, transparent 55%),
+    radial-gradient(ellipse at 10% 70%, #25374055, transparent 50%), #171a20;
+  color: var(--text);
+  background-attachment: fixed;
+}
+[data-theme="dark"] :is(.brand,.workspace .page-heading h1,.workspace h2,.workspace h3,.workspace h4,.workspace strong,.workspace legend) { color: #e5e6e9; }
+[data-theme="dark"] :is(.brand small,.footer,.workspace p,.workspace small,.workspace label,.workspace summary,.workspace .mod-caution,.workspace .setting-description,.workspace .pb-description,.workspace .workflow-description) { color: #b6bac3; }
+[data-theme="dark"] .workspace :is(.eyebrow,.heading-period) { color: var(--v2-gold); }
+[data-theme="dark"] body :is(.glass-bezel,.workspace .glass-bezel:not(.stat-grid)) {
+  background: var(--surface);
+  border-color: var(--line);
+  box-shadow: 0 2px 8px #00000018;
+}
+[data-theme="dark"] body .navigation-rail.glass-bezel { background: #1d2128; }
+[data-theme="dark"] .navigation-rail :is(.directory-heading h2,.nav-group > summary,.rail-principle strong,.nav-item,.nav-item::after,.nav-item > i) { color: #b6bac3; }
+[data-theme="dark"] .navigation-rail .nav-item > span { color: #cbb780; }
+[data-theme="dark"] .navigation-rail .nav-item:hover { background: #2a3039; }
+[data-theme="dark"] .navigation-rail .nav-item.active { background: #33322e; color: #ebd7a5; border-color: #726348; box-shadow: inset 3px 0 #d7bc82; }
+[data-theme="dark"] .navigation-rail .nav-item[data-view="bible"] > span { color: #d7bc82; }
+[data-theme="dark"] :is(.directory-toggle,.header-shortcut) { color: #d3d5da; border-color: var(--line); }
+[data-theme="dark"] .workspace :is(.guardrail-card,.notice-card,.kernel-reference-card,.included-model-card,.approved-lesson,.market-category,.setting-directory-link,.scene-side,.memory-card,.workflow-card,.mod-analysis-card,.mod-kernel-card,.auditor-finding,.stat-card,.task-card,.receipt-row,.agent-card,.tweak-category-group,.pb-card,.capsule-orbit > span,.resource-comparison,.resource-values > span,.appearance-setting,.view-load-status,.html-scene-preview,.graph-runtime-error,.apps-pack,.apps-details,.v2-home-card) {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--line);
+  box-shadow: none;
+}
+[data-theme="dark"] .workspace :is(.v2-home-card.featured,.pb-card.on) { background: #302e28; border-color: #746449; }
+[data-theme="dark"] .workspace .v2-home-card:hover { border-color: #a68d59; box-shadow: 0 6px 20px #00000025; }
+[data-theme="dark"] .workspace :is(.v2-card-icon,.featured .v2-card-icon) { background: #383329; color: #e1c995; border-color: #685b42; }
+[data-theme="dark"] .workspace :is(.v2-home-card > small,.v2-card-link,.apps-status,.v2-home-note > span) { color: #d7bc82; }
+[data-theme="dark"] .workspace :is(.button,.primary-button,.pb-chip,.scene-side button,.notification-tabs button,.graph-view-controls button) {
+  color: #e2d7be; background: #30343c; border-color: #555548; box-shadow: none;
+}
+[data-theme="dark"] .workspace :is(.button.primary,.primary-button) { background: #d7bc82; color: #211d15; border-color: #d7bc82; }
+[data-theme="dark"] .workspace .button.secondary { background: #383329; color: #ead4a6; border-color: #6d5e43; }
+[data-theme="dark"] .workspace .button:hover { filter: brightness(1.1); }
+[data-theme="dark"] :is(.workspace,.navigation-rail) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),select,textarea) {
+  color: #e5e6e9; background-color: #1b1f26; border-color: #505763;
+}
+[data-theme="dark"] :is(input,textarea)::placeholder { color: #9da5b3; }
+[data-theme="dark"] :is(button,input,textarea,select,summary):focus-visible { outline-color: #e1c995; }
+[data-theme="dark"] .workspace :is(.inline-status:not(:empty),.empty-card,.notice-card,.guardrail-card) { color: #c4c8d0; background: #292e37; border-color: var(--line); }
+[data-theme="dark"] .workspace :is(.read-only-label,.local-only-badge,.admin-badge,.source-badge,.count-pill,.chip-safe) { color: #b9d1b3; background: #28372f; border-color: #465e4d; }
+[data-theme="dark"] .workspace :is(.notification-tabs,.pb-tabs,.scene-mode-tabs) { background: #1b1f26; border-color: var(--line); }
+[data-theme="dark"] .workspace :is(.notification-tabs button[aria-selected="true"],.pb-chip.active,.scene-mode-tabs [aria-pressed="true"],.graph-view-controls button[aria-pressed="true"]) { color: #ebd7a5; background: #3b3529; border-color: #96805a; }
+[data-theme="dark"] .workspace :is(pre,code) { color: #d8dce2; background: #191d23; }
+[data-theme="dark"] .workspace :is(.receipt-row strong,.task-card strong,.kernel-reference-details summary,.orchestrator-goal,.orchestrator-hint,.setting-evidence,.tweak-category-group > summary,.stat-card > span,.graph-footer,.legend,.label-hint,.mod-facts dd,.mod-verdict span,.mod-analysis-card label,.capsule-orbit > span,.phase-status,.planned-label,.pb-count,.rp-note,.net-provider small,.scene-placeholder,.agent-card strong,.agent-card p,.agent-card small,.agent-card .agent-live) { color: #bec4cf; }
+[data-theme="dark"] .workspace #orchestrator-panel :is(details,textarea),
+[data-theme="dark"] .workspace [data-release-notes] > details { background: #1c2027; border-color: var(--line); }
+[data-theme="dark"] .workspace :is(.activity-graph,.resource-chart) { background: #191e27; border-color: var(--line); }
+[data-theme="dark"] .workspace :is(.mandala-caption,.mandala-hover,.mandala-selection,.mandala-index,.mandala-index button,.mandala-drawer-toggle,.mandala-sound,.graph-expand,.graph-discussion,.graph-discussion-toggle,.graph-discussion button,.graph-discussion select,.vx-bar,.vx-handle,.vx-dock,.vx-msg,.vx-panels button,.vx-rail button,.agent-eye-spy) {
+  color: #e0d9ca; background: #22262ef2; border-color: #535866; text-shadow: none;
+}
+[data-theme="dark"] .workspace :is(.mandala-caption strong,.mandala-selection strong,.mandala-selection small,.mandala-selection-close,.graph-discussion small,.agent-eye-spy small,.vx-count) { color: #e0d9ca; }
+[data-theme="dark"] .workspace .vx-hud { color: #e0d9ca; background: #22262ee8; }
+[data-theme="dark"] .workspace .vx-bar button { color: #ddd6c9; background: #30343c; border-color: #535866; }
+[data-theme="dark"] .workspace .vx-bar button.active { background: #524631; color: #f0dfb8; border-color: #a58a56; }
+[data-theme="dark"] .workspace .vx-bar button:disabled { color: #abb0bb; }
+[data-theme="dark"] .workspace .capsule-core { background: #3a3428; color: #ead4a6; border-color: #9a8256; }
+[data-theme="dark"] .workspace .capsule-orbit::before,
+[data-theme="dark"] .workspace .capsule-orbit::after { border-color: #555148; }
+[data-theme="dark"] .workspace .capsule-copy .safety-copy { background: #302e28; border-color: #9a8256; }
+[data-theme="dark"] .workspace :is(.risk-low,.pressure-lower,.receipt-seal,.graph-potential-gain) { color: #9aceac; }
+[data-theme="dark"] .workspace :is(.risk-medium,.pressure-higher,.graph-potential-loss) { color: #edc885; }
+[data-theme="dark"] .workspace :is(.risk-high,.mod-flag-high,[data-html-status][data-error="true"]) { color: #ffabb4; }
+[data-theme="dark"] :is(.settings-review,.startup-error,.bible-selection) { color: var(--text); background: var(--surface); border-color: var(--line); }
+[data-theme="dark"] .settings-review :is(p,code,small,summary) { color: #bec4cf; }
+[data-theme="dark"] :is(.settings-review,.startup-error) :is(.button,button) { color: #ead4a6; background: #383329; border-color: #6d5e43; }
+[data-theme="dark"] .settings-review::backdrop { background: #080b12aa; }
+[data-theme="dark"] body .bible-shell { --bible-gold: #d7bc82; --bible-paper: #252831; --bible-ink: #e5e1d7; --bible-soft: #c4b897; }
+[data-theme="dark"] .bible-shell .bible-app-icon { background: #383329; border-color: #625944; }
+[data-theme="dark"] body .bible-shell :is(.bible-card h2,.bible-verse) { color: #e5e1d7; }
+[data-theme="dark"] .bible-shell :is(.bible-reader .bible-go-to > summary,.bible-toolbar label) { color: #c4b897; }
+[data-theme="dark"] .bible-shell .bible-verse sup { color: #ffabb4; }
+[data-theme="dark"] .bible-selection > p { color: #e5e1d7; }
+[data-theme="dark"] body .bible-shell :is(.bible-card,.bible-book-card) { background: #252831; border-color: #625944; }
+[data-theme="dark"] body .bible-shell [data-flavor] { --wash: transparent; --flavor-ink: #dfc995; }
+[data-theme="dark"] .bible-shell :is(.bible-kicker,.bible-notes-warning,.bible-masthead h1,.bible-masthead p,.bible-status,.bible-filter,.bible-search > label,.bible-details > summary,.bible-details p,.bible-section-heading p,.bible-testament,.bible-nav button,.bible-action,.bible-back) { color: #dfc995; }
+[data-theme="dark"] .bible-shell :is(.bible-chapter-grid button,.bible-reader-nav button,.bible-sheet-actions button,.bible-nav button[aria-current="page"]) { color: #ead4a6; background: #383329; border-color: #6d5e43; }
+[data-theme="dark"] .bible-shell :is(.bible-details,.bible-masthead) { border-color: #625944; }
+[data-theme="dark"] body .color-profile-choice[aria-pressed="true"] { border-color: #e5e6e9; }
+[data-theme="dark"] body .notification-count { background: #d7bc82; color: #211d15; border-color: #22262e; }
+@supports (backdrop-filter: blur(1px)) {
+  [data-theme="dark"] body .topbar.glass-bezel { background: #22262ed9; border-color: #4a505b80; box-shadow: 0 1px 0 #ffffff09; }
+  [data-theme="dark"] body .navigation-rail.glass-bezel { background: #1d2128d9; border-color: #4a505b80; }
+  [data-theme="dark"] body .workspace .glass-bezel:not(.stat-grid),
+  [data-theme="dark"] body .workspace :is(.v2-home-card,.apps-pack,.apps-details) { background: #22262ed9; border-color: #4a505bb3; box-shadow: inset 0 1px 0 #ffffff09, 0 5px 22px #00000018; }
+  [data-theme="dark"] body .workspace .v2-home-card.featured { background: #302e28dd; }
+}
+[data-theme="dark"][data-surface-material="solid"] body :is(.glass-bezel,.workspace .glass-bezel:not(.stat-grid),.workspace .v2-home-card,.workspace .apps-pack,.workspace .apps-details,.workspace .vx-bar,.workspace .vx-dock,.workspace .mandala-index,.workspace .graph-discussion,.workspace .agent-eye-spy) { background: var(--surface); backdrop-filter: none; }
+@media (prefers-reduced-transparency: reduce) {
+  [data-theme="dark"]:not([data-surface-material="frosted"]) body :is(.glass-bezel,.workspace .glass-bezel:not(.stat-grid),.workspace .v2-home-card,.workspace .apps-pack,.workspace .apps-details,.workspace .vx-bar,.workspace .vx-dock,.workspace .mandala-index,.workspace .graph-discussion,.workspace .agent-eye-spy) { background: var(--surface); backdrop-filter: none; }
+}

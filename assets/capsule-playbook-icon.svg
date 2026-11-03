@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="crimson" x1="84" y1="96" x2="397" y2="416" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF465B"/>
+      <stop offset=".48" stop-color="#D80A2E"/>
+      <stop offset="1" stop-color="#78051D"/>
+    </linearGradient>
+    <linearGradient id="highlight" x1="132" y1="111" x2="364" y2="404" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8F5"/>
+      <stop offset="1" stop-color="#C9C4C8"/>
+    </linearGradient>
+    <linearGradient id="core" x1="211" y1="197" x2="306" y2="312" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E9DCE0"/>
+    </linearGradient>
+    <filter id="shadow" x="18" y="35" width="470" height="456" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="13"/>
+    </filter>
+  </defs>
+  <path d="M356 116C329 93 295 80 258 80 161 80 82 159 82 256s79 176 176 176c37 0 71-11 99-31" stroke="#120D11" stroke-width="96" stroke-linecap="round" filter="url(#shadow)" opacity=".55"/>
+  <path d="M356 116C329 93 295 80 258 80 161 80 82 159 82 256s79 176 176 176c37 0 71-11 99-31" stroke="url(#crimson)" stroke-width="82" stroke-linecap="round"/>
+  <path d="M349 126C323 108 292 98 258 98 171 98 100 169 100 256s71 158 158 158c33 0 64-10 89-28" stroke="url(#highlight)" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+  <path d="M370 224h54a32 32 0 0 1 32 32v0a32 32 0 0 1-32 32h-54" stroke="url(#crimson)" stroke-width="38" stroke-linecap="round"/>
+  <rect x="197" y="195" width="120" height="122" rx="38" fill="#171216" stroke="url(#highlight)" stroke-width="10"/>
+  <rect x="225" y="223" width="64" height="66" rx="19" fill="url(#core)"/>
+  <path d="M243 239h28a5 5 0 0 1 5 5v24a5 5 0 0 1-5 5h-28a5 5 0 0 1-5-5v-24a5 5 0 0 1 5-5Z" fill="#E21A3A" opacity=".92"/>
+</svg>

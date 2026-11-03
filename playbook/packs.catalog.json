@@ -1,0 +1,800 @@
+{
+  "format": "capsule-packs/1",
+  "generated": "2026-11-02",
+  "law": "Every install runs the Capsule Order: restore point first, manifest disclosed (what / from where), user-initiated, one receipt per app (id, resolved version, source), uninstall mirror for the whole pack. Winget is the primary source (ships with Windows, resolves to upstream vendor installers). Chocolatey is the optional second source; its packages get the same disclose + verify treatment, never silent trust. Exact installer sizes are reported by the source at install time and recorded on the receipt.",
+  "packs": [
+    {
+      "id": "edge-add-back",
+      "name": "Add Back Edge",
+      "role": "Restore Microsoft Edge \u2014 for machines where another tool removed it.",
+      "apps": [
+        {
+          "name": "Microsoft Edge",
+          "winget": "Microsoft.Edge",
+          "choco": "microsoft-edge",
+          "optional": false,
+          "note": "The full browser, straight from Microsoft \u2014 updatable and repairable through Windows' own servicing."
+        },
+        {
+          "name": "AdGuard",
+          "winget": "AdGuard.AdGuard",
+          "choco": "adguard",
+          "optional": true,
+          "note": "Optional: system-wide ad/tracker filtering once Edge is back."
+        }
+      ],
+      "docs": [
+        "Other optimizers ship an Edge remover; Capsule's answer is the opposite \u2014 one install puts Edge back exactly as Microsoft ships it. Nothing is patched or pinned.",
+        "Once Edge is back, the Edge Privacy-Enhanced pack layers the privacy settings on top."
+      ]
+    },
+    {
+      "id": "privacy-starter",
+      "name": "Privacy Starter",
+      "role": "Browse, message and store files without being the product.",
+      "apps": [
+        {
+          "name": "Firefox",
+          "winget": "Mozilla.Firefox",
+          "choco": "firefox",
+          "optional": false,
+          "note": "Primary browser \u2014 independent engine, strong tracking protection."
+        },
+        {
+          "name": "Brave",
+          "winget": "Brave.Brave",
+          "choco": "brave",
+          "optional": true,
+          "note": "Chromium alternative with built-in ad/tracker blocking."
+        },
+        {
+          "name": "Tor Browser",
+          "winget": "TorProject.TorBrowser",
+          "choco": "tor-browser",
+          "optional": true,
+          "note": "Anonymous browsing over the Tor network."
+        },
+        {
+          "name": "Mullvad VPN",
+          "winget": "MullvadVPN.MullvadVPN",
+          "choco": "mullvadvpn",
+          "optional": true,
+          "note": "No-account VPN, flat pricing."
+        },
+        {
+          "name": "Proton VPN",
+          "winget": "Proton.ProtonVPN",
+          "choco": "protonvpn",
+          "optional": true,
+          "note": "Swiss VPN with a free tier."
+        },
+        {
+          "name": "KeePassXC",
+          "winget": "KeePassXCTeam.KeePassXC",
+          "choco": "keepassxc",
+          "optional": false,
+          "note": "Offline password vault \u2014 your passwords never leave the machine."
+        },
+        {
+          "name": "VeraCrypt",
+          "winget": "IDRIX.VeraCrypt",
+          "choco": "veracrypt",
+          "optional": true,
+          "note": "Encrypted volumes and containers."
+        },
+        {
+          "name": "Signal",
+          "winget": "OpenWhisperSystems.Signal",
+          "optional": true,
+          "choco": "signal",
+          "note": "Encrypted messaging, desktop companion."
+        },
+        {
+          "name": "Bitwarden",
+          "winget": "Bitwarden.Bitwarden",
+          "optional": true,
+          "choco": "bitwarden",
+          "note": "Cloud-synced password manager \u2014 the KeePassXC alternative."
+        },
+        {
+          "name": "LibreWolf",
+          "winget": "LibreWolf.LibreWolf",
+          "optional": true,
+          "choco": "librewolf",
+          "note": "Firefox fork hardened by default."
+        },
+        {
+          "name": "Vivaldi",
+          "winget": "Vivaldi.Vivaldi",
+          "optional": true,
+          "choco": "vivaldi",
+          "note": "Power-user browser with strong privacy controls."
+        },
+        {
+          "name": "Tailscale",
+          "winget": "Tailscale.Tailscale",
+          "optional": true,
+          "choco": "tailscale",
+          "note": "Private mesh network between your own devices."
+        },
+        {
+          "name": "NordVPN",
+          "winget": "NordSecurity.NordVPN",
+          "optional": true,
+          "choco": "nordvpn"
+        },
+        {
+          "name": "Surfshark",
+          "winget": "Surfshark.Surfshark",
+          "optional": true,
+          "choco": "surfshark"
+        },
+        {
+          "name": "Windscribe",
+          "winget": "Windscribe.Windscribe",
+          "optional": true,
+          "choco": "windscribe"
+        }
+      ],
+      "docs": [
+        "Pair with the Edge Privacy-Enhanced stack if you keep Edge as your daily browser.",
+        "Extensions (uBlock Origin and friends) install from each browser's own store \u2014 Capsule does not side-load extensions."
+      ]
+    },
+    {
+      "id": "edge-privacy-stack",
+      "name": "Edge Privacy-Enhanced",
+      "role": "Keep Microsoft Edge \u2014 strengthened, not amputated.",
+      "apps": [
+        {
+          "name": "Microsoft Edge",
+          "winget": "Microsoft.Edge",
+          "choco": "microsoft-edge",
+          "optional": false,
+          "note": "The browser itself, from Microsoft via winget."
+        },
+        {
+          "name": "AdGuard",
+          "winget": "AdGuard.AdGuard",
+          "choco": "adguard",
+          "optional": true,
+          "note": "System-wide ad and tracker filtering, including inside Edge."
+        }
+      ],
+      "docs": [
+        "Recommended Edge settings (apply by hand, all reversible in Edge's own Settings): Tracking prevention = Strict; Send 'Do Not Track' = on; Clear browsing data on close = cookies off, history on; DNS = use a secure provider (the Utilities DNS Changer pairs with this pack).",
+        "Strengthen Windows, don't amputate Microsoft: nothing in this pack removes Edge or blocks its updates."
+      ]
+    },
+    {
+      "id": "developer",
+      "name": "Developer",
+      "role": "A working dev machine in one install.",
+      "apps": [
+        {
+          "name": "Visual Studio Code",
+          "winget": "Microsoft.VisualStudioCode",
+          "choco": "vscode",
+          "optional": false
+        },
+        {
+          "name": "Windows Terminal",
+          "winget": "Microsoft.WindowsTerminal",
+          "choco": "microsoft-windows-terminal",
+          "optional": false
+        },
+        {
+          "name": "Git",
+          "winget": "Git.Git",
+          "choco": "git",
+          "optional": false
+        },
+        {
+          "name": "Node.js LTS",
+          "winget": "OpenJS.NodeJS.LTS",
+          "choco": "nodejs-lts",
+          "optional": false
+        },
+        {
+          "name": "Python 3.12",
+          "winget": "Python.Python.3.12",
+          "choco": "python312",
+          "optional": false
+        },
+        {
+          "name": "Docker Desktop",
+          "winget": "Docker.DockerDesktop",
+          "choco": "docker-desktop",
+          "optional": true,
+          "note": "Needs WSL2 \u2014 if WSL is provisioned, this rides on it."
+        },
+        {
+          "name": "Postman",
+          "winget": "Postman.Postman",
+          "choco": "postman",
+          "optional": true
+        },
+        {
+          "name": "7-Zip",
+          "winget": "7zip.7zip",
+          "choco": "7zip",
+          "optional": false
+        },
+        {
+          "name": "GitHub Desktop",
+          "winget": "GitHub.GitHubDesktop",
+          "optional": true,
+          "choco": "github-desktop"
+        },
+        {
+          "name": "Neovim",
+          "winget": "Neovim.Neovim",
+          "optional": true,
+          "choco": "neovim"
+        },
+        {
+          "name": "PuTTY",
+          "winget": "PuTTY.PuTTY",
+          "optional": true,
+          "choco": "putty"
+        },
+        {
+          "name": "WinMerge",
+          "winget": "WinMerge.WinMerge",
+          "optional": true,
+          "choco": "winmerge"
+        },
+        {
+          "name": "VSCodium",
+          "winget": "VSCodium.VSCodium",
+          "optional": true,
+          "choco": "vscodium",
+          "note": "VS Code build without Microsoft telemetry."
+        },
+        {
+          "name": "Go",
+          "winget": "GoLang.Go",
+          "optional": true,
+          "choco": "golang"
+        },
+        {
+          "name": "Rust (MSVC)",
+          "winget": "Rustlang.Rust.MSVC",
+          "optional": true,
+          "choco": "rust"
+        },
+        {
+          "name": "CMake",
+          "winget": "Kitware.CMake",
+          "optional": true,
+          "choco": "cmake"
+        },
+        {
+          "name": "Wireshark",
+          "winget": "WiresharkFoundation.Wireshark",
+          "optional": true,
+          "choco": "wireshark"
+        }
+      ],
+      "docs": [
+        "Git identity (name/email) is yours to set after install \u2014 Capsule never invents it."
+      ]
+    },
+    {
+      "id": "gamer",
+      "name": "Gamer",
+      "role": "The stores and the stream tools.",
+      "apps": [
+        {
+          "name": "Steam",
+          "winget": "Valve.Steam",
+          "choco": "steam",
+          "optional": false
+        },
+        {
+          "name": "Epic Games Launcher",
+          "winget": "EpicGames.EpicGamesLauncher",
+          "choco": "epicgameslauncher",
+          "optional": true
+        },
+        {
+          "name": "GOG Galaxy",
+          "winget": "GOG.Galaxy",
+          "choco": "goggalaxy",
+          "optional": true
+        },
+        {
+          "name": "Discord",
+          "winget": "Discord.Discord",
+          "choco": "discord",
+          "optional": false
+        },
+        {
+          "name": "OBS Studio",
+          "winget": "OBSProject.OBSStudio",
+          "choco": "obs-studio",
+          "optional": true,
+          "note": "Streaming and recording."
+        },
+        {
+          "name": "Battle.net",
+          "winget": "Blizzard.BattleNet",
+          "optional": true
+        },
+        {
+          "name": "EA App",
+          "winget": "ElectronicArts.EADesktop",
+          "optional": true
+        },
+        {
+          "name": "itch.io",
+          "winget": "ItchIo.Itch",
+          "optional": true,
+          "choco": "itch"
+        },
+        {
+          "name": "Playnite",
+          "winget": "Playnite.Playnite",
+          "optional": true,
+          "choco": "playnite",
+          "note": "One library over every store."
+        },
+        {
+          "name": "Moonlight",
+          "winget": "MoonlightGameStreamingProject.Moonlight",
+          "optional": true,
+          "choco": "moonlight",
+          "note": "Stream games from your own PC."
+        },
+        {
+          "name": "GeForce NOW",
+          "winget": "NVIDIA.GeForceNOW",
+          "optional": true
+        }
+      ],
+      "docs": []
+    },
+    {
+      "id": "retro-gaming",
+      "name": "Retro Gaming",
+      "role": "Emulation front-end and cores. ROMs are yours \u2014 Capsule ships no game files.",
+      "apps": [
+        {
+          "name": "RetroArch",
+          "winget": "Libretro.RetroArch",
+          "choco": "retroarch",
+          "optional": false
+        },
+        {
+          "name": "Dolphin",
+          "winget": "DolphinEmulator.Dolphin",
+          "choco": "dolphin",
+          "optional": true,
+          "note": "GameCube / Wii."
+        },
+        {
+          "name": "PCSX2",
+          "winget": "PCSX2Team.PCSX2",
+          "choco": "pcsx2",
+          "optional": true,
+          "note": "PlayStation 2."
+        },
+        {
+          "name": "PPSSPP",
+          "winget": "HenrikRydgard.PPSSPP",
+          "choco": "ppsspp",
+          "optional": true,
+          "note": "PSP."
+        },
+        {
+          "name": "RPCS3",
+          "winget": "RPCS3.RPCS3",
+          "choco": "rpcs3",
+          "optional": true,
+          "note": "PlayStation 3 \u2014 demanding; check your hardware first."
+        },
+        {
+          "name": "Cemu",
+          "winget": "Cemu.Cemu",
+          "optional": true,
+          "choco": "cemu",
+          "note": "Wii U."
+        }
+      ],
+      "docs": [
+        "BIOS/firmware files are legally yours to dump from your own consoles; nothing here downloads them."
+      ]
+    },
+    {
+      "id": "content-creator",
+      "name": "Content Creator",
+      "role": "Record, edit, convert \u2014 the free professional toolchain.",
+      "apps": [
+        {
+          "name": "OBS Studio",
+          "winget": "OBSProject.OBSStudio",
+          "choco": "obs-studio",
+          "optional": false
+        },
+        {
+          "name": "Audacity",
+          "winget": "Audacity.Audacity",
+          "choco": "audacity",
+          "optional": false
+        },
+        {
+          "name": "Kdenlive",
+          "winget": "KDE.Kdenlive",
+          "choco": "kdenlive",
+          "optional": false
+        },
+        {
+          "name": "GIMP",
+          "winget": "GIMP.GIMP",
+          "choco": "gimp",
+          "optional": false
+        },
+        {
+          "name": "HandBrake",
+          "winget": "HandBrake.HandBrake",
+          "choco": "handbrake",
+          "optional": false
+        },
+        {
+          "name": "VLC",
+          "winget": "VideoLAN.VLC",
+          "choco": "vlc",
+          "optional": false
+        },
+        {
+          "name": "Blender",
+          "winget": "BlenderFoundation.Blender",
+          "optional": true,
+          "choco": "blender"
+        },
+        {
+          "name": "Krita",
+          "winget": "KDE.Krita",
+          "optional": true,
+          "choco": "krita"
+        },
+        {
+          "name": "Inkscape",
+          "winget": "Inkscape.Inkscape",
+          "optional": true,
+          "choco": "inkscape"
+        },
+        {
+          "name": "Paint.NET",
+          "winget": "dotPDN.Paint.NET",
+          "optional": true,
+          "choco": "paint.net"
+        }
+      ],
+      "docs": []
+    },
+    {
+      "id": "power-user",
+      "name": "Windows Power User",
+      "role": "The everyday accelerators.",
+      "apps": [
+        {
+          "name": "PowerToys",
+          "winget": "Microsoft.PowerToys",
+          "choco": "powertoys",
+          "optional": false
+        },
+        {
+          "name": "Everything",
+          "winget": "voidtools.Everything",
+          "choco": "everything",
+          "optional": false,
+          "note": "Instant file search across all drives."
+        },
+        {
+          "name": "Windows Terminal",
+          "winget": "Microsoft.WindowsTerminal",
+          "choco": "microsoft-windows-terminal",
+          "optional": false
+        },
+        {
+          "name": "ShareX",
+          "winget": "ShareX.ShareX",
+          "choco": "sharex",
+          "optional": true,
+          "note": "Screenshots and capture workflows."
+        },
+        {
+          "name": "WinDirStat",
+          "winget": "WinDirStat.WinDirStat",
+          "choco": "windirstat",
+          "optional": true,
+          "note": "See where the disk went."
+        },
+        {
+          "name": "7-Zip",
+          "winget": "7zip.7zip",
+          "choco": "7zip",
+          "optional": false
+        },
+        {
+          "name": "WizTree",
+          "winget": "AntibodySoftware.WizTree",
+          "optional": true,
+          "choco": "wiztree"
+        },
+        {
+          "name": "NanaZip",
+          "winget": "M2Team.NanaZip",
+          "optional": true,
+          "choco": "nanazip"
+        },
+        {
+          "name": "Files",
+          "winget": "FilesCommunity.Files",
+          "optional": true,
+          "choco": "files",
+          "note": "Modern file manager."
+        },
+        {
+          "name": "Total Commander",
+          "winget": "Ghisler.TotalCommander",
+          "optional": true,
+          "choco": "totalcommander"
+        },
+        {
+          "name": "IrfanView",
+          "winget": "IrfanSkiljan.IrfanView",
+          "optional": true,
+          "choco": "irfanview"
+        },
+        {
+          "name": "WinRAR",
+          "winget": "RARLab.WinRAR",
+          "optional": true,
+          "choco": "winrar"
+        },
+        {
+          "name": "Rainmeter",
+          "winget": "Rainmeter.Rainmeter",
+          "optional": true,
+          "choco": "rainmeter"
+        },
+        {
+          "name": "Autoruns",
+          "winget": "Microsoft.Sysinternals.Autoruns",
+          "optional": true,
+          "choco": "autoruns",
+          "note": "See everything that starts with Windows \u2014 from Sysinternals."
+        },
+        {
+          "name": "Bulk Crap Uninstaller",
+          "winget": "Klocman.BulkCrapUninstaller",
+          "optional": true,
+          "choco": "bulk-crap-uninstaller"
+        },
+        {
+          "name": "Revo Uninstaller",
+          "winget": "RevoUninstaller.RevoUninstaller",
+          "optional": true,
+          "choco": "revouninstaller"
+        },
+        {
+          "name": "Geek Uninstaller",
+          "winget": "GeekUninstaller.GeekUninstaller",
+          "optional": true,
+          "choco": "geekuninstaller"
+        }
+      ],
+      "docs": []
+    },
+    {
+      "id": "security",
+      "name": "Power User Security",
+      "role": "Strengthen the built-in defenses; add a second opinion, never a replacement that disables them.",
+      "apps": [
+        {
+          "name": "KeePassXC",
+          "winget": "KeePassXCTeam.KeePassXC",
+          "choco": "keepassxc",
+          "optional": false
+        },
+        {
+          "name": "VeraCrypt",
+          "winget": "IDRIX.VeraCrypt",
+          "choco": "veracrypt",
+          "optional": true
+        },
+        {
+          "name": "Malwarebytes",
+          "winget": "Malwarebytes.Malwarebytes",
+          "choco": "malwarebytes",
+          "optional": true,
+          "note": "On-demand second-opinion scanner. Windows Security stays on \u2014 Capsule law: security features are never disabled."
+        },
+        {
+          "name": "AdGuard",
+          "winget": "AdGuard.AdGuard",
+          "choco": "adguard",
+          "optional": true
+        }
+      ],
+      "docs": [
+        "BitLocker, Memory Integrity, SmartScreen and Defender are strengthened by the Security posture (Phase 6), never turned off by any pack."
+      ]
+    },
+    {
+      "id": "minecraft-modding",
+      "name": "Minecraft Modding",
+      "role": "Launchers and mod managers for Java Minecraft.",
+      "apps": [
+        {
+          "name": "Minecraft Launcher",
+          "winget": "Mojang.MinecraftLauncher",
+          "optional": false,
+          "choco": "minecraft-launcher",
+          "note": "The official launcher \u2014 required for Java Edition."
+        },
+        {
+          "name": "Prism Launcher",
+          "winget": "PrismLauncher.PrismLauncher",
+          "choco": "prismlauncher",
+          "optional": false,
+          "note": "Instance-based launcher with built-in modpack support."
+        },
+        {
+          "name": "Modrinth App",
+          "winget": "Modrinth.ModrinthApp",
+          "choco": "modrinth",
+          "optional": true
+        },
+        {
+          "name": "CurseForge",
+          "winget": "Overwolf.CurseForge",
+          "choco": "curseforge",
+          "optional": true
+        },
+        {
+          "name": "OpenJDK 21",
+          "winget": "Microsoft.OpenJDK.21",
+          "choco": "microsoft-openjdk21",
+          "optional": false,
+          "note": "The Java runtime modern Minecraft and launchers expect."
+        }
+      ],
+      "docs": [
+        "Mods themselves flow through the Modding Hub (R6 in the utility roadmap) with the same receipt rules."
+      ]
+    },
+    {
+      "id": "hytale-creator",
+      "name": "Hytale Creator",
+      "role": "The toolchain around Hytale \u2014 modeling, sound and capture, ready for launch day.",
+      "apps": [
+        {
+          "name": "Blockbench",
+          "winget": "JannisX11.Blockbench",
+          "choco": "blockbench",
+          "optional": false,
+          "note": "Low-poly modeling and animation \u2014 the Hytale-style asset tool."
+        },
+        {
+          "name": "OBS Studio",
+          "winget": "OBSProject.OBSStudio",
+          "choco": "obs-studio",
+          "optional": false
+        },
+        {
+          "name": "Audacity",
+          "winget": "Audacity.Audacity",
+          "choco": "audacity",
+          "optional": true
+        },
+        {
+          "name": "GIMP",
+          "winget": "GIMP.GIMP",
+          "choco": "gimp",
+          "optional": true
+        },
+        {
+          "name": "Krita",
+          "winget": "KDE.Krita",
+          "optional": true,
+          "choco": "krita"
+        }
+      ],
+      "docs": [
+        "Hytale itself installs from its own official launcher when available \u2014 it is not on winget or Chocolatey, and Capsule will not fetch it from anywhere else."
+      ]
+    },
+    {
+      "id": "family-pc",
+      "name": "Family PC",
+      "role": "The calm essentials for a shared machine.",
+      "apps": [
+        {
+          "name": "Firefox",
+          "winget": "Mozilla.Firefox",
+          "choco": "firefox",
+          "optional": false
+        },
+        {
+          "name": "LibreOffice",
+          "winget": "TheDocumentFoundation.LibreOffice",
+          "choco": "libreoffice-fresh",
+          "optional": false
+        },
+        {
+          "name": "VLC",
+          "winget": "VideoLAN.VLC",
+          "choco": "vlc",
+          "optional": false
+        },
+        {
+          "name": "Zoom",
+          "winget": "Zoom.Zoom",
+          "choco": "zoom",
+          "optional": true
+        },
+        {
+          "name": "Spotify",
+          "winget": "Spotify.Spotify",
+          "choco": "spotify",
+          "optional": true
+        },
+        {
+          "name": "Google Chrome",
+          "winget": "Google.Chrome",
+          "optional": true,
+          "choco": "googlechrome",
+          "note": "For the sites that demand it."
+        }
+      ],
+      "docs": []
+    },
+    {
+      "id": "windows-recovery",
+      "name": "Windows Recovery",
+      "role": "Boot media tools \u2014 alongside the built-in Capsule repair toolkit.",
+      "apps": [
+        {
+          "name": "Rufus",
+          "winget": "Rufus.Rufus",
+          "choco": "rufus",
+          "optional": false,
+          "note": "Write ISO images to USB."
+        },
+        {
+          "name": "Ventoy",
+          "winget": "Ventoy.Ventoy",
+          "choco": "ventoy",
+          "optional": true,
+          "note": "One USB, many bootable ISOs."
+        },
+        {
+          "name": "7-Zip",
+          "winget": "7zip.7zip",
+          "choco": "7zip",
+          "optional": false
+        },
+        {
+          "name": "Balena Etcher",
+          "winget": "Balena.Etcher",
+          "optional": true,
+          "choco": "etcher"
+        },
+        {
+          "name": "Display Driver Uninstaller",
+          "winget": "Wagnardsoft.DisplayDriverUninstaller",
+          "optional": true,
+          "choco": "ddu",
+          "note": "Clean GPU driver removal before a fresh install."
+        }
+      ],
+      "docs": [
+        "The Capsule repair toolkit (DISM/SFC scripts) already ships inside the playbook and the Utilities face \u2014 this pack adds the USB side of recovery."
+      ]
+    }
+  ],
+  "provenance": "Curation: Nathan's R10 starter list + Sparkle 2.25.0's apps gallery, mined from its renderer bundle 2026-11-02 and repurposed at Nathan's direction (IDs carried over; one corrected \u2014 Sparkle's 'Paint.NET' is not a winget id, the real one is dotPDN.Paint.NET). Edge leads the catalog: Capsule adds back what other tools remove."
+}

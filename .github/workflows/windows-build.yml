@@ -1,0 +1,80 @@
+name: Capsule Windows build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - capsule-v2-windows-build-20261103
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      CARGO_TERM_COLOR: never
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        shell: pwsh
+        run: |
+          npm ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Select Windows Rust toolchain
+        shell: pwsh
+        run: |
+          rustup default stable-x86_64-pc-windows-msvc
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Source and native regressions
+        shell: pwsh
+        run: |
+          npm test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo test --manifest-path src-tauri\Cargo.toml --lib --locked --quiet
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Prepare pinned models required by the existing build gate
+        shell: pwsh
+        run: |
+          npm run prepare:models
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build current Tauri Windows app and NSIS setup
+        shell: pwsh
+        run: |
+          npm exec -- tauri build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node assistant\design-audit.cjs --dark
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Stage native build outputs and checksums
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path native-build | Out-Null
+          Copy-Item -LiteralPath src-tauri\target\release\capsule_toolbox.exe -Destination native-build
+          Get-ChildItem -LiteralPath src-tauri\target\release\bundle\nsis -Filter '*-setup.exe' |
+            Copy-Item -Destination native-build
+          Copy-Item -LiteralPath dist\toolbox\design-audit.json -Destination native-build
+          Copy-Item -LiteralPath .design-audit\dark-theme.json -Destination native-build
+          @"
+          CapsuleOSv2 native build outputs
+          Commit: $env:GITHUB_SHA
+          These are build outputs, not the complete offline/AME distribution.
+          Setup requires the adjacent Linux runtime and model payload described in TOOLBOX.md.
+          The portable EXE requires its adjacent Windows runtime.
+          Do not distribute or run these files as a complete standalone delivery.
+          Installed/UAC/AME acceptance has not been performed by this workflow.
+          "@ | Set-Content -LiteralPath native-build\BUILD-STATUS.txt -Encoding utf8
+          Get-ChildItem -LiteralPath native-build -File | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          } | Set-Content -LiteralPath native-build\SHA256SUMS.txt -Encoding utf8
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CapsuleOSv2-native-build
+          path: native-build
+          if-no-files-found: error
+          retention-days: 7

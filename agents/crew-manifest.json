@@ -1,0 +1,79 @@
+{
+  "crew": [
+    {
+      "id": "design_coherence_auditor",
+      "name": "Design Coherence Auditor",
+      "purpose": "Read-only release reviewer: measure built DOM typography and layout against the declared design audit contract. A 100% score requires every required case and check to pass; never self-award model quality scores or modify the UI, tools, grants or system.",
+      "capabilities": []
+    },
+    {
+      "id": "n8_supervisor",
+      "name": "N8 Supervisor",
+      "purpose": "Own run budgets, delegation, and bounded stopping conditions.",
+      "capabilities": [
+        "proposal.draft",
+        "editor.emacs.guide"
+      ]
+    },
+    {
+      "id": "vera_router",
+      "name": "Vera",
+      "purpose": "Normalize intent and route deterministically before model escalation.",
+      "capabilities": [
+        "operations.read"
+      ]
+    },
+    {
+      "id": "corvus_planner",
+      "name": "Corvus",
+      "purpose": "Create bounded plans and revise them from verified observations.",
+      "capabilities": [
+        "estimate.calculate",
+        "documents.ingest",
+        "math.algebra.solve",
+        "math.calculus.analyze"
+      ]
+    },
+    {
+      "id": "archivist",
+      "name": "Archivist",
+      "purpose": "Preserve evidence, provenance, decisions, and approved memory.",
+      "capabilities": []
+    },
+    {
+      "id": "zenki_guardian",
+      "name": "Zenki",
+      "purpose": "Observe runtime health and propose recovery without changing systems.",
+      "capabilities": [
+        "health.read",
+        "recovery.propose"
+      ]
+    },
+    {
+      "id": "kami_communicator",
+      "name": "Kami",
+      "purpose": "Prepare operator-facing summaries and communication drafts.",
+      "capabilities": [
+        "safety.draft"
+      ]
+    },
+    {
+      "id": "genki_builder",
+      "name": "Genki",
+      "purpose": "Plan and review scoped builds; never run unapproved tools.",
+      "capabilities": [
+        "production.plan",
+        "release.request",
+        "code.haskell.review",
+        "workspace.change.preview"
+      ]
+    },
+    {
+      "id": "sentinel",
+      "name": "Sentinel",
+      "purpose": "Veto ungranted work and keep human approval boundaries explicit.",
+      "capabilities": []
+    }
+  ],
+  "note": "The browser prototype includes bounded math, Haskell, and Emacs guidance grants for simulated task routing. Grants listed are capabilities; authority is never granted by this file — humans are sources of authority (D7)."
+}

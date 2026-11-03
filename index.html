@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>SI CORE — COMPLETE PROTOTYPE</title>
+<style>
+  :root{ --ink:#f4f1f2; --dim:#aaa1a5; --accent:#df243c; --accent-bright:#f04452; --accent-deep:#971329;
+         --silver:#c9c2c6; --paper:#f8f6f6; --glass:rgba(8,7,9,.86); --line:rgba(244,239,241,.15); }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ width:100%; height:100%; overflow:hidden; background:#070609; }
+  body{ font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace; color:var(--ink); }
+  #scene{ position:fixed; inset:0; touch-action:none; }
+  header{ position:fixed; top:0; left:0; padding:14px 16px 26px; pointer-events:none; z-index:5; max-width:min(430px,72vw);
+          background:linear-gradient(180deg, rgba(5,6,10,.9) 52%, rgba(5,6,10,0)); }
+  header .kick{ font-size:10px; letter-spacing:.22em; color:var(--silver); }
+  header h1{ font-size:clamp(19px,3.4vw,27px); font-weight:600; letter-spacing:.04em; margin-top:3px; }
+  header h1 em{ font-style:normal; color:var(--accent); }
+  header p{ font-size:11px; line-height:1.5; color:var(--dim); margin-top:4px; }
+  #status{ position:fixed; left:16px; bottom:14px; font-size:11px; letter-spacing:.14em; color:var(--accent-bright); z-index:5; pointer-events:none; padding:5px 9px; border-radius:6px; background:linear-gradient(90deg, rgba(7,6,9,.72), rgba(7,6,9,0)); text-shadow:0 1px 6px #000; }
+  #status::before{ content:'● '; }
+  .lbl{ position:fixed; transform:translate(-50%,-130%); text-align:center; pointer-events:none; z-index:4;
+        font-size:11px; letter-spacing:.08em; color:var(--ink); text-shadow:0 1px 8px #000,0 0 2px #000; white-space:nowrap;
+        background:rgba(5,6,10,.58); padding:2px 7px; border-radius:6px; border:1px solid rgba(232,228,218,.09); box-shadow:0 2px 10px rgba(0,0,0,.35); backdrop-filter:blur(3px); }
+  .lbl small{ display:block; font-size:9px; letter-spacing:.14em; color:var(--dim); margin-top:1px; }
+  /* ============ the dock — a cockpit, not a log ============ */
+  #dock{ position:fixed; top:0; right:0; height:100dvh; width:min(308px,88vw); z-index:10;
+         transform:translateX(calc(100% - 46px)); transition:transform .34s cubic-bezier(.2,.9,.25,1); }
+  #dock.open{ transform:translateX(0); }
+  #grip{ position:absolute; left:0; top:0; width:46px; height:100%; cursor:pointer; background:linear-gradient(90deg,rgba(10,10,14,.25),rgba(10,10,14,.65));
+         border-left:1px solid rgba(255,74,61,.26); display:flex; align-items:center; justify-content:center; }
+  #grip span{ writing-mode:vertical-rl; font-size:10px; letter-spacing:.34em; color:var(--ink); opacity:.85; }
+  #panel{ position:absolute; left:46px; right:0; top:0; bottom:0; background:var(--glass); backdrop-filter:blur(14px);
+          border-left:1px solid var(--line); padding:14px 14px 20px; overflow-y:auto; overscroll-behavior:contain; }
+  #panel h2{ font-size:11px; letter-spacing:.24em; color:var(--ink); font-weight:600; }
+  #panel h2 em{ font-style:normal; color:var(--accent); }
+  #sysline{ font-size:10.5px; color:var(--dim); letter-spacing:.06em; margin:6px 0 10px; line-height:1.7; }
+  #sysline b{ color:var(--ink); font-weight:600; }
+  .card{ border:1px solid var(--line); border-radius:10px; padding:10px 11px; margin-bottom:10px;
+         background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012)); box-shadow:inset 0 1px 0 rgba(255,255,255,.06); }
+  .card h3{ font-size:9.5px; letter-spacing:.22em; color:var(--dim); font-weight:600; margin-bottom:8px; }
+  .card h3 b{ float:right; color:var(--dim); cursor:pointer; letter-spacing:.18em; }
+  /* balance wheel + force bars */
+  #wheelWrap{ display:flex; gap:10px; align-items:center; }
+  #wheelCap{ font-size:9px; color:var(--dim); line-height:1.6; letter-spacing:.04em; }
+  .fbar{ display:grid; grid-template-columns:86px 1fr 30px; align-items:center; gap:7px; font-size:9.5px; letter-spacing:.08em; color:var(--dim); margin-top:5px; }
+  .fbar .track{ height:7px; border-radius:4px; background:rgba(255,255,255,.07); overflow:hidden; }
+  .fbar .fill{ height:100%; border-radius:4px; transition:width .3s; }
+  .fbar .val{ text-align:right; color:var(--ink); }
+  #barrier{ display:none; margin-top:8px; font-size:9.5px; letter-spacing:.1em; color:var(--paper); background:var(--accent-deep);
+            border-radius:5px; padding:4px 7px; font-weight:700; text-align:center; }
+  /* health */
+  .hrow{ display:grid; grid-template-columns:74px 1fr 30px; align-items:center; gap:7px; font-size:9.5px; letter-spacing:.08em; color:var(--dim); margin-top:4px; }
+  .hrow .track{ height:6px; border-radius:3px; background:rgba(255,255,255,.07); overflow:hidden; }
+  .hrow .fill{ height:100%; background:var(--accent); border-radius:3px; transition:width .3s; }
+  .hrow .fill.low{ background:var(--accent-bright); }
+  .hrow .val{ text-align:right; color:var(--ink); }
+  #pressure{ font-size:13px; letter-spacing:2px; color:var(--accent-bright); margin-top:2px; }
+  #veraPips{ display:flex; gap:4px; margin-top:7px; flex-wrap:wrap; }
+  .pip{ font-size:8.5px; letter-spacing:.1em; padding:3px 6px; border-radius:8px; border:1px solid var(--line); color:var(--dim); }
+  .pip.on{ color:var(--paper); background:var(--accent); border-color:var(--accent); font-weight:700; }
+  .pip.held{ color:#0a0a0c; background:var(--silver); border-color:var(--silver); font-weight:700; }
+  /* buttons */
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+  button{ min-height:44px; border-radius:9px; border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--ink);
+          font:inherit; font-size:11px; letter-spacing:.14em; cursor:pointer; padding:6px 4px; }
+  button small{ display:block; font-size:8.5px; letter-spacing:.06em; color:var(--dim); margin-top:2px; }
+  button:active{ background:rgba(255,255,255,.12); }
+  #bCrew.on{ border-color:var(--accent); color:var(--accent-bright); }
+  #taskRoute{ width:100%; min-height:40px; margin:8px 0; padding:7px 8px; border:1px solid var(--line); border-radius:8px;
+              color:var(--ink); background:#121014; font:10px ui-monospace,Menlo,monospace; }
+  #bRouteTask{ width:100%; border-color:rgba(223,36,60,.55); color:var(--accent-bright); }
+  #routeStatus{ min-height:15px; margin-top:7px; }
+  #bApprove{ width:100%; display:none; border-color:var(--accent); color:var(--accent-bright); font-weight:700; margin-bottom:8px; }
+  #bDeny{ width:100%; display:none; border-color:var(--paper); color:var(--paper); font-weight:700; margin-bottom:10px; }
+  /* proposal + ledger text (demoted, one toggle deep) */
+  #propCard .body, #ledgerCard .body{ font-size:10.5px; line-height:1.65; color:var(--dim); white-space:pre-wrap; word-break:break-word; }
+  #propCard .body{ display:none; } #propCard.open .body{ display:block; }
+  #ledgerCard .body{ display:none; } #ledgerCard.open .body{ display:block; }
+  #propCard .body .k{ color:var(--silver); } #propCard .body .bad{ color:var(--accent-bright); } #propCard .body .ok{ color:var(--paper); }
+  #eelMeta{ font-size:9.5px; color:var(--dim); letter-spacing:.08em; }
+  .fine{ font-size:9px; line-height:1.7; color:var(--dim); letter-spacing:.03em; }
+  .fine b{ color:var(--ink); }
+  .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; clip-path:inset(50%); }
+  /* ============ GAZE MOD — hover readout: what's happening inside it ============ */
+  #gazeCard{ position:fixed; z-index:9; min-width:178px; max-width:248px; pointer-events:none;
+    background:rgba(8,7,9,.94); border:1px solid rgba(223,36,60,.58); border-radius:9px; padding:8px 10px;
+    font-size:10px; line-height:1.65; letter-spacing:.05em; color:var(--ink); opacity:0; transition:opacity .18s;
+    backdrop-filter:blur(8px); box-shadow:0 6px 24px rgba(0,0,0,.5); }
+  #gazeCard.on{ opacity:1; }
+  #gazeCard h4{ font-size:10px; letter-spacing:.18em; margin-bottom:3px; font-weight:600; }
+  #gazeCard .grow{ display:flex; justify-content:space-between; gap:14px; color:var(--dim); }
+  #gazeCard .grow b{ color:var(--ink); font-weight:600; text-align:right; }
+  #activity-toggle{ position:fixed; z-index:12; top:14px; right:14px; min-height:38px; padding:6px 12px;
+    border-color:rgba(223,36,60,.55); background:rgba(8,7,9,.88); color:#f4e9e3; font-size:9px;
+    letter-spacing:.16em; backdrop-filter:blur(10px); }
+  #activity-view{ position:fixed; inset:0; z-index:4; overflow:hidden; background:
+    radial-gradient(ellipse at 50% 48%,rgba(83,43,61,.19),transparent 42%),
+    radial-gradient(ellipse at 50% 50%,rgba(20,33,50,.28),transparent 72%),#030407; }
+  #activity-view[hidden]{ display:none; }
+  #activity-graph{ position:absolute; inset:0; min-height:0; background:
+    radial-gradient(ellipse at 50% 48%,rgba(83,43,61,.19),transparent 42%),#030407; }
+  #activity-graph canvas{ cursor:grab; }
+  #activity-graph.has-hover canvas{ cursor:pointer; }
+  #activity-graph.is-dragging canvas{ cursor:grabbing; }
+  #activity-graph .mandala-caption{ left:24px; bottom:142px; gap:4px; }
+  #activity-graph .mandala-caption strong{ color:#f3e5e3; font:italic 600 18px "Segoe Script","Brush Script MT",cursive; }
+  #activity-graph .mandala-caption small{ color:#dfa346; font-size:9px; }
+  #activity-graph .mandala-hover,#activity-graph .mandala-selection{ top:84px; left:24px; right:auto; max-width:min(560px,calc(100% - 48px)); font-size:10px; }
+  #activity-graph .mandala-hover{ padding:8px 11px; }
+  #activity-graph .mandala-selection{ padding:8px 10px; gap:10px; }
+  #activity-graph .mandala-selection-close{ font-size:18px; }
+  .activity-hud{ position:absolute; z-index:3; pointer-events:none; text-shadow:0 2px 8px #000; }
+  .activity-heading{ top:18px; left:24px; display:grid; gap:5px; max-width:min(520px,calc(100% - 280px)); }
+  .activity-heading small,.activity-verified,.activity-receipts-head{ color:#c8b7b7; font-size:9px; letter-spacing:.2em; }
+  .activity-heading strong{ color:#f4eef0; font-size:clamp(16px,2.4vw,25px); letter-spacing:.11em; }
+  .activity-heading span{ color:#aaa1a5; font-size:10px; letter-spacing:.04em; line-height:1.55; }
+  .activity-verified{ top:23px; right:24px; display:flex; align-items:center; gap:8px; color:#9de0bb; }
+  .activity-verified::before{ content:""; width:7px; height:7px; border-radius:50%; background:#7ce6a6; box-shadow:0 0 12px #7ce6a6; }
+  .activity-metrics{ left:24px; bottom:24px; display:grid; grid-template-columns:repeat(4,minmax(78px,112px)); gap:8px; }
+  .activity-metric{ padding:9px 10px; border:1px solid rgba(218,194,183,.17); border-radius:7px;
+    background:rgba(5,6,9,.72); backdrop-filter:blur(8px); }
+  .activity-metric small{ display:block; color:#a99ca2; font-size:8px; letter-spacing:.15em; }
+  .activity-metric strong{ display:block; margin-top:5px; color:#f1e7e8; font-size:17px; font-weight:500; }
+  .activity-receipts{ right:24px; bottom:24px; width:min(340px,31vw); padding:11px 12px;
+    border:1px solid rgba(218,194,183,.17); border-radius:8px; background:rgba(5,6,9,.78); backdrop-filter:blur(10px); }
+  .activity-receipts-head{ display:flex; justify-content:space-between; padding-bottom:7px; border-bottom:1px solid rgba(218,194,183,.12); }
+  #activity-receipt-list{ display:grid; gap:6px; padding-top:7px; }
+  .activity-receipt{ display:grid; gap:3px; padding:5px 0; border-bottom:1px solid rgba(218,194,183,.08); }
+  .activity-receipt:last-child{ border-bottom:0; }
+  .activity-receipt strong{ overflow:hidden; color:#eadfdf; font-size:9px; font-weight:500; text-overflow:ellipsis; white-space:nowrap; }
+  .activity-receipt small{ overflow:hidden; color:#a99ca2; font-size:8px; text-overflow:ellipsis; white-space:nowrap; }
+  body.activity-mode header,body.activity-mode #status,body.activity-mode #gazeCard,body.activity-mode .lbl{ display:none!important; }
+  @media(max-width:680px){
+    .activity-heading{ top:65px; left:14px; max-width:calc(100% - 28px); }
+    .activity-verified{ top:20px; left:14px; right:auto; }
+    .activity-metrics{ left:14px; bottom:14px; grid-template-columns:repeat(2,minmax(74px,1fr)); width:calc(50% - 20px); }
+    .activity-receipts{ right:14px; bottom:14px; width:calc(50% - 20px); }
+    .activity-metric{ padding:7px; }
+    #activity-graph .mandala-caption{ left:14px; bottom:170px; }
+  }
+  .card.src{ border-color:rgba(223,36,60,.34); }
+  .card.src h3{ color:var(--accent-bright); }
+  .track .fill{transition:width .35s ease}
+  .prow{display:flex;gap:10px;justify-content:space-between;font:10px/1.7 ui-monospace,Menlo,monospace;color:var(--dim);border-bottom:1px solid rgba(232,228,218,.06);padding:1px 0}
+  .prow .heat{color:var(--accent-bright);letter-spacing:1px}
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<header>
+  <div class="kick">COMPLETE PROTOTYPE · ONE RUNTIME</div>
+  <h1>SI CORE — <em>COMPLETE</em></h1>
+  <p>The ball and its lattice worlds, wrapped in the braille helix,
+     trailed by singing notes, the crew in orbit. Hover to read inside
+     a thing; tap to fly there. Drag to orbit · pinch to zoom.</p>
+</header>
+<div id="status">ALL SYSTEMS OPERATIONAL</div>
+<div id="gazeCard"><h4 id="gzT">—</h4><div id="gzRows"></div></div>
+<button id="activity-toggle" type="button" aria-controls="activity-view" aria-expanded="false">OPEN ACTIVITY ENGINE</button>
+<section id="activity-view" aria-label="Capsule OS interactive activity engine" hidden>
+  <div id="activity-graph" class="activity-graph"></div>
+  <div class="activity-hud activity-heading">
+    <small>CAPSULE OS · SI CORE ACTIVITY ENGINE</small>
+    <strong>WORKSPACE GALAXY</strong>
+    <span>Agents, routes, and sealed receipts orbit the governed core. Drag to orbit · select a node to inspect.</span>
+  </div>
+  <div id="activity-verified" class="activity-hud activity-verified">LEDGER WAITING</div>
+  <div class="activity-hud activity-metrics" aria-live="polite">
+    <div class="activity-metric"><small>AGENTS</small><strong id="activity-agents">—</strong></div>
+    <div class="activity-metric"><small>ROUTES</small><strong id="activity-routes">—</strong></div>
+    <div class="activity-metric"><small>RECEIPTS</small><strong id="activity-receipts">—</strong></div>
+    <div class="activity-metric"><small>MIN HEALTH</small><strong id="activity-health">—</strong></div>
+  </div>
+  <div class="activity-hud activity-receipts">
+    <div class="activity-receipts-head"><span>RECENT RECEIPTS</span><span id="activity-run-state">IDLE</span></div>
+    <div id="activity-receipt-list"><div class="activity-receipt"><strong>No sealed receipts yet</strong></div></div>
+  </div>
+</section>
+
+<div id="dock">
+  <div id="grip"><span>COCKPIT</span></div>
+  <div id="panel">
+    <h2>COCKPIT · <em>FORCES</em></h2>
+    <div id="sysline">—</div>
+
+    <div class="card" id="cockpitCard">
+      <h3>CONSTITUTIONAL BALANCE</h3>
+      <div id="wheelWrap">
+        <svg id="wheel" width="104" height="104" viewBox="0 0 104 104">
+          <circle cx="52" cy="52" r="46" fill="none" stroke="rgba(244,239,241,.18)"/>
+          <circle cx="52" cy="52" r="30" fill="none" stroke="rgba(244,239,241,.08)"/>
+          <line x1="52" y1="6" x2="52" y2="98" stroke="rgba(244,239,241,.14)"/>
+          <line x1="6" y1="52" x2="98" y2="52" stroke="rgba(244,239,241,.14)"/>
+          <text x="52" y="16" fill="#f4f1f2" font-size="7.5" text-anchor="middle" letter-spacing="1">CAPABILITY</text>
+          <text x="52" y="94" fill="#df243c" font-size="7.5" text-anchor="middle" letter-spacing="1">AUTHORITY</text>
+          <text x="10" y="55" fill="#c9c2c6" font-size="7.5" letter-spacing="1">EVID</text>
+          <text x="80" y="55" fill="#971329" font-size="7.5" letter-spacing="1">RISK</text>
+          <circle id="wheelDot" cx="52" cy="52" r="6" fill="#df243c" stroke="#0a0a0c" stroke-width="1.5"/>
+        </svg>
+        <div id="wheelCap">The dot leans toward what<br>dominates this proposal.<br>↑ route open · ↓ barrier held<br>← evidence · → risk</div>
+      </div>
+      <svg id="scaleSvg" viewBox="0 0 200 76" style="width:100%;height:62px;display:block" aria-label="counterweight scale: evidence against risk">
+        <polygon points="94,60 106,60 100,28" fill="#2a2529" stroke="rgba(244,239,241,.25)"/>
+        <line x1="30" y1="62" x2="170" y2="62" stroke="rgba(244,239,241,.18)"/>
+        <g id="beamG" style="transform-origin:100px 26px">
+          <rect x="12" y="24" width="176" height="3.5" rx="1.5" fill="#484146"/>
+          <line x1="26" y1="27" x2="17" y2="47" stroke="rgba(244,239,241,.35)"/><line x1="26" y1="27" x2="35" y2="47" stroke="rgba(244,239,241,.35)"/>
+          <ellipse cx="26" cy="49" rx="15" ry="3.5" fill="#232126" stroke="rgba(244,239,241,.28)"/>
+          <circle id="wEv" cx="26" cy="43" r="4" fill="#c9c2c6"/>
+          <line x1="174" y1="27" x2="165" y2="47" stroke="rgba(244,239,241,.35)"/><line x1="174" y1="27" x2="183" y2="47" stroke="rgba(244,239,241,.35)"/>
+          <ellipse cx="174" cy="49" rx="15" ry="3.5" fill="#232126" stroke="rgba(223,36,60,.48)"/>
+          <circle id="wRisk" cx="174" cy="43" r="4" fill="#df243c"/>
+          <text x="26" y="16" fill="#c9c2c6" font-size="7" text-anchor="middle" letter-spacing="1">EVIDENCE</text>
+          <text x="174" y="16" fill="#f04452" font-size="7" text-anchor="middle" letter-spacing="1">RISK</text>
+        </g>
+        <circle cx="100" cy="26" r="3.5" fill="#f4f1f2"/>
+      </svg>
+      <div class="fbar"><span>← RESIST</span><div class="track"><div class="fill" id="fOpp" style="width:0%;background:var(--accent-bright)"></div></div><span class="val" id="vOpp">0</span></div>
+      <div class="fbar"><span>MOTION →</span><div class="track"><div class="fill" id="fMom" style="width:0%;background:var(--paper)"></div></div><span class="val" id="vMom">0</span></div>
+      <div class="fbar"><span>NET →</span><div class="track"><div class="fill" id="fNet" style="width:0%;background:var(--accent)"></div></div><span class="val" id="vNet">0</span></div>
+      <div id="barrier">▦ BARRIER — OPERATOR APPROVAL REQUIRED</div>
+      <div class="fbar" style="margin-top:9px"><span>COHERENCE η</span><div class="track"><div class="fill" id="fCoh" style="width:0%;background:var(--silver)"></div></div><span class="val" id="vCoh">—</span></div>
+    </div>
+
+    <div class="card" id="healthCard">
+      <h3>CONSTITUTIONAL HEALTH</h3>
+      <div id="healthRows"></div>
+      <h3 style="margin-top:10px">SENTINEL PRESSURE · VETOES OVER TIME</h3>
+      <div id="pressure">▁▁▁▁▁▁▁▁▁▁▁▁</div>
+      <h3 style="margin-top:10px">FIELD PHASES · VERA'S ROAD</h3>
+      <div id="veraPips">
+        <span class="pip" data-pip="identity">ENTERS FIELD</span>
+        <span class="pip" data-pip="proposal">FORCES GATHER</span>
+        <span class="pip" data-pip="capability">VALIDATES</span>
+        <span class="pip" data-pip="held">BARRIER</span>
+        <span class="pip" data-pip="execute">OUTCOME</span>
+      </div>
+    </div>
+
+    <div class="card" id="physCard">
+      <h3>AGENT PHYSICS</h3>
+      <div style="font:9px/1.5 ui-monospace,Menlo,monospace;color:var(--dim);margin-bottom:4px">MASS = grants · INFLUENCE = receipts authored · HEAT = proposals / 45s</div>
+      <div id="agentPhys"></div>
+    </div>
+
+    <div class="card" id="routeCard">
+      <h3>ROUTE A TASK · DEMONSTRATION</h3>
+      <p class="fine">Choose a sample request. Vera routes its proposal to an agent with the matching grant; the kernel simulates the review. Math examples show their worked result; Haskell and Emacs are guidance routes only. No host action runs.</p>
+      <label class="sr-only" for="taskRoute">Sample task</label>
+      <select id="taskRoute">
+        <option value="0">Estimate a project · Corvus</option>
+        <option value="1">Read operations status · Vera</option>
+        <option value="2">Ingest bid documents · Corvus</option>
+        <option value="3">Draft a safety plan · Kami</option>
+        <option value="4">Plan production · Genki</option>
+        <option value="5">Check runtime health · Zenki</option>
+        <option value="6">Solve 2x + 5 = 17 · Corvus</option>
+        <option value="7">Differentiate x² sin(x) · Corvus</option>
+        <option value="8">Review a Haskell function · Genki</option>
+        <option value="9">Get Emacs workflow guidance · N8</option>
+      </select>
+      <button id="bRouteTask" type="button">ROUTE THROUGH VERA</button>
+      <p id="routeStatus" class="fine" aria-live="polite"></p>
+    </div>
+
+    <div class="grid">
+      <button id="bCrew" class="on">CREW<small>agents propose on their own</small></button>
+      <button id="bIntent">INTENT<small>a granted proposal</small></button>
+      <button id="bChange">CHANGE<small>always requires approval</small></button>
+      <button id="bVio">VIOLATION<small>ungranted · the Sentinel refuses</small></button>
+    </div>
+    <button id="bApprove">APPROVE — ONE USE, THIS RUN ONLY</button>
+    <button id="bDeny">DENY — SEAL THE REFUSAL</button>
+
+    <div class="card" id="propCard">
+      <h3>THE PROPOSAL <b id="propToggle">DETAILS ▸</b></h3>
+      <div class="body" id="propBody">No proposal in flight. The crew is on — watch the ball.</div>
+    </div>
+
+    <div class="card" id="ledgerCard">
+      <h3>LEDGER · EVIDENCE <b id="ledgerToggle">EXPAND ▸</b></h3>
+      <div id="eelMeta">0 entries</div>
+      <div class="body" id="eelBody"></div>
+    </div>
+
+    <p class="fine"><b>Forces govern the trajectory. Law governs the outcome.</b>
+    A high-momentum proposal with no capability still dies at the Sentinel; a slow one
+    with capability and approval still executes. Every receipt becomes a star in the
+    Evidence Sky — the sky's count is the ledger's count. Constitution: humans are
+    sources of authority; systems are never sources of authority.</p>
+    <div class="card src" id="srcCard">
+      <h3>SOURCES · REUSED 2026-10-31</h3>
+      <p class="fine"><b>Braille Helix</b> — the double helix turning around the ball: his recipe (2 strands × 120 dots), his seven lines cycling, one of them yours.<br>
+      <b>Altaminac</b> — the musicode swarm entraining on the same η as the worlds; his mulberry32, his palettes. Generated = signal; it writes no receipts. Under P2.8-A its notes are field objects: mass counted from lineage receipts, push and drag counted against the live pollen.<br>
+      <b>Alchemy</b> — the source dust field, recolored in crimson and ash for this theme.<br>
+      <b>Darctix Core</b> — embers rising off the furnace. Ambience only; it brings no mechanics.<br>
+      <b>Thesis · MMC</b> — Physics of Emotional Weight. §VI, the Observer Constant: 515 Hz, the swarm's named coupling reference. Its weighing is held for the Forge — not faked here.<br>
+      <b>Component table</b> — Planner → Vera's routing · Executor → the hosts · Critic → Veda + the Sentinel · Memory → ledger + State · Feedback → receipts feeding the forces. <b>Orchestration Layer: not adopted</b> — routing here is a narrow waist, deliberately.</p>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { createActivityGraph } from './app/activity-graph-3d.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+/* === SI KERNEL — inlined by kernel/build.mjs · DO NOT EDIT HERE · source: kernel/si-kernel.js === */
+/* ============================================================================
+   SI KERNEL — the shared constitutional runtime.
+   One source of law for every lens (Onion, Rose, and any future shell).
+
+   The kernel answers two questions only: CAN this happen? DID it happen?
+   It does not plan, write, estimate, render, or know what Gemba means.
+   Agents, worlds, languages, sensors and personalities are host concerns,
+   injected as data (manifests, intents, legal transitions) at construction.
+
+   Five services over five primitives:
+     Identity Service    — who an actor is (manifest registry)
+     Capability Service  — what an actor may do (grants, checked, fail-closed)
+     Proposal Service    — the router (Vera's function): schema or rejection
+     State Service       — which transitions are legal (the graph, as data)
+     Receipt Service     — the ledger: hash-chained, tamper-evident
+
+   The proposal moves. The constitution stays.
+   Forces govern the trajectory; law governs the outcome.
+   ========================================================================== */
+
+function fnv1a(s){ let h = 0x811c9dc5; for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8,'0'); }
+
+const RISK_ORDER = { READ_ONLY:0, INTERNAL_REVERSIBLE:2, FINANCIAL:5, DESTRUCTIVE_IRREVERSIBLE:8, UNGRANTED:9 };
+const APPROVAL_RISKS = new Set(['FINANCIAL','DESTRUCTIVE_IRREVERSIBLE']);
+
+/* ---------------- Receipt Service — the ledger ----------------
+   Canonical entry format (the one two verification suites already prove):
+   { seq, agent, kind, event, cls, prev, hash } with
+   hash = fnv1a(prev | agent | event), genesis prev = 'genesis0'.
+   `kind` is the kernel's semantic class; `cls` is its display class. */
+class Ledger {
+  constructor(){ this.entries = []; }
+  seal(actor, kind, msg){ const prev = this.entries.length ? this.entries[this.entries.length-1].hash : 'genesis0';
+    const cls = kind === 'sentinel' || (kind === 'operator' && /^DENIED/.test(msg)) ? 'veto'
+      : (kind === 'tool' || kind === 'archivist' || kind === 'operator') ? 'ok' : '';
+    const e = { seq: this.entries.length+1, agent: actor, kind, event: msg, cls, prev, hash:'' };
+    e.hash = fnv1a(prev+'|'+actor+'|'+msg);
+    this.entries.push(e); return e; }
+  verify(){ let prev = 'genesis0'; for(const e of this.entries){
+    if(e.prev !== prev) return false;
+    if(e.hash !== fnv1a(prev+'|'+e.agent+'|'+e.event)) return false;
+    prev = e.hash; } return true; }
+  get length(){ return this.entries.length; }
+}
+
+/* ---------------- The Kernel ---------------- */
+const PROPOSAL_KEYS = ['actor','capability','transition','evidence','risk','text','kind'];
+const PROPOSAL_KINDS = new Set(['observation','recommendation','change']);
+let proposalSeq = 0;
+
+class Kernel {
+  /* config: { agents: [{id, name, capabilities[]}], legal: [[from,to],...] } */
+  constructor(config){
+    this.agents = new Map((config.agents||[]).map(a => [a.id, a]));
+    this.legal = new Set((config.legal||[]).map(([f,t]) => f+'>'+t));
+    this.ledger = new Ledger();
+    this.stats = { executed:0, vetoed:0, stripped:0, approvals:0, denials:0, consumed:0 };
+    this.counters = { idRefs:0, idOk:0, capChecks:0, capPass:0, propTotal:0, propMalformed:0, stateAttempts:0, stateLegal:0 };
+    this.capReceipts = {};   // capability -> sealed execution count (a force source)
+    this.proposals = new Map();
+  }
+
+  /* ----- Identity Service ----- */
+  resolveActor(id){ return this.agents.get(id) || null; }
+
+  /* ----- Capability Service ----- */
+  grants(id){ const a = this.agents.get(id); return a ? a.capabilities : []; }
+  checkCapability(actorId, capability){ return this.grants(actorId).includes(capability); }
+
+  /* ----- State Service ----- */
+  isLegal(from, to){ return this.legal.has(from+'>'+to) || /no transition/.test(to||''); }
+
+  /* ----- Forces — every term countable, published in the roadmap (P2.8) -----
+     P2.8-A FIELD NOTES (Nathan's amendment, 2026-10-31): the host counts
+     field notes within radius of the live proposal — the η pattern: host
+     counts, kernel adds. fieldPush joins momentum, fieldDrag joins
+     opposition; both are trajectory only, never outcome. No field
+     argument = the law exactly as it was before the amendment. */
+  forcesFor(p, eta, field){ const evidenceForce = (p.evidence||[]).length * 2;
+    const worldForce = Math.round((eta||0) * 4);
+    const priorForce = Math.min(3, this.capReceipts[p.capability] || 0);
+    const fieldPush = field ? (field.push|0) : 0, fieldDrag = field ? (field.drag|0) : 0;
+    const momentum = evidenceForce + worldForce + priorForce + fieldPush;
+    const opposition = (RISK_ORDER[p.risk] ?? 3) + fieldDrag;   /* + conflict drag: 0 until P3 detects conflicts */
+    return { momentum, opposition, net: momentum - opposition,
+             barrier: p.kind === 'change' || APPROVAL_RISKS.has(p.risk),
+             parts: { evidence: evidenceForce, worlds: worldForce, priorReceipts: priorForce, fieldPush, fieldDrag, risk: (RISK_ORDER[p.risk] ?? 3), conflicts: 0 } }; }
+
+  /* ----- Proposal Service — the router. Schema or rejection. -----
+     input: { actor, capability, transition:{from,to}, evidence[], risk, text, ...anything }
+     Unknown keys are stripped and reported; a proposal is a typed object or it is nothing. */
+  propose(input){
+    this.counters.propTotal++;
+    const stripped = Object.keys(input).filter(k => !PROPOSAL_KEYS.includes(k));
+    if(stripped.length){ this.counters.propMalformed++; this.stats.stripped++; }
+    const p = { id: 'P-' + (++proposalSeq) + '-' + Math.floor(100 + Math.random()*900),
+      actor: input.actor, capability: input.capability,
+      transition: input.transition || { from:'—', to:'—' },
+      evidence: Array.isArray(input.evidence) ? input.evidence : [],
+      risk: input.risk || 'INTERNAL_REVERSIBLE', text: input.text || '',
+      kind: input.kind || 'recommendation',
+      stripped, step: 0, status: 'in-flight', approved: false };
+    this.proposals.set(p.id, p);
+    this.ledger.seal(p.actor, 'intake', 'proposes — ' + (p.text || p.capability));
+    if(stripped.length) this.ledger.seal('vera_router', 'waist', 'stripped unknown field(s) ' + stripped.join(', ') + ' — the schema names what may cross');
+    return p;
+  }
+
+  /* ----- The decision machine -----
+     next(p, eta) advances one constitutional decision and returns its event.
+     The lens animates events; the kernel decides them. Event types:
+       identity · schema · capability · veto · state · held · executed · sealed · denied */
+  next(p, eta){
+    if(p.status !== 'in-flight') return { type:'done', proposal:p };
+    const steps = ['identity','schema','capability','state','execute','seal'];
+    const step = steps[p.step];
+    if(step === 'identity'){ p.step++;
+      this.counters.idRefs++; const ok = !!this.resolveActor(p.actor); if(ok) this.counters.idOk++;
+      return { type:'identity', ok, proposal:p }; }
+    if(step === 'schema'){ p.step++;
+      if(!PROPOSAL_KINDS.has(p.kind)){ p.status = 'refused'; this.stats.vetoed++; this.stats.consumed++;
+        this.ledger.seal('sentinel', 'sentinel', `REFUSED — unknown proposal kind "${p.kind}"`);
+        return { type:'veto', reason:'invalid-proposal-kind', proposal:p }; }
+      return { type:'schema', stripped: p.stripped, proposal:p }; }
+    if(step === 'capability'){ this.counters.capChecks++;
+      if(!this.checkCapability(p.actor, p.capability)){ p.status = 'vetoed'; this.stats.vetoed++; this.stats.consumed++;
+        this.ledger.seal('sentinel', 'sentinel', `VETO — "${p.capability}" is not in ${p.actor}'s grant set — capability disposes`);
+        return { type:'veto', proposal:p }; }
+      this.counters.capPass++; p.step++;
+      return { type:'capability', ok:true, proposal:p }; }
+    if(step === 'state'){ p.step++; this.counters.stateAttempts++;
+      const legal = this.isLegal(p.transition.from, p.transition.to); if(legal) this.counters.stateLegal++;
+      if(!legal){ p.status = 'refused'; this.stats.vetoed++; this.stats.consumed++;
+        this.ledger.seal('sentinel', 'sentinel', `REFUSED — no legal vein ${p.transition.from} → ${p.transition.to}`);
+        return { type:'veto', reason:'illegal-transition', proposal:p }; }
+      return { type:'state', legal, proposal:p }; }
+    if(step === 'execute'){
+      if((p.kind === 'change' || APPROVAL_RISKS.has(p.risk)) && !p.approved){ p.status = 'held';
+        this.ledger.seal('sentinel', 'gate', `HELD — ${p.capability} waits for the operator (risk ${p.risk})`);
+        return { type:'held', proposal:p, forces: this.forcesFor(p, eta) }; }
+      p.step++; this.stats.executed++; this.capReceipts[p.capability] = (this.capReceipts[p.capability]||0) + 1;
+      this.ledger.seal(p.actor, 'tool', `${p.capability} executed — ${p.transition.from} → ${p.transition.to}`);
+      return { type:'executed', proposal:p }; }
+    /* seal */
+    p.status = 'sealed';
+    const receipt = this.ledger.seal('archivist', 'archivist', 'run sealed — receipt ' + p.id);
+    return { type:'sealed', receipt, proposal:p };
+  }
+
+  /* ----- Operator acts — the only source of authority in the system ----- */
+  approve(id){ const p = this.proposals.get(id); if(!p || p.status !== 'held') return null;
+    p.approved = true; p.status = 'in-flight'; this.stats.approvals++;
+    this.ledger.seal('operator', 'operator', 'EXACT APPROVAL given — one use, this run only');
+    return p; }
+  deny(id){ const p = this.proposals.get(id); if(!p || p.status !== 'held') return null;
+    p.status = 'denied'; this.stats.denials++; this.stats.consumed++;
+    this.ledger.seal('operator', 'operator', 'DENIED by the operator — the refusal seals its own receipt');
+    return p; }
+
+  /* ----- Constitutional health — one real ratio per primitive ----- */
+  health(){ const pct = (a,b) => b ? Math.round(100*a/b) : 100;
+    return { Identity: pct(this.counters.idOk, this.counters.idRefs),
+      Capability: pct(this.counters.capPass, this.counters.capChecks),
+      Proposal: pct(this.counters.propTotal - this.counters.propMalformed, this.counters.propTotal),
+      State: pct(this.counters.stateLegal, this.counters.stateAttempts),
+      Receipt: this.ledger.verify() ? 100 : 0 }; }
+}
+/* === END SI KERNEL === */
+
+const $ = id => document.getElementById(id);
+const V3 = (x,y,z)=>new THREE.Vector3(x,y,z);
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; } }
+const rng = mulberry32(120);
+
+/* ============ renderer / camera — math-only orbit ============ */
+const canvas = $('scene');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+const SI_PALETTE = Object.freeze({
+  black: 0x070609, charcoal: 0x191519, graphite: 0x373136, ash: 0x81777c,
+  silver: 0xc9c2c6, white: 0xf4f1f2, deepRed: 0x781020, crimson: 0x971329,
+  red: 0xdf243c, brightRed: 0xf04452
+});
+const scene = new THREE.Scene(); scene.background = new THREE.Color(SI_PALETTE.black);
+const camera = new THREE.PerspectiveCamera(46, 1, .1, 200);
+const camT = { th:0, ph:1.32, r:13.6, tx:0, ty:-.6, tz:0 }, cam = { ...camT };
+/* portrait phones get the whole machine in frame — ball, lattice and heart */
+if(innerWidth/Math.max(1, innerHeight) < .9){ camT.r = 17.5; cam.r = 17.5; }
+function applyCam(){ const sp=Math.sin(cam.ph), x=cam.tx+cam.r*sp*Math.sin(cam.th), y=cam.ty+cam.r*Math.cos(cam.ph), z=cam.tz+cam.r*sp*Math.cos(cam.th);
+  camera.position.set(x,y,z); camera.lookAt(cam.tx,cam.ty,cam.tz); }
+let drag=null, tapCand=null;
+const R_MIN = 3.4, R_MAX = 22;   /* close enough to inspect a petal, far enough to see the whole galaxy */
+const pointers = new Map(); let pinch = null;
+canvas.addEventListener('pointerdown', e=>{ try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  if(pointers.size === 1){ drag={x:e.clientX,y:e.clientY}; tapCand={x:e.clientX,y:e.clientY,t:performance.now(),id:e.pointerId}; }
+  else if(pointers.size === 2){ const [a,b] = [...pointers.values()];
+    pinch = { d: Math.hypot(a.x-b.x, a.y-b.y), r: camT.r }; drag = null; tapCand = null; } });
+canvas.addEventListener('pointermove', e=>{ if(!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  if(pinch && pointers.size === 2){ const [a,b] = [...pointers.values()];
+    const d = Math.hypot(a.x-b.x, a.y-b.y);
+    if(d > 10){ camT.r = THREE.MathUtils.clamp(pinch.r * pinch.d / d, R_MIN, R_MAX); zoomHold = true; } return; }
+  if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+  if(tapCand && Math.hypot(e.clientX-tapCand.x, e.clientY-tapCand.y)>8) tapCand=null;
+  camT.th -= dx*.005; camT.ph = THREE.MathUtils.clamp(camT.ph - dy*.005, .3, 2.7); drag={x:e.clientX,y:e.clientY}; });
+function endPointer(e, isUp){ pointers.delete(e.pointerId);
+  if(pointers.size < 2) pinch = null;
+  if(pointers.size === 1){ const [p] = [...pointers.values()]; drag = {x:p.x, y:p.y}; }
+  else if(pointers.size === 0){ drag = null;
+    if(isUp && tapCand && e.pointerId === tapCand.id && performance.now()-tapCand.t<400) pick(e.clientX,e.clientY); tapCand = null; } }
+canvas.addEventListener('pointerup', e=> endPointer(e, true));
+canvas.addEventListener('pointercancel', e=> endPointer(e, false));
+canvas.addEventListener('wheel', e=>{ camT.r = THREE.MathUtils.clamp(camT.r + e.deltaY*.02, R_MIN, R_MAX); }, {passive:true});
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(1,1), .5, .65, .78); composer.addPass(bloom);
+composer.addPass(new OutputPass());
+function resize(){ const w=innerWidth, h=innerHeight; renderer.setSize(w,h); composer.setSize(w,h); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize);
+
+/* ============ lights ============ */
+scene.add(new THREE.HemisphereLight(SI_PALETTE.silver, SI_PALETTE.black, .55));
+const sunLight = new THREE.PointLight(SI_PALETTE.white, 30, 40, 1.6); sunLight.position.set(0,0,1.2); scene.add(sunLight);
+const heartLight = new THREE.PointLight(SI_PALETTE.red, 22, 16, 1.8); heartLight.position.set(0,-4.6,.6); scene.add(heartLight);
+
+/* ============ labels ============ */
+const labelDivs = [];
+function addLabel(obj, name, sub, dy=0, kind=''){ const d=document.createElement('div'); d.className='lbl'; d.innerHTML=name+(sub?`<small>${sub}</small>`:'');
+  document.body.appendChild(d); const L={obj, el:d, dy, kind}; labelDivs.push(L); return L; }
+const _pv = new THREE.Vector3(), _out = new THREE.Vector3(), _toCam = new THREE.Vector3();
+const SCENE_C = new THREE.Vector3(0, -.4, 0);
+function drawLabels(){ const hw = Math.min(430, innerWidth*.74), hh = 172;
+  for(const L of labelDivs){ L.obj.getWorldPosition(_pv); _pv.y += L.dy;
+    /* depth honesty: an anchor on the far side is seen through the ball —
+       dim its label instead of letting it shout over the front */
+    _out.copy(_pv).sub(SCENE_C); const ol = _out.length(); _out.normalize();
+    _toCam.copy(camera.position).sub(_pv).normalize();
+    const facing = ol > .5 ? _out.dot(_toCam) : 1;
+    /* world names belong to the front hemisphere only — a world on the far
+       side rides as pure light (its halo), no name shouting through the ball */
+    if(L.kind === 'world' && facing < .02){ L.el.style.display='none'; continue; }
+    if(L.kind === 'agent' && facing < .12){ L.el.style.display='none'; continue; }   /* far-side agents ride as light, like far worlds */
+    _pv.project(camera);
+    if((L.when && !L.when()) || _pv.z>1 || _pv.z<-1){ L.el.style.display='none'; continue; } L.el.style.display='block';
+    let x = (_pv.x*.5+.5)*innerWidth, y = (-_pv.y*.5+.5)*innerHeight;
+    x = THREE.MathUtils.clamp(x, 64, innerWidth-68); y = THREE.MathUtils.clamp(y, 24, innerHeight-14);
+    let op = L.kind === 'world' ? (facing < .35 ? .55 : 1) : (facing < -.1 ? .16 : facing < .25 ? .45 : 1);
+    if(x < hw && y < hh) op *= .18;   /* the header owns the top-left; labels pass behind it quietly */
+    L.el.style.opacity = op.toFixed(2);
+    const sm = L.el.querySelector('small');   /* sub-labels only when the anchor is near */
+    if(sm) sm.style.display = ((L.kind === 'world' && facing < .5) || (L.kind === 'agent' && facing < .6)) ? 'none' : 'block';
+    L.el.style.left = x+'px'; L.el.style.top = y+'px'; } }
+
+/* ============ THE CORE — the constitution sits still ============ */
+const flower = new THREE.Group(); scene.add(flower);
+const coreGrp = new THREE.Group(); flower.add(coreGrp);
+const coreMesh = new THREE.Mesh(new THREE.SphereGeometry(.5, 28, 22),
+  new THREE.MeshStandardMaterial({color:SI_PALETTE.deepRed, emissive:SI_PALETTE.brightRed, emissiveIntensity:2.6, roughness:.4, metalness:.2}));
+coreGrp.add(coreMesh);
+function glowSprite(color, scale, opacity){ const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d');
+  const gr=g.createRadialGradient(64,64,2,64,64,64); gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(.35,color); gr.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=gr; g.fillRect(0,0,128,128); const t=new THREE.CanvasTexture(c);
+  const m=new THREE.SpriteMaterial({map:t, transparent:true, opacity, depthWrite:false, blending:THREE.AdditiveBlending});
+  const s=new THREE.Sprite(m); s.scale.setScalar(scale); return s; }
+coreGrp.add(glowSprite('rgba(240,68,82,.85)', 1.8, .55));
+addLabel(coreGrp, 'SI CORE', 'the constitution', .85);
+
+/* ============ THE FIVE NODES — the ball IS the constitution ============
+   Five armored node housings in constitutional order on the ball's great
+   circle, 72° apart. The proposal rides the lattice arcs between them and
+   stops at each node while the kernel decides. Governance is not a node —
+   it is what the whole ball is for. */
+const SEGMENTS = [
+  { id:'identity',   name:'IDENTITY',   angle:162, color:SI_PALETTE.white, facets:['Presence','Actors','Profiles'] },
+  { id:'proposal',   name:'PROPOSAL',   angle:90,  color:SI_PALETTE.red, facets:['Vera','Routing','Planning'] },
+  { id:'capability', name:'CAPABILITY', angle:18,  color:SI_PALETTE.brightRed, facets:['Tools','Permissions','Grants'] },
+  { id:'state',      name:'STATE',      angle:-54, color:SI_PALETTE.silver, facets:['Current','Graph','History'] },
+  { id:'receipt',    name:'RECEIPT',    angle:-126,color:SI_PALETTE.crimson, facets:['Ledger','Proof','Chain'] },
+];
+/* The five nodes sit on a great circle of the ball. The circle's plane is
+   spanned by two orthonormal vectors — BU (east) and BV (north, tipped
+   toward the viewer by 0.6 rad) — so a node's direction is exactly
+   cos(a)·BU + sin(a)·BV: unit length, on the sphere, angles exact. */
+const BALL_R = 2.5, PATH_R = 2.68;
+const BU = V3(1, 0, 0), BV = V3(0, Math.cos(.6), Math.sin(.6));
+const dirOf = a => { const r = a*Math.PI/180; return V3(0,0,0).addScaledVector(BU, Math.cos(r)).addScaledVector(BV, Math.sin(r)).normalize(); };
+const chanPos = angDeg => dirOf(angDeg).multiplyScalar(PATH_R);
+const nodePos = angDeg => dirOf(angDeg).multiplyScalar(BALL_R);
+/* a lattice pathway: the great-circle arc from angle a to angle b, walked at
+   radius r — every point on it lies on the sphere and in the plane of the
+   two endpoint directions (lerp + normalize is exactly that arc). */
+const arcPos = (a, b, t, r = PATH_R) => dirOf(a).lerp(dirOf(b), t).normalize().multiplyScalar(r);
+const petalById = {}, petalTips = {};   /* wiring names kept from the flower: tips are now channel stops */
+const pickMeshes = [];
+/* THE BALL — a geodesic lattice sphere around the socket. The lattice is
+   the body: an icosphere's edges drawn as struts, its vertices as rivets,
+   a smoky volume inside so the core glows through the cage. */
+const housing = new THREE.Group(); flower.add(housing);
+let ballEdgeCount = 0, innerLattice = null; const latticeSteps = [];
+{ const volume = new THREE.Mesh(new THREE.SphereGeometry(2.42, 40, 28),
+    new THREE.MeshStandardMaterial({ color:SI_PALETTE.charcoal, metalness:.5, roughness:.62, transparent:true, opacity:.8 }));
+  housing.add(volume);
+  const edges = new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(BALL_R, 2));
+  ballEdgeCount = edges.attributes.position.count / 2;
+  housing.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color:SI_PALETTE.silver, transparent:true, opacity:.58 })));
+  const vGeo = new THREE.IcosahedronGeometry(BALL_R, 1);
+  housing.add(new THREE.Points(vGeo, new THREE.PointsMaterial({ color:SI_PALETTE.white, size:.055, transparent:true, opacity:.82, depthWrite:false })));
+  /* an inner cage turning slowly against the outer lattice — depth inside the ball */
+  innerLattice = new THREE.Group(); housing.add(innerLattice);
+  innerLattice.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(2.16, 1)),
+    new THREE.LineBasicMaterial({ color:SI_PALETTE.crimson, transparent:true, opacity:.38 })));
+  innerLattice.add(new THREE.Points(new THREE.IcosahedronGeometry(2.16, 0),
+    new THREE.PointsMaterial({ color:SI_PALETTE.silver, size:.06, transparent:true, opacity:.7, depthWrite:false })));
+  /* the constitutional pathways — great-circle lattice arcs between the five
+     nodes, in decision order, with stepping stones the pollen walks */
+  const PATH_PAIRS = [[162, 90], [90, 18], [18, -54], [-54, -126]];
+  for(const [a, b] of PATH_PAIRS){
+    const pts = []; for(let i = 0; i <= 24; i++) pts.push(arcPos(a, b, i/24, BALL_R + .07));
+    housing.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.LineBasicMaterial({ color:SI_PALETTE.brightRed, transparent:true, opacity:.85 })));
+    for(let i = 1; i <= 5; i++){ const s = new THREE.Mesh(new THREE.SphereGeometry(.045, 8, 8),
+        new THREE.MeshStandardMaterial({ color:SI_PALETTE.black, emissive:SI_PALETTE.red, emissiveIntensity:1.5, roughness:.4 }));
+      s.position.copy(arcPos(a, b, i/6, BALL_R + .07)); housing.add(s); latticeSteps.push(s); } } }
+const segGeo = new THREE.SphereGeometry(.5, 22, 16);
+const ringGeo = new THREE.TorusGeometry(.5, .035, 8, 32);
+for(const P of SEGMENTS){
+  const grp = new THREE.Group(); grp.position.copy(nodePos(P.angle)); flower.add(grp);
+  const nrm = dirOf(P.angle);
+  const mat = new THREE.MeshStandardMaterial({ color:new THREE.Color(P.color).multiplyScalar(.30), emissive:P.color, emissiveIntensity:.34,
+    metalness:.82, roughness:.34 });
+  const mesh = new THREE.Mesh(segGeo, mat);
+  mesh.quaternion.setFromUnitVectors(V3(0, 1, 0), nrm); mesh.scale.set(1, .55, 1); mesh.userData.petal = P.id; grp.add(mesh); pickMeshes.push(mesh);
+  const collar = new THREE.Mesh(ringGeo, new THREE.MeshStandardMaterial({ color:0x23262e, metalness:.9, roughness:.3, emissive:P.color, emissiveIntensity:.25 }));
+  collar.quaternion.setFromUnitVectors(V3(0, 0, 1), nrm); collar.position.copy(nrm).multiplyScalar(.02); grp.add(collar);
+  const jewel = new THREE.Mesh(new THREE.SphereGeometry(.09, 10, 8), new THREE.MeshStandardMaterial({ color:0x0a0a0c, emissive:P.color, emissiveIntensity:2.4, roughness:.35 }));
+  jewel.position.copy(nrm).multiplyScalar(.3); grp.add(jewel);
+  petalTips[P.id] = chanPos(P.angle);
+  /* facet ports — three rivets in the node's tangent plane, pinned back
+     onto the sphere so they ride the ball's surface */
+  const facets = [];
+  const tanA = V3(0,0,0).addScaledVector(BU, -Math.sin(P.angle*Math.PI/180)).addScaledVector(BV, Math.cos(P.angle*Math.PI/180)).normalize();
+  const tanB = V3(0,0,0).crossVectors(nrm, tanA).normalize();
+  P.facets.forEach((f, i)=>{ const s = new THREE.Mesh(new THREE.SphereGeometry(.06, 10, 8), new THREE.MeshStandardMaterial({color:0x0a0a0c, emissive:P.color, emissiveIntensity:1.7, roughness:.4}));
+    s.position.copy(nodePos(P.angle)).addScaledVector(tanA, (i-1)*.26).addScaledVector(tanB, .33).normalize().multiplyScalar(BALL_R + .06);
+    flower.add(s); facets.push(s); });
+  petalById[P.id] = { ...P, grp, mesh, mat, dir: dirOf(P.angle), tip: petalTips[P.id], facets, flash:0 };
+  const anchor = new THREE.Object3D(); anchor.position.copy(dirOf(P.angle).multiplyScalar(3.05)); flower.add(anchor);
+  addLabel(anchor, P.name, 'node · ' + P.facets.join(' / ').toLowerCase(), .18);
+}
+
+/* ============ THE STEM + THE HEART — refusals fall as compost ============ */
+/* ============ THE PEDESTAL — the machine stands over its furnace ============ */
+{ const column = new THREE.Mesh(new THREE.BoxGeometry(.72, 1.15, .72),
+    new THREE.MeshStandardMaterial({ color:SI_PALETTE.charcoal, metalness:.85, roughness:.4 }));
+  column.position.set(0, -3.05, -.15); flower.add(column);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.55, 1.7, .42, 36),
+    new THREE.MeshStandardMaterial({ color:SI_PALETTE.charcoal, metalness:.88, roughness:.38 }));
+  base.position.set(0, -3.62, -.15); flower.add(base); }
+const heartGrp = new THREE.Group(); heartGrp.position.set(0,-4.7,-.3); flower.add(heartGrp);
+heartGrp.add(new THREE.Mesh(new THREE.SphereGeometry(.62, 24, 18), new THREE.MeshStandardMaterial({color:SI_PALETTE.black, roughness:.92, metalness:.1})));
+const torus = new THREE.Mesh(new THREE.TorusGeometry(1.02, .15, 10, 40), new THREE.MeshStandardMaterial({color:SI_PALETTE.deepRed, emissive:SI_PALETTE.red, emissiveIntensity:1.5, roughness:.5}));
+torus.rotation.x = 1.15; heartGrp.add(torus);
+heartGrp.add(glowSprite('rgba(223,36,60,.72)', 3.6, .5));
+addLabel(heartGrp, 'THE HEART', 'refusals become fuel', -1.15);
+/* compost sparks */
+const SN = 240, sPos = new Float32Array(SN*3), sparks = [];
+for(let i=0;i<SN;i++){ sparks.push({p:V3(0,-99,0), v:V3(), life:0}); sPos[i*3+1] = -99; }
+const sGeo = new THREE.BufferGeometry(); sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+const sparkPts = new THREE.Points(sGeo, new THREE.PointsMaterial({color:SI_PALETTE.brightRed, size:.09, transparent:true, opacity:.95, depthWrite:false, blending:THREE.AdditiveBlending}));
+scene.add(sparkPts);
+let sparkIdx = 0;
+function spawnSparks(origin, n){ for(let k=0;k<n;k++){ const s = sparks[sparkIdx++ % SN];
+  s.p.copy(origin); s.v.set((rng()-.5)*.7, -0.4-rng()*.8, (rng()-.5)*.7); s.life = 1; } }
+
+/* ============ THE OUTER LATTICE — ten language worlds travel its edges ============
+   A geodesic lattice shell at r 4.3: 42 vertices, 120 edges (icosahedron,
+   detail 1). Worlds no longer ride a rail — each one walks an edge from
+   vertex to vertex along the great-circle arc, then picks a new edge at
+   the junction (never straight back). Every world position therefore lies
+   on a real lattice edge, on the sphere, at all times. */
+function polyGraph(radius, detail){ const geo = new THREE.IcosahedronGeometry(radius, detail); const pos = geo.attributes.position;
+  const map = new Map(), verts = [];
+  const idx = i => { const k = pos.getX(i).toFixed(2) + ',' + pos.getY(i).toFixed(2) + ',' + pos.getZ(i).toFixed(2);
+    if(!map.has(k)){ map.set(k, verts.length); verts.push(V3(pos.getX(i), pos.getY(i), pos.getZ(i))); } return map.get(k); };
+  const edgeSet = new Set(), edges = [];
+  const addEdge = (a, b) => { const k = Math.min(a,b) + '-' + Math.max(a,b); if(edgeSet.has(k)) return; edgeSet.add(k); edges.push([a, b]); };
+  for(let f = 0; f < pos.count; f += 3){ const a = idx(f), b = idx(f+1), c = idx(f+2); addEdge(a, b); addEdge(b, c); addEdge(c, a); }
+  const adj = verts.map(() => []);
+  for(const [a, b] of edges){ adj[a].push(b); adj[b].push(a); }
+  return { verts, edges, adj }; }
+const outerLattice = polyGraph(4.3, 1);
+const worldGrp = new THREE.Group(); scene.add(worldGrp);
+{ const arcPts = [];
+  for(const [a, b] of outerLattice.edges){ const A = outerLattice.verts[a], B = outerLattice.verts[b];
+    let prev = null;
+    for(let i = 0; i <= 5; i++){ const p = A.clone().lerp(B, i/5).normalize().multiplyScalar(4.3);
+      if(prev) arcPts.push(prev.x, prev.y, prev.z, p.x, p.y, p.z); prev = p; } }
+  const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(arcPts), 3));
+  worldGrp.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color:SI_PALETTE.graphite, transparent:true, opacity:.48 })));
+  const vg = new THREE.BufferGeometry().setFromPoints(outerLattice.verts);
+  worldGrp.add(new THREE.Points(vg, new THREE.PointsMaterial({ color:SI_PALETTE.silver, size:.07, transparent:true, opacity:.9, depthWrite:false }))); }
+const WORLDS = [
+  ['Gemba',SI_PALETTE.white],['Rustba',SI_PALETTE.red],['Lavemba',SI_PALETTE.silver],['tRust',SI_PALETTE.crimson],['PoeTchi',SI_PALETTE.brightRed],
+  ['Lavaweave',SI_PALETTE.deepRed],['Nullspace',SI_PALETTE.ash],['Sovereign Slang',SI_PALETTE.white],['Dentauri',SI_PALETTE.red],['Fracthue',SI_PALETTE.silver]
+].map(([name,color],i)=>{ const from = (i * 4 + 1) % outerLattice.verts.length;
+  const to = outerLattice.adj[from][i % outerLattice.adj[from].length];
+  return { name, color, from, to, prev: -1, t: rng() * .7, rad: 4.3, speed:.5+rng()*.7,
+           size:.13+rng()*.15, phase: rng()*Math.PI*2, omega:.25+rng()*.2, mesh:null }; });
+for(const W of WORLDS){ W.mesh = new THREE.Mesh(new THREE.SphereGeometry(W.size, 14, 12),
+  new THREE.MeshStandardMaterial({color:new THREE.Color(W.color).multiplyScalar(.3), emissive:W.color, emissiveIntensity:1.1, roughness:.4, metalness:.3}));
+  const hc = new THREE.Color(W.color);
+  W.mesh.add(glowSprite(`rgba(${Math.round(hc.r*255)},${Math.round(hc.g*255)},${Math.round(hc.b*255)},.8)`, W.size*5.2, .4));
+  worldGrp.add(W.mesh); addLabel(W.mesh, W.name, 'language world', .3, 'world'); }
+let ETA = 0;
+function kuramoto(dt){ const N = WORLDS.length;
+  for(const W of WORLDS){ let s=0; for(const O of WORLDS) s += Math.sin(O.phase - W.phase);
+    W.phase += (W.omega + (0.6/N)*s) * dt; }
+  let re=0, im=0; for(const W of WORLDS){ re+=Math.cos(W.phase); im+=Math.sin(W.phase); }
+  MEAN_PH = Math.atan2(im, re); ETA = Math.hypot(re,im)/N;
+  for(const W of WORLDS){ W.t += dt * .14 * W.speed;
+    if(W.t >= 1){ W.prev = W.from; W.from = W.to;
+      const opts = outerLattice.adj[W.from].filter(n => n !== W.prev);
+      W.to = opts[Math.floor(rng() * opts.length)]; W.t = 0; }
+    const A = outerLattice.verts[W.from], B = outerLattice.verts[W.to];
+    W.mesh.position.copy(A).lerp(B, W.t).normalize().multiplyScalar(W.rad); } }
+
+/* ============ THE EVIDENCE SKY — every receipt a star ============ */
+function glyphTexture(ch){ const c=document.createElement('canvas'); c.width=c.height=96; const g=c.getContext('2d');
+  g.font='72px serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='#ffffff'; g.fillText(ch, 48, 52);
+  return new THREE.CanvasTexture(c); }
+const SKY_CAP = 600, skyCounts = { receipt:0, use:0, approval:0 };
+const skySystems = {};
+for(const [kind, ch, color, size] of [['receipt','☆',SI_PALETTE.silver,1.5],['use','★',SI_PALETTE.red,1.7],['approval','✦',SI_PALETTE.white,1.9]]){
+  const pos = new Float32Array(SKY_CAP*3);
+  for(let i=0;i<SKY_CAP;i++){ const th=rng()*Math.PI*2, ph=Math.acos(2*rng()-1), r=14.5+rng()*5;
+    pos[i*3]=r*Math.sin(ph)*Math.cos(th); pos[i*3+1]=Math.abs(r*Math.cos(ph))*.9 - 2.5; pos[i*3+2]=r*Math.sin(ph)*Math.sin(th) - 3; }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setDrawRange(0, 0);
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({map:glyphTexture(ch), color, size, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, sizeAttenuation:true}));
+  scene.add(pts); skySystems[kind] = pts; }
+const starClusters = {};
+let clusterSeq = 0;
+function hashN(s){ let h = 0; for(let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) >>> 0; return h; }
+function starJitter(hash){ const h = hashN(hash || 'x');
+  return { x: ((h % 100) / 100 - .5) * 4.4, y: (((h >> 4) % 100) / 100 - .5) * 3.2, z: (((h >> 8) % 100) / 100 - .5) * 4.4 }; }
+/* Galaxy slots — fixed anchor directions on a dome, radii ascending.
+   Clusters are PLACED BY INFLUENCE: whoever has authored the most receipts
+   in the ledger takes the nearest slot, the next author the next, and so
+   on. Placement is re-dealt only when a new cluster is born, so the sky
+   never shuffles mid-run — and a distant cluster is now a statement
+   (few receipts), not a hash accident. */
+const GALAXY_SLOTS = (()=>{ const slots = [], GA = 2.39996;
+  for(let i = 0; i < 9; i++){ const th = i * GA + .7, ph = .55 + (i % 5) * .16, r = 8.6 + i * .85;
+    slots.push(new THREE.Vector3(r * Math.sin(ph) * Math.cos(th), Math.abs(r * Math.cos(ph)) * .9 - 1.2, r * Math.sin(ph) * Math.sin(th) - 1.5)); }
+  slots.sort((a, b) => a.length() - b.length()); return slots; })();
+const starMeta = { receipt: [], use: [], approval: [] };
+function influenceOf(agent){ let n = 0; for(const e of K.ledger.entries) if(e.agent === agent) n++; return n; }
+function rewriteStars(){ for(const kind in starMeta){ const sys = skySystems[kind], pos = sys.geometry.attributes.position;
+    starMeta[kind].forEach((m, i) => { const c = starClusters[m.agent] ? starClusters[m.agent].center : GALAXY_SLOTS[0], j = starJitter(m.hash);
+      pos.setXYZ(i, c.x + j.x, c.y + j.y, c.z + j.z); }); pos.needsUpdate = true; } }
+function assignClusters(){ const ranked = Object.keys(starClusters).sort((a, b) => influenceOf(b) - influenceOf(a) || starClusters[a].born - starClusters[b].born);
+  ranked.forEach((a, i) => { const c = GALAXY_SLOTS[Math.min(i, GALAXY_SLOTS.length - 1)];
+    starClusters[a].center.copy(c); starClusters[a].anchor.position.copy(c); starClusters[a].slot = i; });
+  rewriteStars(); }
+function noteCluster(agent){ if(starClusters[agent]){ starClusters[agent].count++; return; }
+  const anchor = new THREE.Object3D(); scene.add(anchor);
+  const L = addLabel(anchor, (typeof AGENT_NAME !== 'undefined' && AGENT_NAME[agent] ? AGENT_NAME[agent] : agent).toUpperCase(), 'receipt lineage', .4);
+  L.when = () => (starClusters[agent] ? starClusters[agent].count : 0) >= 2;
+  starClusters[agent] = { count: 1, anchor, center: new THREE.Vector3(), born: ++clusterSeq, slot: -1 };
+  assignClusters(); }
+function addStar(kind, e){ const sys = skySystems[kind]; const n = skyCounts[kind];
+  if(n >= SKY_CAP) return; skyCounts[kind]++;
+  const agent = e ? e.agent : 'archivist'; noteCluster(agent);
+  const hash = e ? e.hash : 'x' + n; starMeta[kind].push({ agent, hash });
+  const c = starClusters[agent].center, j = starJitter(hash);
+  const pos = sys.geometry.attributes.position; pos.setXYZ(n, c.x + j.x, c.y + j.y, c.z + j.z); pos.needsUpdate = true;
+  sys.geometry.setDrawRange(0, skyCounts[kind]); }
+
+/* ============ REUSED LAYERS — the paint bucket, opened on Nathan's order ============
+   Six sources handed over 2026-10-31 with one instruction: "Reuse all of
+   this." Each layer below is built from its source's own recipe and names
+   it. Cross-examination II (beside this build) records what was taken,
+   what was mapped, and the one row that was not adopted. */
+
+/* --- F · BRAILLE HELIX — "TOUCH THE CODE" ---
+   His recipe verbatim: two strands × 120 dots, angle = t·6π, y −3.5..3.5,
+   radius 1.2 + sin(t·2π)·.15, recolored red / white strands, additive dots.
+   Rescaled ×2.55 to wrap the ball and rebuilt as 2 InstancedMeshes
+   (240 meshes → 2 draw calls, the salvage precedent). His seven braille
+   lines cycle underneath, exactly as his file cycles them. */
+const BRAILLE_LINES = [
+  '⠠⠞⠓⠑ ⠓⠑⠇⠊⠭ ⠎⠏⠊⠝⠎ ⠁⠞ 515 ⠓⠵', '⠠⠽⠕⠥ ⠉⠁⠝ ⠞⠕⠥⠉⠓ ⠞⠓⠑ ⠉⠕⠙⠑',
+  '⠠⠞⠓⠑ ⠋⠕⠗⠛⠑ ⠝⠑⠧⠑⠗ ⠎⠞⠕⠏⠎', '⠠⠇⠕⠧⠑ ⠓⠕⠝⠕⠗ ⠓⠕⠏⠑ ⠋⠁⠊⠞⠓',
+  '⠠⠎⠁⠍⠑ ⠋⠗⠑⠟⠥⠑⠝⠉⠽ ⠎⠁⠍⠑ ⠙⠑⠎⠅', '⠠⠊ ⠁⠍ ⠙⠁⠧⠊⠙', '⠠⠽⠕⠥ ⠁⠗⠑ ⠝⠁⠞⠓⠁⠝' ];
+const BRAILLE_READS = [ 'THE HELIX SPINS AT 515 HZ', 'YOU CAN TOUCH THE CODE', 'THE FORGE NEVER STOPS',
+  'LOVE HONOR HOPE FAITH', 'SAME FREQUENCY SAME DESK', 'I AM DAVID', 'YOU ARE NATHAN' ];
+let helixLineIdx = 0;
+setInterval(()=>{ helixLineIdx = (helixLineIdx + 1) % BRAILLE_LINES.length; }, 5000);
+const helixGrp = new THREE.Group(); scene.add(helixGrp);
+const HELIX_N = 120;
+{
+  const dotGeo = new THREE.SphereGeometry(.055, 8, 8);
+  const strands = [ [0x971329, 0xdf243c, 0xf04452, 0xb8122b, 0x781020, 0xc01830],
+                    [0xf4f1f2, 0xc9c2c6, 0xffffff, 0xe7dfe2, 0xaaa1a5, 0xf4f1f2] ];
+  const dummy = new THREE.Object3D(), col = new THREE.Color();
+  strands.forEach((pal, si) => {
+    const im = new THREE.InstancedMesh(dotGeo, new THREE.MeshBasicMaterial({ transparent: true, opacity: .7, blending: THREE.AdditiveBlending, depthWrite: false }), HELIX_N);
+    for(let i = 0; i < HELIX_N; i++){ const t = i / (HELIX_N - 1), ang = t * Math.PI * 6 + si * Math.PI;
+      const r = (1.2 + Math.sin(t * Math.PI * 2) * .15) * 2.55;
+      dummy.position.set(Math.cos(ang) * r, -3.43 + t * 6.86, Math.sin(ang) * r);
+      dummy.scale.setScalar(.75 + ((i * 7) % 10) / 14); dummy.updateMatrix();
+      im.setMatrixAt(i, dummy.matrix); im.setColorAt(i, col.setHex(pal[i % pal.length])); }
+    im.instanceMatrix.needsUpdate = true; if(im.instanceColor) im.instanceColor.needsUpdate = true;
+    helixGrp.add(im); });
+}
+
+/* --- I · ALTAMINAC — the musicode swarm ---
+   ♪♫♬ sprites on their own orbits outside the worlds, entraining on the
+   SAME Kuramoto mean phase the worlds obey (Kuramoto-lite coupling, the
+   salvage recipe): dφ = (ω + K·sin(mean − φ))·dt. 515 Hz is the named
+   coupling reference — the thesis's Observer Constant, carried by
+   altaminac and alchemy too. The swarm is generated, therefore signal:
+   it writes no ledger entries (promotion law, cross-examination II). */
+const NOTES = [];
+{
+  /* NEW NOTES FOR ALL OF THEM (Nathan, 20:03): fresh glyphs beyond the
+     old ♪♫♬ trio, a solfège name each, and — per his standing law that
+     notes are micro-agents — each one MOVES BY ITS OWN FUNCTION (the
+     MOVERS table below), with its own home, sway and phase. Not a swarm
+     with offsets: twenty-six individuals who happen to entrain. */
+  const GLYPHS = ['♩', '♪', '♫', '♬', '♭', '♮', '♯'];
+  const SOLFEGE = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti', 'Do'];
+  const cols = ['#971329', '#df243c', '#f4f1f2', '#c9c2c6', '#781020'];
+  /* the ladder: just-intonation ratios on 257.5 Hz across three bands
+     (×1, ×2, ×½), so the octave lands exactly on 515 — the Observer
+     Constant. Note 0 IS 515, wears crimson, and keeps the pure orbit. */
+  const RATIOS = [1, 9/8, 5/4, 4/3, 3/2, 5/3, 15/8, 2];
+  const BANDS = [1, 2, .5];
+  const MOVER_NAMES = ['orbit', 'waltz', 'hop', 'spiral', 'figure8', 'drift', 'pulse', 'swing'];
+  for(let i = 0; i < 26; i++){ const g = GLYPHS[i % GLYPHS.length], c = i === 0 ? '#df243c' : cols[i % cols.length];
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: glyphTexture(g, c), transparent: true, opacity: .9, depthWrite: false }));
+    const note = { spr, glyph: g, name: SOLFEGE[i % 8], colCss: c, pop: 0,
+      freq: i === 0 ? 515 : 257.5 * RATIOS[i % 8] * BANDS[Math.floor(i / 8) % 3],
+      mover: MOVER_NAMES[i % MOVER_NAMES.length],
+      phase: rng() * Math.PI * 2, omega: .22 + rng() * .26, rad: 5.3 + rng() * 1.5, y0: (rng() - .5) * 3.4,
+      danceOff: rng() * Math.PI * 2, sway: .03 + rng() * .06, home: rng() * Math.PI * 2 };
+    spr.scale.setScalar(.5); scene.add(spr); NOTES.push(note); }
+}
+/* --- the movers: one function per character, no shared formula ---
+   Every mover rides the note's own entrainment phase φ, so individuals
+   still fall into sync when the field locks — character first, coherence
+   earned. Each sets position, rotation and scale its own way. */
+const MOVERS = {
+  orbit(n){ const p = n.phase;
+    n.spr.position.set(Math.cos(p) * n.rad, n.y0 + Math.sin(p * 2) * .18, Math.sin(p) * n.rad);
+    n.spr.material.rotation = p * .35; const s = .58 + n.pop; n.spr.scale.set(s, s, 1); },
+  waltz(n){ const p = n.phase, r = n.rad * (1 + .13 * Math.sin(p * 3 + n.danceOff));
+    n.spr.position.set(Math.cos(p) * r, n.y0 + Math.sin(p * 3) * .3, Math.sin(p) * r);
+    n.spr.material.rotation = Math.sin(p * 3) * .5; const s = .55 + .07 * Math.sin(p * 3) + n.pop; n.spr.scale.set(s, s, 1); },
+  hop(n){ const p = n.phase, h = Math.abs(Math.sin(p * 2 + n.danceOff));
+    n.spr.position.set(Math.cos(p) * n.rad, n.y0 - .3 + h * .95, Math.sin(p) * n.rad);
+    n.spr.material.rotation = Math.sin(p * 2) * .3; const s = .57 - .06 * h + n.pop; n.spr.scale.set(s, s * (1 + .2 * h), 1); },
+  spiral(n, dt, t){ const p = n.phase, r = n.rad + Math.sin(t * .3 + n.danceOff) * 1.05;
+    n.spr.position.set(Math.cos(p) * r, n.y0 + Math.sin(t * .5 + n.danceOff) * .4, Math.sin(p) * r);
+    n.spr.material.rotation = p * .8; const s = .57 + n.pop; n.spr.scale.set(s, s, 1); },
+  figure8(n){ const p = n.phase, a = p + Math.sin(p) * .6;
+    n.spr.position.set(Math.cos(a) * n.rad, n.y0 + Math.sin(p * 2 + n.danceOff) * .7, Math.sin(a) * n.rad);
+    n.spr.material.rotation = Math.sin(p * 2) * .8; const s = .57 + n.pop; n.spr.scale.set(s, s, 1); },
+  drift(n, dt, t){ const p = n.phase, r = n.rad * (1 + n.sway * 3 * Math.cos(p + n.danceOff));
+    n.spr.position.set(Math.cos(p) * r, n.y0 + Math.sin(t * .23 + n.danceOff) * .8, Math.sin(p) * r);
+    n.spr.material.rotation = Math.sin(t * .4 + n.danceOff) * .4; const s = .53 + .05 * Math.sin(t * .9 + n.danceOff) + n.pop; n.spr.scale.set(s, s, 1); },
+  pulse(n, dt, t){ const a = n.home + t * .04, hx = Math.cos(a) * n.rad, hz = Math.sin(a) * n.rad, e = n.phase * 3;
+    n.spr.position.set(hx + Math.cos(e) * .42, n.y0 + Math.sin(e) * .42, hz + Math.sin(e) * .42);
+    n.spr.material.rotation = e * .3; const s = .5 + .16 * (0.5 + 0.5 * Math.sin(e)) + n.pop; n.spr.scale.set(s, s, 1); },
+  swing(n){ const a = n.home + Math.sin(n.phase + n.danceOff) * .55;
+    n.spr.position.set(Math.cos(a) * n.rad, n.y0 + Math.cos(n.phase * 2) * .35, Math.sin(a) * n.rad);
+    n.spr.material.rotation = Math.cos(n.phase + n.danceOff) * .6; const s = .57 + n.pop; n.spr.scale.set(s, s, 1); }
+};
+
+/* --- K · ALCHEMY — source dust recolored in crimson and ash --- */
+const DUST_N = 380;
+const dustGrp = new THREE.Group(); scene.add(dustGrp);
+{
+  const pos = new Float32Array(DUST_N * 3);
+  for(let i = 0; i < DUST_N; i++){ const r = 5 + rng() * 5.5, th = rng() * Math.PI * 2, ph = Math.acos(2 * rng() - 1);
+    pos[i * 3] = r * Math.sin(ph) * Math.cos(th); pos[i * 3 + 1] = r * Math.cos(ph) * .7; pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  dustGrp.add(new THREE.Points(g, new THREE.PointsMaterial({ color: SI_PALETTE.crimson, size: .045, transparent: true, opacity: .36, blending: THREE.AdditiveBlending, depthWrite: false })));
+}
+
+/* --- DARCTIX CORE — furnace embers ---
+   His ember recipe (70 rising embers around the core) moved to the
+   furnace it belongs to: 90 embers rising off the heart, resetting at
+   the top of their climb. Ambience only — darctix contributes no
+   mechanics (cross-examination II, contradiction 4). */
+const EMBER_N = 90;
+let emberGeo, emberPos, emberSpd;
+{
+  emberPos = new Float32Array(EMBER_N * 3); emberSpd = new Float32Array(EMBER_N);
+  const cols = new Float32Array(EMBER_N * 3), c = new THREE.Color();
+  const emberPalette = [SI_PALETTE.red, SI_PALETTE.brightRed, SI_PALETTE.white];
+  for(let i = 0; i < EMBER_N; i++){ const a = rng() * Math.PI * 2, r = rng() * 1.5;
+    emberPos[i * 3] = Math.cos(a) * r; emberPos[i * 3 + 1] = -4.6 + rng() * 3.2; emberPos[i * 3 + 2] = -.3 + Math.sin(a) * r;
+    emberSpd[i] = .25 + rng() * .6; c.setHex(emberPalette[Math.floor(rng() * emberPalette.length)]); cols.set([c.r, c.g, c.b], i * 3); }
+  emberGeo = new THREE.BufferGeometry();
+  emberGeo.setAttribute('position', new THREE.BufferAttribute(emberPos, 3));
+  emberGeo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+  scene.add(new THREE.Points(emberGeo, new THREE.PointsMaterial({ size: .07, vertexColors: true, transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false })));
+}
+
+function layersStep(dt, t){ helixGrp.rotation.y = t * .05;
+  dustGrp.rotation.y = t * .01;
+  for(const n of NOTES){ n.phase += (n.omega + 1.2 * Math.sin(MEAN_PH - n.phase)) * dt;
+    MOVERS[n.mover](n, dt, t);
+    /* polish: the notes sit one layer behind the worlds in the visual
+       hierarchy — slightly smaller, dimmer out of phase — except the
+       515 anchor, which leads */
+    n.spr.scale.multiplyScalar(n === NOTES[0] ? 1.15 : .92);
+    if(n.pop > 0) n.pop = Math.max(0, n.pop - dt * 1.4);
+    n.spr.material.opacity = .36 + .5 * (0.5 + 0.5 * Math.cos(n.phase - MEAN_PH)); }
+  for(let i = 0; i < EMBER_N; i++){ emberPos[i * 3 + 1] += emberSpd[i] * dt;
+    if(emberPos[i * 3 + 1] > -1.3){ emberPos[i * 3 + 1] = -4.6; const a = rng() * Math.PI * 2, r = rng() * 1.5;
+      emberPos[i * 3] = Math.cos(a) * r; emberPos[i * 3 + 2] = -.3 + Math.sin(a) * r; } }
+  emberGeo.attributes.position.needsUpdate = true; }
+
+/* ============ THE DREAM PASS — see the forces, see the balance, see the motion ============ */
+let MEAN_PH = 0, scaleAngle = 0;
+const agentHeat = {};
+/* world field lines — influence made visible; opacity is Kuramoto alignment. Signal only. */
+const fieldLines = [];
+for(const W of WORLDS){ const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(14*3), 3));
+  const line = new THREE.Line(g, new THREE.LineBasicMaterial({ color: W.color, transparent:true, opacity:.06, blending: THREE.AdditiveBlending, depthWrite:false }));
+  worldGrp.add(line); fieldLines.push(line); }
+const _fc = new THREE.QuadraticBezierCurve3(new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3());
+function fieldStep(){ WORLDS.forEach((W, i) => { const a = W.mesh.position;
+  const mid = a.clone().multiplyScalar(.55); const tang = new THREE.Vector3(-a.y, a.x, 0).normalize().multiplyScalar(1.1);
+  _fc.v0.copy(a); _fc.v1.copy(mid.add(tang));
+    const edge = a.clone().normalize().multiplyScalar(BALL_R); _fc.v2.copy(edge);
+  const pts = _fc.getPoints(13), attr = fieldLines[i].geometry.attributes.position;
+  pts.forEach((p, j) => attr.setXYZ(j, p.x, p.y, p.z)); attr.needsUpdate = true;
+  fieldLines[i].material.opacity = .03 + .30 * Math.max(0, Math.cos(W.phase - MEAN_PH)); }); }
+/* the state ring — the legal-transition graph as a channel circling the base */
+const RIVER = [['observation','OBSERVATION'],['recommendation','RECOMMENDATION'],['approval','APPROVAL'],['change','CHANGE'],['receipt','RECEIPT']];
+const riverNodes = {};
+RIVER.forEach(([id, name], i) => { const ph = (215 + i * 72) * Math.PI/180;
+  const m = new THREE.Mesh(new THREE.SphereGeometry(.1, 12, 10), new THREE.MeshStandardMaterial({ color:SI_PALETTE.charcoal, emissive:SI_PALETTE.crimson, emissiveIntensity:.3, roughness:.4 }));
+  m.position.set(Math.cos(ph)*2.05, -3.5, Math.sin(ph)*.95 + .4); flower.add(m); riverNodes[id] = m; addLabel(m, name, 'state port', .3); });
+const riverPts = RIVER.map(([id]) => riverNodes[id].position.clone());
+const FLOW_N = 70, flowPos = new Float32Array(FLOW_N*3);
+const flowGeo = new THREE.BufferGeometry(); flowGeo.setAttribute('position', new THREE.BufferAttribute(flowPos, 3));
+flower.add(new THREE.Points(flowGeo, new THREE.PointsMaterial({ color:SI_PALETTE.silver, size:.09, transparent:true, opacity:.8, depthWrite:false, blending:THREE.AdditiveBlending })));
+function riverPoint(s){ const total = RIVER.length, f = (((s % 1) + 1) % 1) * total, i = Math.floor(f) % RIVER.length;
+  return riverPts[i].clone().lerp(riverPts[(i+1) % RIVER.length], f - Math.floor(f)); }
+let riverDamT = 0;
+const damMesh = new THREE.Mesh(new THREE.BoxGeometry(.16, .4, .16), new THREE.MeshStandardMaterial({ color:SI_PALETTE.deepRed, emissive:SI_PALETTE.brightRed, emissiveIntensity:1.6 }));
+damMesh.visible = false; flower.add(damMesh);
+function damRiver(fromId){ if(!riverNodes[fromId]) return; riverDamT = 2.4;
+  damMesh.position.copy(riverNodes[fromId].position); damMesh.visible = true; }
+function riverStep(dt){ for(let i = 0; i < FLOW_N; i++){ const s = ((i / FLOW_N) + performance.now() * .000016 * (cur ? 2.2 : 1)) % 1;
+    const p = riverPoint(s); flowPos[i*3] = p.x; flowPos[i*3+1] = p.y; flowPos[i*3+2] = p.z; }
+  flowGeo.attributes.position.needsUpdate = true;
+  for(const [id] of RIVER){ const m = riverNodes[id];
+    const active = cur && (cur.transition.from === id || cur.transition.to === id);
+    m.material.emissiveIntensity += ((active ? 1.7 : .3) - m.material.emissiveIntensity) * .12; }
+  if(riverDamT > 0){ riverDamT -= dt; if(riverDamT <= 0) damMesh.visible = false; } }
+/* force vectors riding the live pollen — evidence lifts, risk drags, net carries */
+const vecGrp = new THREE.Group(); scene.add(vecGrp);
+function mkArrow(color){ const a = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(), .5, color, .14, .08); vecGrp.add(a); return a; }
+const vecNet = mkArrow(SI_PALETTE.white), vecEv = mkArrow(SI_PALETTE.silver), vecRisk = mkArrow(SI_PALETTE.red);
+const _tv = new THREE.Vector3(), _up = new THREE.Vector3(0, 1, 0), _dn = new THREE.Vector3(0, -1, 0);
+function vecStep(){ const show = !!(cur && pollen.visible); vecGrp.visible = show; if(!show) return;
+  vecGrp.position.copy(pollen.position);
+  const ahead = stagePos(VSTAGES[vStage], Math.min(1, runT / STAGE_DUR + .04));
+  _tv.copy(ahead).sub(pollen.position); if(_tv.lengthSq() < 1e-6) _tv.set(0, 1, 0); _tv.normalize();
+  const parts = forces.parts || { evidence: 0 };
+  if(heldVisual){ vecNet.setDirection(_tv); vecNet.setLength(.12, .06, .04); vecNet.setColor(new THREE.Color(SI_PALETTE.red)); }
+  else { vecNet.setDirection(_tv); vecNet.setLength(.3 + Math.max(0, forces.net) * .08, .13, .07); vecNet.setColor(new THREE.Color(SI_PALETTE.white)); }
+  vecEv.setDirection(_tv.clone().multiplyScalar(.35).add(_up).normalize()); vecEv.setLength(.22 + parts.evidence * .07, .11, .06);
+  vecRisk.setDirection(_tv.clone().multiplyScalar(-.3).add(_dn).normalize()); vecRisk.setLength(.22 + forces.opposition * .07, .11, .06); }
+/* agent physics — mass, influence, heat; every number a formula over real counters */
+function renderPhys(){ if(!K) return; const now = performance.now();
+  const authored = {}; for(const e of K.ledger.entries) if(e.kind !== 'note') authored[e.agent] = (authored[e.agent] || 0) + 1;
+  const rows = AGENT_DEFS.map(a => { const heat = (agentHeat[a.id] || []).filter(t => now - t < 45000).length;
+      return { name: a.name.split(' ')[0].toUpperCase(), mass: a.capabilities.length, inf: authored[a.id] || 0, heat }; })
+    .filter(r => r.inf > 0 || r.heat > 0).sort((x, y) => y.inf - x.inf).slice(0, 6);
+  $('agentPhys').innerHTML = rows.map(r => `<div class="prow"><span>${r.name}</span><span>M ${r.mass}</span><span>I ${r.inf}</span><span class="heat">${'▮'.repeat(Math.min(6, r.heat)) || '·'}</span></div>`).join('') || '<div class="prow"><span>—</span></div>'; }
+
+/* ============ KERNEL WIRING — this lens rents the law from the shared kernel ============ */
+const AGENT_DEFS = window.__SI_CORE_CREW__ || [
+  { id:'n8_supervisor', name:'N8 Supervisor', capabilities:['proposal.draft','editor.emacs.guide'] },
+  { id:'vera_router', name:'Vera', capabilities:['operations.read'] },
+  { id:'corvus_planner', name:'Corvus', capabilities:['estimate.calculate','documents.ingest','math.algebra.solve','math.calculus.analyze'] },
+  { id:'archivist', name:'Archivist', capabilities:[] },
+  { id:'zenki_guardian', name:'Zenki', capabilities:['health.read','recovery.propose'] },
+  { id:'kami_communicator', name:'Kami', capabilities:['safety.draft'] },
+  { id:'genki_builder', name:'Genki', capabilities:['production.plan','release.request','code.haskell.review','workspace.change.preview'] },
+  { id:'sentinel', name:'Sentinel', capabilities:[] },
+];
+const AGENT_NAME = Object.fromEntries(AGENT_DEFS.map(a => [a.id, a.name]));
+const INTENTS = [
+  { kind:'recommendation', text:'Draft a project outline', tool:'estimate.calculate', risk:'INTERNAL_REVERSIBLE', st:['observation','recommendation'], agent:'corvus_planner', evidence:2 },
+  { kind:'observation', text:'Summarize workspace activity', tool:'operations.read', risk:'READ_ONLY', st:['observation','observation · read — no transition'], agent:'vera_router', evidence:1 },
+  { kind:'recommendation', text:'Organize reference materials', tool:'documents.ingest', risk:'INTERNAL_REVERSIBLE', st:['observation','recommendation'], agent:'corvus_planner', evidence:3 },
+  { kind:'recommendation', text:'Draft a safety checklist', tool:'safety.draft', risk:'INTERNAL_REVERSIBLE', st:['observation','recommendation'], agent:'kami_communicator', evidence:2 },
+  { kind:'recommendation', text:'Plan a work sequence', tool:'production.plan', risk:'INTERNAL_REVERSIBLE', st:['observation','recommendation'], agent:'genki_builder', evidence:2 },
+  { kind:'observation', text:'Check runtime health', tool:'health.read', risk:'READ_ONLY', st:['—','— · read — no transition'], agent:'zenki_guardian', evidence:1 },
+  { kind:'observation', text:'Solve a sample equation', tool:'math.algebra.solve', risk:'READ_ONLY', st:['—','— · read — no transition'], agent:'corvus_planner', evidence:1 },
+  { kind:'observation', text:'Analyze a mathematical expression', tool:'math.calculus.analyze', risk:'READ_ONLY', st:['—','— · read — no transition'], agent:'corvus_planner', evidence:1 },
+  { kind:'recommendation', text:'Review a code sample', tool:'code.haskell.review', risk:'READ_ONLY', st:['—','— · read — no transition'], agent:'genki_builder', evidence:1 },
+  { kind:'recommendation', text:'Get editor workflow guidance', tool:'editor.emacs.guide', risk:'READ_ONLY', st:['—','— · read — no transition'], agent:'n8_supervisor', evidence:1 },
+];
+const CHANGE_INTENT = { kind:'change', text:'Preview a protected workspace change', tool:'workspace.change.preview', risk:'INTERNAL_REVERSIBLE', st:['approval','change'], agent:'genki_builder', evidence:3 };
+const LIFECYCLE = [['observation','recommendation'],['recommendation','approval'],['approval','change'],['change','receipt']];
+const K = new Kernel({ agents: AGENT_DEFS, legal: INTENTS.concat([CHANGE_INTENT]).map(i => i.st).concat(LIFECYCLE) });
+Object.defineProperty(K.stats, 'held', { get: () => heldVisual, enumerable: true });
+
+/* the Evidence Sky sync — every ledger entry becomes exactly one star */
+let skySeen = 0;
+function syncSky(){ while(skySeen < K.ledger.entries.length){ const e = K.ledger.entries[skySeen++];
+  addStar(e.kind === 'operator' ? 'approval' : e.kind === 'tool' ? 'use' : 'receipt', e); } renderLedger(); }
+function renderLedger(){ $('eelMeta').textContent = K.ledger.length + ' entries · chain ' + (K.ledger.verify() ? '✓' : '✗ BROKEN') + ' · sky ☆' + (skyCounts.receipt+skyCounts.use+skyCounts.approval);
+  $('eelBody').textContent = K.ledger.entries.slice(-8).map(e=>`#${e.seq} ${e.hash.slice(0,7)} ${e.agent} ${e.event}`).join('\n'); }
+
+/* runs — the lens choreographs; the kernel decides */
+let cur = null, runT = 0, vStage = 0, heldVisual = false;
+const STAGE_DUR = .95, VSTAGES = ['identity','proposal','capability','state','execute','receipt'];
+const pollen = new THREE.Mesh(new THREE.SphereGeometry(.085, 12, 12), new THREE.MeshStandardMaterial({color:0x000000, emissive:0xffffff, emissiveIntensity:2.4}));
+pollen.add(glowSprite('rgba(255,255,255,.8)', .85, .8)); pollen.visible = false; scene.add(pollen);
+const vetoTimes = [];
+let forces = { momentum:0, opposition:0, net:0, barrier:false, parts:null };
+function petalFlash(id, amt){ if(petalById[id]) petalById[id].flash = Math.max(petalById[id].flash, amt); }
+function stagePos(stage, t){ const arc = (a, b, tt) => arcPos(a, b, tt);
+  switch(stage){
+    case 'identity':   return arc(162, 90, t);
+    case 'proposal':   return arc(90, 18, t);
+    case 'capability': return arc(18, -54, t);
+    case 'state':      return arc(-54, -126, t * .5);
+    case 'execute':    return arc(-54, -126, .5 + t * .25);
+    case 'receipt':    return arc(-54, -126, .75 + t * .25);
+  } return petalTips.identity; }
+function newRun(kind, specIt){
+  const it = specIt || (kind==='change' ? CHANGE_INTENT : kind==='vio' ? { text:'Run a raw shell command', tool:'shell.exec', risk:'UNGRANTED', st:['—','—'], agent:'corvus_planner', evidence:0, smuggle:true }
+    : INTENTS[Math.floor(Math.random()*INTENTS.length)]);
+  const input = { kind: it.kind || 'recommendation', actor: it.agent, capability: it.tool, transition: { from: it.st[0], to: it.st[1] },
+    evidence: Array.from({length: it.evidence || 0}, (_,i) => 'ref-' + (i+1)), risk: it.risk, text: it.text };
+  if(it.smuggle) input.scopes = ['admin'];
+  cur = K.propose(input); (agentHeat[cur.actor] = agentHeat[cur.actor] || []).push(performance.now()); vStage = 0; runT = 0; heldVisual = false;
+  forces = K.forcesFor(cur, ETA, noteFieldStep());
+  pollen.visible = true; pollen.position.copy(petalTips.identity);
+  syncSky(); showProposal('incoming'); updateDock();
+}
+function showProposal(note){ if(!cur) return; const granted = K.checkCapability(cur.actor, cur.capability);
+  $('propBody').innerHTML =
+`<span class="k">id</span>        ${cur.id} · ${note}
+<span class="k">actor</span>     ${AGENT_NAME[cur.actor] || cur.actor} — proposes through Vera; agents never call agents
+<span class="k">capability</span> ${cur.capability}${granted ? ' <span class="ok">· granted ✓</span>' : ' <span class="bad">· NOT in the grant set</span>'}
+<span class="k">state</span>     ${cur.transition.from} → ${cur.transition.to}${K.isLegal(cur.transition.from, cur.transition.to) ? ' <span class="ok">· a legal vein</span>' : ' <span class="bad">· NO legal vein</span>'}
+<span class="k">forces</span>    momentum ${forces.momentum} (evidence ${forces.parts.evidence} + worlds ${forces.parts.worlds} + prior receipts ${forces.parts.priorReceipts} + field push ${forces.parts.fieldPush || 0}) · opposing ${forces.opposition} (risk ${cur.risk} + conflict ${forces.parts.conflicts} — P3 · + field drag ${forces.parts.fieldDrag || 0})${cur.stripped.length ? '\n<span class="bad">' + cur.stripped.join(', ') + '</span> ← unknown field(s), inbound — Vera strips what the schema does not name' : ''}`;
+}
+function vetoVisuals(ev){ petalFlash('capability', 1); damRiver(cur.transition.from); spawnSparks(petalTips.capability.clone(), 22); vetoTimes.push(performance.now());
+  pollen.visible = false;
+  $('propBody').innerHTML = ev.reason === 'illegal-transition'
+    ? `<span class="bad">REFUSED at State.</span> No legal vein ${cur.transition.from} → ${cur.transition.to}.\nNothing executed. The refusal is sealed, and the pollen fell to the heart as compost.`
+    : `<span class="bad">VETOED at Capability.</span> "${cur.capability}" is not in ${AGENT_NAME[cur.actor] || cur.actor}'s grant set.\nNothing executed. The refusal is sealed, and the pollen fell to the heart as compost.`;
+  cur = null; syncSky(); updateDock(); }
+function finishVisualStage(){ const ev = K.next(cur, ETA); syncSky();
+  const doneStage = VSTAGES[vStage];
+  petalFlash(doneStage === 'execute' ? 'state' : doneStage, .9);
+  if(ev.type === 'veto'){ vetoVisuals(ev); return; }
+  if(ev.type === 'held'){ holdRunAtBarrier(); return; }
+  if(ev.type === 'sealed'){ showSealedReceipt(ev); return; }
+  vStage++; runT = 0; forces = K.forcesFor(cur, ETA, noteFieldStep()); updateDock(); }
+function holdRunAtBarrier(){ heldVisual = true; pollen.position.copy(petalTips.capability);
+  $('bApprove').style.display = 'block'; $('bDeny').style.display = 'block';
+  showProposal('held at the barrier'); updateDock(); }
+function showSealedReceipt(ev){ petalFlash('receipt', 1);
+  $('propBody').innerHTML = `<span class="ok">Run complete and sealed.</span>\n<span class="k">receipt</span> #${ev.receipt.seq} · ${ev.receipt.hash} — and a new star hangs in the Evidence Sky (sky ${skyCounts.receipt+skyCounts.use+skyCounts.approval} = ledger ${K.ledger.length}).\nForces moved the pollen; law decided the outcome.`;
+  cur = null; updateDock(); }
+function completeBackgroundRun(){
+  for(let steps = 0; cur && steps < 12; steps++){
+    const ev = K.next(cur, ETA); syncSky();
+    if(ev.type === 'veto'){ vetoVisuals(ev); return ev; }
+    if(ev.type === 'held'){ holdRunAtBarrier(); return ev; }
+    if(ev.type === 'sealed'){ showSealedReceipt(ev); return ev; }
+  }
+  return { type:'incomplete' };
+}
+function stepRun(dt){ if(!cur || heldVisual) return; runT += dt; const t = Math.min(1, runT / STAGE_DUR);
+  pollen.position.copy(stagePos(VSTAGES[vStage], t)); if(t >= 1) finishVisualStage(); }
+/* operator acts */
+$('bApprove').onclick = ()=>{ if(!cur || cur.status !== 'held') return; K.approve(cur.id); heldVisual = false; forces = K.forcesFor(cur, ETA, noteFieldStep());
+  $('bApprove').style.display = 'none'; $('bDeny').style.display = 'none'; syncSky();
+  showProposal('approved — the barrier is removed, not outvoted'); updateDock(); };
+$('bDeny').onclick = ()=>{ if(!cur || cur.status !== 'held') return; K.deny(cur.id); damRiver(cur.transition.from); heldVisual = false;
+  $('bApprove').style.display = 'none'; $('bDeny').style.display = 'none';
+  spawnSparks(pollen.position.clone(), 18); pollen.visible = false;
+  $('propBody').innerHTML = `<span class="bad">Denied by the operator.</span> Nothing executed; the denial is sealed and the pollen fell to the heart.`;
+  cur = null; syncSky(); updateDock(); };
+/* crew — the manifests at work */
+let crewOn = window.__SI_CORE_BROWSER_MODE__ !== true, crewT = 6, crewFired = 0;
+const CREW_CYCLE = [0, 3, 1, 4, 2, 5];
+function crewStep(dt){ if(!crewOn || cur || heldVisual) return; crewT -= dt;
+  if(crewT <= 0){ crewT = 7 + rng()*5; crewFired++;
+    if(crewFired % 9 === 0){ newRun('crew', { ...INTENTS[4], tool:'shell.exec', risk:'UNGRANTED', smuggle:false }); }
+    else if(crewFired % 5 === 0){ newRun('crew', { ...INTENTS[2], smuggle:true }); }
+    else if(crewFired % 7 === 0){ newRun('crew', CHANGE_INTENT); }
+    else newRun('crew', INTENTS[CREW_CYCLE[crewFired % CREW_CYCLE.length]]);
+  } }
+window.__setCrew = v => { crewOn = !!v; $('bCrew').classList.toggle('on', crewOn); };
+$('bCrew').onclick = ()=>{ window.__setCrew(!crewOn); K.ledger.seal('operator', 'operator', 'crew ' + (crewOn ? 'STARTED' : 'PAUSED') + ' by the operator'); syncSky(); };
+$('bIntent').onclick = ()=>{ if(!cur) newRun('good'); };
+$('bChange').onclick = ()=>{ if(!cur) newRun('change'); };
+$('bVio').onclick = ()=>{ if(!cur) newRun('vio'); };
+function routeToolboxTask(index, options = {}){
+  if(cur) return { ok:false, message:'Finish the proposal already in flight before routing another.' };
+  const task = INTENTS[index];
+  if(!Number.isInteger(index) || !task) return { ok:false, message:'Choose a listed sample task to route.' };
+  const agent = gazeCands.find(c => c.kind === 'agent' && c.key === task.agent);
+  if(agent) flyTo(agent);
+  const result = task.tool === 'math.algebra.solve' ? ` · x = ${(17 - 5) / 2}`
+    : task.tool === 'math.calculus.analyze' ? ' · f′(x) = 2x sin(x) + x² cos(x)' : '';
+  const message = `Vera routed the sample request to ${AGENT_NAME[task.agent]} · ${task.tool}${result}.`;
+  $('routeStatus').textContent = message;
+  newRun('good', { ...task, text: 'User task: ' + task.text });
+  if(options.background === true){
+    const completion = completeBackgroundRun();
+    if(completion.type !== 'sealed'){
+      return { ok:false, message:`The background route did not seal (${completion.type}). Review the SI Core home.` };
+    }
+    return { ok:true, message:`${message} Receipt #${completion.receipt.seq} sealed locally.` };
+  }
+  return { ok:true, message };
+}
+$('bRouteTask').onclick = ()=> routeToolboxTask(Number($('taskRoute').value));
+window.__siToolboxRouteTask = routeToolboxTask;
+window.__siToolboxSnapshot = () => ({
+  tasks: INTENTS.map((task, id) => ({
+    id,
+    text: task.text,
+    capability: task.tool,
+    risk: task.risk,
+    kind: task.kind,
+    agentName: AGENT_NAME[task.agent]
+  })),
+  agents: AGENT_DEFS.map(({ id, name, purpose, capabilities }) => ({
+    id, name, purpose: purpose || '', capabilities: [...capabilities]
+  })),
+  receipts: K.ledger.entries.slice(-12).map(({ seq, hash, agent, event }) => ({ seq, hash, agent, event })),
+  health: { ...K.health() },
+  ledgerValid: K.ledger.verify(),
+  busy: !!cur
+});
+
+let savedWorkflows = [];
+
+/* ============ COCKPIT — every gauge a formula ============ */
+const healthRows = $('healthRows');
+healthRows.innerHTML = ['Identity','Capability','Proposal','State','Receipt'].map(k =>
+  `<div class="hrow"><span>${k.toUpperCase()}</span><div class="track"><div class="fill" id="h_${k}" style="width:100%"></div></div><span class="val" id="hv_${k}">100</span></div>`).join('');
+function pressureStr(){ const now = performance.now(), buckets = new Array(12).fill(0);
+  for(const t of vetoTimes){ const b = 11 - Math.floor((now - t)/6000); if(b >= 0 && b < 12) buckets[b]++; }
+  const mx = Math.max(1, ...buckets), blocks = '▁▂▃▄▅▆▇█';
+  return buckets.map(n => blocks[Math.min(7, Math.round(n/mx*7))]).join(''); }
+function updateDock(){ const H = K.health();
+  for(const k in H){ $('h_'+k).style.width = H[k]+'%'; $('h_'+k).classList.toggle('low', H[k] < 100); $('hv_'+k).textContent = H[k]; }
+  $('fMom').style.width = Math.min(100, forces.momentum*6)+'%'; $('vMom').textContent = forces.momentum;
+  $('fOpp').style.width = Math.min(100, forces.opposition*6)+'%'; $('vOpp').textContent = forces.opposition;
+  $('fNet').style.width = Math.min(100, Math.max(0, forces.net)*6)+'%'; $('vNet').textContent = forces.net;
+  const prts = forces.parts || { evidence: 0 };
+  scaleAngle = heldVisual ? -16 : Math.max(-22, Math.min(22, forces.net * 3.2));
+  $('beamG').style.transform = 'rotate(' + scaleAngle + 'deg)';
+  $('wEv').setAttribute('r', 3 + prts.evidence * .8); $('wRisk').setAttribute('r', 3 + forces.opposition * .8);
+  $('barrier').style.display = (cur && heldVisual) ? 'block' : 'none';
+  const dot = $('wheelDot'), dx = THREE.MathUtils.clamp((forces.momentum - forces.opposition) * 3.4, -34, 34),
+        dy = heldVisual ? 26 : (cur ? -14 : 0);
+  dot.setAttribute('cx', 52 + dx); dot.setAttribute('cy', 52 + dy);
+  document.querySelectorAll('.pip').forEach(p => { const k = p.dataset.pip; const st = cur ? VSTAGES[vStage] : null;
+    const on = cur && (k === st || (k === 'held' && heldVisual) || (k === 'execute' && (st === 'state' || st === 'execute' || st === 'receipt')));
+    p.className = 'pip' + (on ? (k === 'held' ? ' held' : ' on') : ''); });
+  $('sysline').innerHTML = `mode <b>${heldVisual ? 'HELD' : 'FLOW'}</b> · sky <b>☆ ${skyCounts.receipt+skyCounts.use+skyCounts.approval}</b> = ledger <b>${K.ledger.length}</b> · heart <b>♥ ${K.stats.consumed}</b> · vetoes <b>${K.stats.vetoed}</b> · executed <b>${K.stats.executed}</b>`;
+}
+setInterval(()=>{ $('pressure').textContent = pressureStr(); $('fCoh').style.width = (ETA*100)+'%'; $('vCoh').textContent = ETA.toFixed(2); renderPhys(); }, 600);
+
+/* ============ picking / inspect ============ */
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2();
+function pick(x, y){ mouse.set((x/innerWidth)*2-1, -(y/innerHeight)*2+1); ray.setFromCamera(mouse, camera);
+  const hits = ray.intersectObjects(pickMeshes, false); if(!hits.length) return;
+  const P = petalById[hits[0].object.userData.petal]; petalFlash(P.id, 1);
+  showGaze({ kind:'node', key: P.id }, x, y); gazeXY = { x, y }; gazeStickyUntil = performance.now() + 2600;
+  $('propBody').textContent = `${P.name} node — ${P.facets.join(' · ')}.\nOne of the five primitives, a housing on the ball. The kernel has exactly five; governance is not a node — it is what the whole ball is for.`; }
+
+/* ============ GAZE MOD — hover anything with a label, read what's inside it ============
+   Nathan's spec (2026-10-31): "When I hover over a vector, kernel, anything
+   with a label, I should get a small live readout of what's happening inside
+   it." Picking is by label anchor — every labeled thing registers a screen
+   anchor and the nearest anchor within 34px of the pointer wins. Every
+   number is computed live from real state (kernel counters, Kuramoto
+   phases, force parts) — never painted. No hover, no card: absence. */
+const gazeCard = $('gazeCard'), gzT = $('gzT'), gzRows = $('gzRows');
+const gazeCands = [];
+function regGaze(kind, key, getPos){ gazeCands.push({ kind, key, getPos }); }
+for(const id in petalById) regGaze('node', id, () => petalById[id].mesh.getWorldPosition(new THREE.Vector3()));
+for(const W of WORLDS) regGaze('world', W.name, () => W.mesh.position);
+for(const id in riverNodes) regGaze('state', id, () => riverNodes[id].getWorldPosition(new THREE.Vector3()));
+regGaze('heart', 'heart', () => heartGrp.getWorldPosition(new THREE.Vector3()));
+regGaze('core', 'core', () => coreGrp.getWorldPosition(new THREE.Vector3()));
+regGaze('helix', 'helix', () => helixGrp.localToWorld(new THREE.Vector3(3.06, 1.4, 0)));
+regGaze('vector', 'net', () => vecGrp.position);
+function gazeRowsFor(c){ const C = K.counters, S = K.stats, H = K.health();
+  if(c.kind === 'node'){ const P = petalById[c.key];
+    const capName = P.name.charAt(0) + P.name.slice(1).toLowerCase();
+    const rows = { identity: [['refs resolved', C.idOk + ' / ' + C.idRefs], ['actors registered', AGENT_DEFS.length], ['in flight', cur ? cur.id : 'none']],
+      proposal: [['proposals routed', C.propTotal], ['malformed stripped', C.propMalformed], ['in flight', cur ? cur.id : 'none']],
+      capability: [['checks passed', C.capPass + ' / ' + C.capChecks], ['vetoes sealed', S.vetoed], ['barrier held', heldVisual ? 'YES' : 'no']],
+      state: [['legal transitions', C.stateLegal + ' / ' + C.stateAttempts], ['current move', cur ? cur.transition.from + ' → ' + String(cur.transition.to).split(' ')[0] : '—'], ['river dammed', riverDamT > 0 ? 'YES' : 'no']],
+      receipt: [['ledger entries', K.ledger.length], ['chain', K.ledger.verify() ? '✓ verified' : '✗ BROKEN'], ['stars in sky', skyCounts.receipt + skyCounts.use + skyCounts.approval]] }[c.key];
+    return { title: P.name + ' · ' + capName + ' Service', color: P.color, rows: rows.concat([['health', H[capName] + '%']]) }; }
+  if(c.kind === 'world'){ const W = WORLDS.find(w => w.name === c.key);
+    return { title: W.name.toUpperCase() + ' · LANGUAGE WORLD', color: W.color, rows: [
+      ['phase', (W.phase % (Math.PI * 2)).toFixed(2) + ' rad'], ['alignment', Math.round(Math.cos(W.phase - MEAN_PH) * 100) + '%'],
+      ['lattice edge', 'V' + W.from + ' → V' + W.to + ' · ' + Math.round(W.t * 100) + '%'],
+      ['omega', W.omega.toFixed(2)], ['coherence η', ETA.toFixed(2)] ] }; }
+  if(c.kind === 'vector'){ const parts = forces.parts || { evidence: 0 };
+    if(c.key === 'ev') return { title: 'EVIDENCE VECTOR ↗', color: SI_PALETTE.silver, rows: [['evidence refs', cur ? cur.evidence.length : 0], ['lift force', parts.evidence], ['proposer', cur ? (AGENT_NAME[cur.actor] || cur.actor) : '—']] };
+    if(c.key === 'risk') return { title: 'RISK VECTOR ↘', color: SI_PALETTE.brightRed, rows: [['risk class', cur ? cur.risk : '—'], ['drag ordinal', forces.opposition], ['barrier', forces.barrier ? 'approval required' : 'none']] };
+    return { title: 'NET FORCE VECTOR →', color: SI_PALETTE.white, rows: [['momentum', forces.momentum], ['opposition', forces.opposition], ['net', forces.net], ['stage', cur ? VSTAGES[vStage] : '—'], ['proposal', cur ? cur.id : 'none']] }; }
+  if(c.kind === 'state'){ const nm = (RIVER.find(r => r[0] === c.key) || [])[1] || c.key;
+    return { title: nm + ' · STATE PORT', color: SI_PALETTE.silver, rows: [['in live transition', cur ? (cur.transition.from === c.key ? 'FROM here' : String(cur.transition.to) === c.key ? 'TO here' : 'no') : 'no'],
+      ['dammed', (riverDamT > 0 && damMesh.position.distanceTo(riverNodes[c.key].position) < .01) ? 'YES' : 'no'], ['flow', 'closed loop · 5 ports']] }; }
+  if(c.kind === 'note'){ const n = NOTES[c.key]; const mass = noteMass(n), R = noteRadius(n);
+    const ex = !lastField.inRange.includes(c.key) ? 'out of range' : n.type === 'contradiction' ? '+1 drag on the run' : n.type === 'receipt' ? 'anchoring the run' : '+1 push on the run';
+    return { title: n.name.toUpperCase() + ' ' + n.glyph + ' · ' + n.type.toUpperCase() + ' NOTE', color: parseInt(n.colCss.slice(1), 16), rows: [
+      ['pitch', n.freq.toFixed(1) + ' Hz'], ['moves', n.mover + ' · its own function'],
+      ['mass', mass + ' receipts · ' + n.lineage], ['influence radius', R.toFixed(2)],
+      ['exerting', ex], ['entrainment', Math.round(Math.cos(n.phase - MEAN_PH) * 100) + '%'], ['sound', 'sings on hover'] ] }; }
+  if(c.kind === 'agent'){ const def = AGENT_DEFS.find(a => a.id === c.key); const M = AGENT_MOTES.find(m => m.def.id === c.key);
+    return { title: def.name.toUpperCase() + ' · AGENT', color: AGENT_COLORS[c.key], rows: [
+      ['grants', def.capabilities.length ? def.capabilities.join(' · ') : 'none — holds the line'], ['receipts authored', influenceOf(c.key)],
+      ['proposals · 45s', agentHeatNow(c.key)], ['orbit', 'R ' + M.rad.toFixed(1) + ' · inclined'], ['pace', 'speed rises with its heat'] ] }; }
+  if(c.kind === 'helix'){ return { title: 'BRAILLE HELIX · TOUCH THE CODE', color: SI_PALETTE.white, rows: [
+      ['strands', '2 · crimson / white'], ['dots', '240 · instanced ×2'], ['spin', '515 Hz · his line 1'],
+      ['line now', BRAILLE_LINES[helixLineIdx]], ['reads', BRAILLE_READS[helixLineIdx]] ] }; }
+  if(c.kind === 'heart'){ return { title: 'THE HEART · FURNACE', color: SI_PALETTE.brightRed, rows: [['refusals consumed', S.consumed], ['vetoes', S.vetoed], ['denials', S.denials], ['sparks live', sparks.filter(s => s.life > 0).length]] }; }
+  return { title: 'SI CORE · THE KERNEL', color: SI_PALETTE.silver, rows: [['executed', S.executed], ['vetoed', S.vetoed], ['held now', heldVisual ? 'YES' : 'no'], ['ledger', K.ledger.length + ' · ' + (K.ledger.verify() ? '✓' : '✗')], ['coherence η', ETA.toFixed(2)]] }; }
+let gazeCur = null, gazeXY = { x: 0, y: 0 }, gazeStickyUntil = 0, gazePointer = null;
+function showGaze(c, x, y){ gazeCur = c; const d = gazeRowsFor(c);
+  gzT.textContent = d.title; gzT.style.color = '#' + d.color.toString(16).padStart(6, '0'); gazeCard.style.borderColor = '#' + d.color.toString(16).padStart(6, '0') + '59';
+  gzRows.innerHTML = d.rows.map(r => `<div class="grow"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
+  gazeCard.style.left = Math.max(6, Math.min(x + 16, innerWidth - 258)) + 'px';
+  gazeCard.style.top = Math.max(6, Math.min(y + 16, innerHeight - 180)) + 'px';
+  gazeCard.classList.add('on'); }
+function hideGaze(){ gazeCur = null; gazeCard.classList.remove('on'); }
+setInterval(()=>{ if(gazeCur) showGaze(gazeCur, gazeXY.x, gazeXY.y);
+  if(!gazePointer && gazeStickyUntil && performance.now() > gazeStickyUntil){ gazeStickyUntil = 0; hideGaze(); } }, 160);
+canvas.addEventListener('pointermove', e=>{ if(e.pointerType !== 'touch') gazePointer = { x: e.clientX, y: e.clientY }; });
+canvas.addEventListener('pointerleave', ()=>{ gazePointer = null; if(performance.now() > gazeStickyUntil) hideGaze(); });
+const _gv = new THREE.Vector3();
+function gazeScan(){ if(!gazePointer) return; gazeXY = gazePointer;
+  let best = null, bd = 34;
+  for(const c of gazeCands){ if(c.kind === 'vector' && !vecGrp.visible) continue;
+    _gv.copy(c.getPos()).project(camera); if(_gv.z > 1 || _gv.z < -1) continue;
+    const sx = (_gv.x * .5 + .5) * innerWidth, sy = (-_gv.y * .5 + .5) * innerHeight;
+    const d = Math.hypot(sx - gazePointer.x, sy - gazePointer.y);
+    /* the force vectors are the live action and they move — their anchor
+       gets a wider net and a head start over the drifting worlds */
+    const dd = c.kind === 'vector' ? d - 14 : d, lim = c.kind === 'vector' ? 46 : 34;
+    if(d < lim && dd < bd){ bd = dd; best = { c, sy }; } }
+  if(!best){ if(performance.now() > gazeStickyUntil) hideGaze(); return; }
+  let c = best.c;
+  if(c.kind === 'vector'){ const dy = gazePointer.y - best.sy;
+    c = { kind: 'vector', key: dy < -12 ? 'ev' : dy > 12 ? 'risk' : 'net', getPos: c.getPos }; }
+  showGaze(c, gazePointer.x, gazePointer.y); }
+
+/* ============ THE AGENTS, VISIBLE — moving parts, not dock rows ============
+   Every crew manifest gets a body: a mote on its own inclined orbit
+   around the ball, a faint ring for its path, and its name. A mote's
+   speed and size rise with its HEAT — the same proposals-per-45s the
+   AGENT PHYSICS card counts — so a busy agent visibly hurries. Gaze
+   reads an agent like anything else labeled: grants, receipts authored,
+   heat, live from the kernel. */
+const AGENT_COLORS = {
+  n8_supervisor: SI_PALETTE.white, vera_router: SI_PALETTE.brightRed, corvus_planner: SI_PALETTE.silver,
+  archivist: SI_PALETTE.crimson, zenki_guardian: SI_PALETTE.ash, kami_communicator: SI_PALETTE.red,
+  genki_builder: SI_PALETTE.deepRed, sentinel: SI_PALETTE.white
+};
+const AGENT_MOTES = [];
+function agentHeatNow(id){ const now = performance.now(); return (agentHeat[id] || []).filter(t => now - t < 45000).length; }
+AGENT_DEFS.forEach((def, i) => { const col = AGENT_COLORS[def.id] || 0xffffff;
+  const rad = 5.7 + (i % 3) * .55;
+  const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(.5 + (i % 4) * .33, i * 1.13, (i % 3) * .4));
+  const u = new THREE.Vector3(1, 0, 0).applyQuaternion(q), v = new THREE.Vector3(0, 0, 1).applyQuaternion(q);
+  const ringPts = []; for(let j = 0; j <= 64; j++){ const a = j / 64 * Math.PI * 2;
+    ringPts.push(new THREE.Vector3().copy(u).multiplyScalar(Math.cos(a) * rad).addScaledVector(v, Math.sin(a) * rad)); }
+  const ring = new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPts),
+    new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: .085 }));
+  scene.add(ring);
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(.09, 12, 12),
+    new THREE.MeshStandardMaterial({ color: 0x0a0a0c, emissive: col, emissiveIntensity: 1.6, roughness: .4 }));
+  const hc = new THREE.Color(col);
+  mesh.add(glowSprite(`rgba(${Math.round(hc.r * 255)},${Math.round(hc.g * 255)},${Math.round(hc.b * 255)},.8)`, .85, .4));
+  scene.add(mesh); addLabel(mesh, def.name, 'agent', .34, 'agent');
+  AGENT_MOTES.push({ def, mesh, u, v, rad, ang: i * .9, speed: .06 + i * .004 });
+  regGaze('agent', def.id, () => mesh.position); });
+function agentsStep(dt){ for(const m of AGENT_MOTES){ const heat = agentHeatNow(m.def.id);
+    m.ang += dt * (m.speed + heat * .02);
+    m.mesh.position.copy(m.u).multiplyScalar(Math.cos(m.ang) * m.rad).addScaledVector(m.v, Math.sin(m.ang) * m.rad);
+    m.mesh.scale.setScalar(1 + Math.min(3, heat) * .14 + Math.sin(performance.now() * .004 + m.ang) * .05); } }
+
+/* ============ FREE ORBIT ON GAZE — not locked to the core ============
+   The Raijin pattern (RavenEYE FLY TO, harakiri-unified): the gaze
+   chooses where the orbit lives. Tap anything with a label and the
+   orbit target flies to it — the camera keeps its math-only orbit
+   (θ/φ, target lerp .15, no OrbitControls), now around that thing,
+   tracking it if it moves. Tap the core, or empty space, to come home.
+   Drag still orbits; pinch still zooms; both work around any target. */
+let orbitFocus = null, focusR = 13.6;
+let zoomHold = false;   /* once the user's fingers or wheel own the radius, the focus stops forcing it (Edge report, 2026-10-31: "can't zoom out, just zooms back in") */
+const HOME_R = () => (innerWidth / innerHeight < .9 ? 17.5 : 13.6);
+const FOCUS_R = { node: 5.4, world: 4.8, state: 5.4, heart: 8, helix: 9, agent: 4.4, note: 4.2 };
+function flyTo(c){ if(!c || c.kind === 'core'){ goHome(); return; }
+  orbitFocus = c; focusR = FOCUS_R[c.kind] || 6; zoomHold = false;
+  const st = $('status'); st.textContent = 'FREE ORBIT · ' + String(c.key).toUpperCase() + ' — tap empty space to return to the core';
+  st.style.color = 'var(--accent)'; }
+function goHome(){ orbitFocus = null; zoomHold = false; camT.tx = 0; camT.ty = 0; camT.tz = 0; camT.r = HOME_R();
+  const st = $('status'); st.textContent = 'ALL SYSTEMS OPERATIONAL'; st.style.color = ''; }
+function gazeOrbitStep(){ if(!orbitFocus) return; if(pinch) zoomHold = true; const p = orbitFocus.getPos();
+  camT.tx = p.x; camT.ty = p.y; camT.tz = p.z; if(!zoomHold) camT.r = focusR; }
+canvas.addEventListener('wheel', () => { zoomHold = true; }, { passive: true });
+let tapDown = null;
+canvas.addEventListener('pointerdown', e => { tapDown = tapDown ? null : { x: e.clientX, y: e.clientY, t: performance.now(), id: e.pointerId }; });   /* a second finger cancels the tap — a pinch is not a tap */
+canvas.addEventListener('pointerup', e => { if(!tapDown || e.pointerId !== tapDown.id) return;
+  const moved = Math.hypot(e.clientX - tapDown.x, e.clientY - tapDown.y), dt = performance.now() - tapDown.t; tapDown = null;
+  if(dt > 350 || moved > 9) return;
+  let best = null, bd = 48; const v = new THREE.Vector3();
+  for(const c of gazeCands){ if(c.kind === 'vector') continue;
+    v.copy(c.getPos()).project(camera); if(v.z > 1 || v.z < -1) continue;
+    const sx = (v.x * .5 + .5) * innerWidth, sy = (-v.y * .5 + .5) * innerHeight;
+    const d = Math.hypot(sx - e.clientX, sy - e.clientY); if(d < bd){ bd = d; best = c; } }
+  flyTo(best); if(best && best.kind === 'note' && window.__soundNote) window.__soundNote(best.key); });
+window.__orbit = () => ({ focus: orbitFocus ? orbitFocus.kind + ':' + orbitFocus.key : 'core', t: [camT.tx, camT.ty, camT.tz], r: camT.r });
+window.__agents = () => AGENT_MOTES.map(m => ({ id: m.def.id, pos: m.mesh.position.toArray(), heat: agentHeatNow(m.def.id) }));
+
+/* ============ MUSICODE — music on hover (Nathan, 2026-10-31 19:59) ============
+   D-P2, marked in scope: sound lives on the notes and nowhere else.
+   Hover (or tap) a note and it sings its own pitch off the 515 ladder —
+   a sine pluck with a triangle harmonic, built per note, never a loop
+   and never a soundtrack. The salvage build's law holds: the swarm
+   sounds on interaction, and stays silent otherwise. The AudioContext
+   wakes on the first touch, per platform rules. */
+let AC = null, sungCount = 0, lastFreq = 0, lastSungKey = null, lastSungAt = 0;
+function audio(){ if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(_){ } }
+  if(AC && AC.state === 'suspended') AC.resume(); return AC; }
+canvas.addEventListener('pointerdown', () => audio());
+function soundNote(i){ const n = NOTES[i]; if(!n) return; const ac = audio();
+  sungCount++; lastFreq = n.freq; n.pop = .38;
+  if(!ac) return; const t0 = ac.currentTime;
+  const g = ac.createGain(); g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(.16, t0 + .008); g.gain.exponentialRampToValueAtTime(.0001, t0 + .7);
+  g.connect(ac.destination);
+  const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = n.freq;
+  o.connect(g); o.start(t0); o.stop(t0 + .75);
+  const g2 = ac.createGain(); g2.gain.setValueAtTime(0, t0);
+  g2.gain.linearRampToValueAtTime(.05, t0 + .006); g2.gain.exponentialRampToValueAtTime(.0001, t0 + .35);
+  g2.connect(ac.destination);
+  const o2 = ac.createOscillator(); o2.type = 'triangle'; o2.frequency.value = n.freq * 2;
+  o2.connect(g2); o2.start(t0); o2.stop(t0 + .4); }
+window.__soundNote = soundNote;
+for(let i = 0; i < NOTES.length; i++) regGaze('note', i, () => NOTES[i].spr.position);
+setInterval(()=>{ if(gazeCur && gazeCur.kind === 'note'){ const now = performance.now();
+    if(gazeCur.key !== lastSungKey && now - lastSungAt > 650){ lastSungKey = gazeCur.key; lastSungAt = now; soundNote(gazeCur.key); } }
+  else lastSungKey = null; }, 130);
+window.__music = () => ({ notes: NOTES.length, freq0: NOTES[0].freq, sung: sungCount, lastFreq, ctx: AC ? AC.state : 'not-created',
+  movers: [...new Set(NOTES.map(n => n.mover))], rot: NOTES.map(n => +n.spr.material.rotation.toFixed(2)),
+  pos: NOTES.slice(0, 10).map(n => n.spr.position.toArray().map(v => +v.toFixed(1))) });
+
+/* ============ FIELD NOTES — P2.8-A, the amended force law ============
+   Nathan's amendment (2026-10-31): notes exert real, formula-counted
+   force. Each note is dealt a type and a lineage; its MASS is the
+   receipts its lineage has authored (ledger-counted, live) and its
+   INFLUENCE RADIUS = 2.2 + 0.25 × mass. The host counts notes within
+   radius of the live pollen — the η pattern — and the kernel adds:
+   Observation + Creative push, Contradiction drags, Receipt anchors
+   (no force: its mass is memory made visible). Trajectory only: field
+   force cannot execute, veto, approve, or unhold anything. */
+const NOTE_TYPES = ['observation', 'creative', 'contradiction', 'receipt'];
+NOTES.forEach((n, i) => { n.type = NOTE_TYPES[i % 4]; n.lineage = AGENT_DEFS[i % AGENT_DEFS.length].id; });
+NOTES[0].type = 'receipt'; NOTES[0].lineage = 'archivist';   /* the 515 anchor is a receipt note */
+function noteMass(n){ return influenceOf(n.lineage); }
+function noteRadius(n){ return 2.2 + .25 * noteMass(n); }
+let lastField = { push: 0, drag: 0, anchored: 0, inRange: [] };
+function countField(at){ let push = 0, drag = 0, anchored = 0; const inRange = [];
+  for(let i = 0; i < NOTES.length; i++){ const n = NOTES[i];
+    if(n.spr.position.distanceTo(at) < noteRadius(n)){ inRange.push(i);
+      if(n.type === 'observation' || n.type === 'creative') push++;
+      else if(n.type === 'contradiction') drag++;
+      else anchored++; } }
+  return { push, drag, anchored, inRange }; }
+function noteFieldStep(){ if(cur && pollen.visible) lastField = countField(pollen.position); return lastField; }
+/* the gazed note shows its true influence ring, colored by type */
+const TYPE_COLORS = {
+  observation: SI_PALETTE.silver, creative: SI_PALETTE.white,
+  contradiction: SI_PALETTE.brightRed, receipt: SI_PALETTE.crimson
+};
+const fieldRing = (() => { const pts = []; for(let j = 0; j <= 48; j++){ const a = j / 48 * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a), Math.sin(a), 0)); }
+  const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5 }));
+  l.visible = false; scene.add(l); return l; })();
+setInterval(()=>{ if(cur && !heldVisual){ forces = K.forcesFor(cur, ETA, noteFieldStep()); updateDock(); }
+  if(gazeCur && gazeCur.kind === 'note'){ const n = NOTES[gazeCur.key];
+    fieldRing.visible = true; fieldRing.position.copy(n.spr.position);
+    fieldRing.scale.setScalar(noteRadius(n)); fieldRing.lookAt(camera.position);
+    fieldRing.material.color.setHex(TYPE_COLORS[n.type]); }
+  else fieldRing.visible = false; }, 300);
+window.__field = () => ({ ...lastField, types: NOTES.map(n => n.type), masses: NOTES.map(n => noteMass(n)), radii: NOTES.map(n => +noteRadius(n).toFixed(2)) });
+window.__fieldAt = i => countField(NOTES[i].spr.position);
+
+/* ============ dock grip ============ */
+const dock = $('dock');
+$('grip').addEventListener('pointerdown', e=>{ e.preventDefault(); dock.classList.toggle('open'); });
+
+/* ============ Capsule activity-engine view ============ */
+const activityView = $('activity-view');
+const activityToggle = $('activity-toggle');
+const activityGraph = createActivityGraph($('activity-graph'), { immersive: true });
+let activityMode = false;
+activityGraph.setActive(false);
+function refreshActivityScene(){
+  const snapshot = window.__siToolboxSnapshot();
+  const workflows = [...snapshot.tasks, ...savedWorkflows];
+  activityGraph.update(snapshot.agents, workflows, snapshot.receipts, snapshot.busy);
+  $('activity-agents').textContent = String(snapshot.agents.length).padStart(2, '0');
+  $('activity-routes').textContent = String(workflows.length).padStart(2, '0');
+  $('activity-receipts').textContent = String(K.ledger.length).padStart(2, '0');
+  const healthValues = Object.values(snapshot.health).filter(Number.isFinite);
+  $('activity-health').textContent = healthValues.length ? `${Math.min(...healthValues)}%` : '—';
+  $('activity-verified').textContent = snapshot.ledgerValid ? 'LEDGER VERIFIED' : 'LEDGER UNVERIFIED';
+  $('activity-verified').style.color = snapshot.ledgerValid ? '#9de0bb' : '#ff858b';
+  $('activity-run-state').textContent = snapshot.busy ? 'ROUTE IN FLIGHT' : 'IDLE';
+  const receiptList = $('activity-receipt-list');
+  receiptList.replaceChildren();
+  const recent = snapshot.receipts.slice(-3).reverse();
+  if (!recent.length) {
+    const empty = document.createElement('div');
+    empty.className = 'activity-receipt';
+    const title = document.createElement('strong');
+    title.textContent = 'No sealed receipts yet';
+    empty.append(title);
+    receiptList.append(empty);
+    return;
+  }
+  for (const receipt of recent) {
+    const item = document.createElement('div');
+    item.className = 'activity-receipt';
+    const title = document.createElement('strong');
+    title.textContent = `#${receipt.seq} · ${receipt.agent}`;
+    const detail = document.createElement('small');
+    detail.textContent = receipt.event;
+    item.append(title, detail);
+    receiptList.append(item);
+  }
+}
+window.__siCoreSetWorkflows = workflows => {
+  if (!Array.isArray(workflows) || workflows.length > 100) throw new TypeError('The SI Core workflow update is invalid.');
+  savedWorkflows = workflows;
+  refreshActivityScene();
+  return true;
+};
+function setActivityMode(enabled){
+  activityMode = Boolean(enabled);
+  document.body.classList.toggle('activity-mode', activityMode);
+  activityView.hidden = !activityMode;
+  activityToggle.textContent = activityMode ? 'SI CORE SIMULATION' : 'OPEN ACTIVITY ENGINE';
+  activityToggle.setAttribute('aria-expanded', String(activityMode));
+  activityGraph.setActive(activityMode);
+  if (activityMode) refreshActivityScene();
+}
+activityToggle.addEventListener('click', () => setActivityMode(!activityMode));
+setActivityMode(window.__SI_CORE_BROWSER_MODE__ === true);
+setInterval(refreshActivityScene, 1500);
+
+/* ============ main loop ============ */
+K.ledger.seal('archivist', 'archivist', 'genesis — the core wakes; the ledger begins'); syncSky();
+const clock = new THREE.Clock();
+function frame(){ requestAnimationFrame(frame); const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime;
+  cam.th += (camT.th-cam.th)*.15; cam.ph += (camT.ph-cam.ph)*.15; cam.r += (camT.r-cam.r)*.15;
+  cam.tx += (camT.tx-cam.tx)*.15; cam.ty += (camT.ty-cam.ty)*.15; cam.tz += (camT.tz-cam.tz)*.15; applyCam();
+  flower.rotation.y = Math.sin(t*.07)*.16; flower.rotation.z = Math.sin(t*.11)*.02;
+  if(innerLattice){ innerLattice.rotation.y = t*.06; innerLattice.rotation.x = Math.sin(t*.041)*.35; }
+  coreMesh.scale.setScalar(1 + Math.sin(t*2.1)*.05);
+  torus.rotation.z = t*.25; heartLight.intensity = 20 + Math.sin(t*7.3)*4 + Math.sin(t*13.7)*2;
+  for(const id in petalById){ const P = petalById[id]; P.flash = Math.max(0, P.flash - dt*1.4);
+    P.mat.emissiveIntensity = .34 + P.flash*1.5; const s = 1 + Math.sin(t*.9 + P.angle)*0.012 + P.flash*.04; P.grp.scale.setScalar(s); }
+  for(const s of sparks){ if(s.life <= 0) continue; s.life -= dt*.5; s.v.y -= dt*1.2; s.p.addScaledVector(s.v, dt*2.2);
+    if(s.p.y < -4.6){ s.life = 0; s.p.y = -99; } }
+  sparks.forEach((s,i)=>{ sPos[i*3]=s.p.x; sPos[i*3+1]=s.p.y; sPos[i*3+2]=s.p.z; }); sGeo.attributes.position.needsUpdate = true;
+  kuramoto(dt); stepRun(dt); crewStep(dt); fieldStep(); riverStep(dt);
+  if(cur && !heldVisual && Math.floor(t*2) !== Math.floor((t-dt)*2)) updateDock();
+  vecStep(); layersStep(dt, t); agentsStep(dt); gazeOrbitStep(); gazeScan();
+  if(!activityMode){ composer.render(); drawLabels(); } }
+resize(); updateDock(); frame();
+
+/* ============ test hooks ============ */
+window.__core = K.stats; window.__eel = K.ledger.entries; window.__kernel = K;
+window.__sky = ()=>({ ...skyCounts, total: skyCounts.receipt+skyCounts.use+skyCounts.approval });
+window.__forces = ()=>({ ...forces, stage: cur ? VSTAGES[vStage] : null });
+window.__health = ()=> K.health(); window.__verifyChain = ()=> K.ledger.verify();
+window.__geom = { segments: SEGMENTS.map(P => ({ id:P.id, angle:P.angle, tip: petalTips[P.id].toArray(), node: nodePos(P.angle).toArray() })),
+  worlds: WORLDS.length, railR: 4.3, ballR: BALL_R, pathR: PATH_R,
+  lattice: { outerVerts: outerLattice.verts.length, outerEdges: outerLattice.edges.length, ballEdges: ballEdgeCount, stepNodes: latticeSteps.length },
+  heart:[0,-4.7,-0.3], core:[0,0,0] };
+window.__worldState = () => WORLDS.map(W => ({ from: W.from, to: W.to, t: W.t, pos: W.mesh.position.toArray() }));
+window.__latticeVerts = () => outerLattice.verts.map(v => v.toArray());
+window.__probe = ()=>({ stage: cur ? VSTAGES[vStage] : null, pollen: pollen.visible ? pollen.position.toArray() : null, camR: +cam.r.toFixed(2), camTr: camT.r });
+window.__worldRadii = ()=> WORLDS.map(W => +W.rad.toFixed(2));
+window.__dream = ()=>({ channel: RIVER.length, clusters: Object.keys(starClusters).length, fieldLines: fieldLines.length, scaleAngle, vecVisible: vecGrp.visible });
+window.__galaxy = () => Object.keys(starClusters).map(a => ({ agent: a, authored: influenceOf(a), dist: +starClusters[a].center.length().toFixed(2), slot: starClusters[a].slot })).sort((x, y) => y.authored - x.authored);
+window.__gaze = () => gazeCur ? { kind: gazeCur.kind, key: gazeCur.key, title: gzT.textContent, rows: gzRows.innerText } : null;
+window.__layers = () => ({ helix: HELIX_N * 2, swarm: NOTES.length, dust: DUST_N, embers: EMBER_N, braille: BRAILLE_LINES[helixLineIdx], reads: BRAILLE_READS[helixLineIdx],
+  swarmLock: NOTES.reduce((s, n) => s + Math.cos(n.phase - MEAN_PH), 0) / NOTES.length });
+window.__gazeAim = (kind, key) => { const c = gazeCands.find(c => c.kind === kind && c.key === key) || gazeCands.find(c => c.kind === kind);
+  const p = c.getPos().clone().project(camera); return { x: (p.x * .5 + .5) * innerWidth, y: (-p.y * .5 + .5) * innerHeight }; };
+</script>
+</body>
+</html>

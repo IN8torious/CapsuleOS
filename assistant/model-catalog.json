@@ -1,0 +1,51 @@
+[
+  {
+    "id": "phi-3.5-mini-q4f16",
+    "name": "Phi-3.5 Mini Instruct",
+    "family": "Phi-3.5",
+    "description": "Multilingual reasoning and general assistance · 4-bit mixed precision.",
+    "repository": "onnx-community/Phi-3.5-mini-instruct-onnx-web",
+    "revision": "1a2c0e4b2eb1a872716fdc50b100617499739a73",
+    "license": "MIT",
+    "dtype": "q4f16",
+    "weightsBytes": 2317473274,
+    "files": [
+      { "path": "LICENSE", "size": 1084, "sha1": "8ab7b4964d147858b89544e8ca33203237161edc" },
+      { "path": "NOTICE.md", "size": 1809, "sha1": "56ff7dcadd87eb0bec57dbba00f005b6622c2809" },
+      { "path": "added_tokens.json", "size": 306, "sha1": "178968dec606c790aa335e9142f6afec37288470" },
+      { "path": "config.json", "size": 3479, "sha1": "2e91eae74de37774d10bc73b6d54b3af4e92df45" },
+      { "path": "genai_config.json", "size": 1674, "sha1": "558ddf0fed0d76eece833a3b1c5324a73ef71153" },
+      { "path": "generation_config.json", "size": 195, "sha1": "93dfd6366eab0bbae1613c5deab3a43bc989e5f8" },
+      { "path": "onnx/model_q4f16.onnx", "size": 220452346, "sha256": "1e1119b8d3fa1adaaad4abaf0c0405dec377054948440e02dd6837d18d2a920d" },
+      { "path": "onnx/model_q4f16.onnx_data", "size": 2097020928, "sha256": "b6dfb3069b717b518266dd58cb8e794bc0712fbc46e1737aef99cd8875302cf0" },
+      { "path": "special_tokens_map.json", "size": 665, "sha1": "badfd2a349071a6b3ae2681838e51695781f60e1" },
+      { "path": "tokenizer.json", "size": 1844408, "sha1": "e213d846868b09aefa5225e6026d91b41e19e7ff" },
+      { "path": "tokenizer.model", "size": 499723, "sha256": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347" },
+      { "path": "tokenizer_config.json", "size": 3984, "sha1": "7280c871b0d18a2a03000fb8d638983793aa33e1" }
+    ]
+  },
+  {
+    "id": "phi-3-mini-4k-q4",
+    "name": "Phi-3 Mini Instruct · 4K",
+    "family": "Phi-3",
+    "description": "Compact-context assistant · 4-bit quantized.",
+    "repository": "Xenova/Phi-3-mini-4k-instruct",
+    "revision": "3f18224da40fced477a058a51081e40c28bd0434",
+    "license": "MIT",
+    "dtype": "q4",
+    "weightsBytes": 2723127196,
+    "files": [
+      { "path": "LICENSE", "size": 12500, "sha1": "a0582a5ec2a21658345106454e4fcedb5acf6133" },
+      { "path": "added_tokens.json", "size": 293, "sha1": "4dece7ae8bbeb8f468cb1da428bfb6193ae0751c" },
+      { "path": "config.json", "size": 877, "sha1": "ec9a4fc2c67013707eb4be1d4a8a128d39ab57de" },
+      { "path": "genai_config.json", "size": 1651, "sha1": "cfc6db3475262127616f457906c6016f53370215" },
+      { "path": "generation_config.json", "size": 172, "sha1": "af0a96c81923b115873d3d48e6bf8986bcd6e888" },
+      { "path": "onnx/model_q4.onnx", "size": 1059602332, "sha256": "16b8e5d28a757c37bbfa7d9420fd094c0c20e3615ca3c203b5b9501015045c8f" },
+      { "path": "onnx/model_q4.onnx_data", "size": 1663524864, "sha256": "41d30b87f06b52e6b24c4e2e65a6a14e5c9fb5bc6f495fac17b19c6bc7875ff5" },
+      { "path": "special_tokens_map.json", "size": 568, "sha1": "32b360b36e8255e8346f50942f478e5a2227e2e6" },
+      { "path": "tokenizer.json", "size": 1844409, "sha1": "efc309ef56b8d8fba1b50d1b4a6e5be6cfded459" },
+      { "path": "tokenizer.model", "size": 499723, "sha256": "9e556afd44213b6bd1be2b850ebbbd98f5481437a8021afaf58ee7fb1818d347" },
+      { "path": "tokenizer_config.json", "size": 3169, "sha1": "9d9d37222d0f5ad9b2f02408b13ec21b8023a93f" }
+    ]
+  }
+]
