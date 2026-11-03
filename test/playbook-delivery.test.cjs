@@ -83,7 +83,7 @@ test(`${includeMsi ? 'MSI' : 'lean'} export delivers a verified APBX and ZIP wit
       assert.equal(icon.readUInt32BE(20), 128);
     }
     if (process.platform === 'win32') {
-      const command = `[xml]$conf = Get-Content -LiteralPath '${path.join(extracted, 'playbook.conf').replace(/'/g, "''")}' -Raw; if ($conf.Playbook.FeaturePages.RadioImagePage.Options.RadioImageOption.Count -ne 5) { throw 'Browser XML invalid' }`;
+      const command = `[xml]$conf = Get-Content -LiteralPath '${path.join(extracted, 'playbook.conf').replace(/'/g, "''")}' -Raw; foreach ($page in $conf.Playbook.FeaturePages.ChildNodes) { if ($page.Options.ChildNodes.Count -gt 4) { throw 'AME page exceeds four options' } }; if ($conf.Playbook.FeaturePages.RadioImagePage.Options.RadioImageOption.Count -ne 4 -or $conf.Playbook.FeaturePages.RadioImagePage.DependsOn -ne 'install-browser-choice') { throw 'Browser XML invalid' }`;
       run('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(command, 'utf16le').toString('base64')]);
       // Exercise the generated Windows PowerShell 5.1 boundary using a no-op restore stub.
       const stub = path.join(folder, 'restore-stub');

@@ -34,7 +34,10 @@ test('browser page offers Edge first and default, three alternatives and keep-cu
   const page = conf.match(/<RadioImagePage[\s\S]*?<\/RadioImagePage>/)[0];
   assert.match(page, /DefaultOption="browser-edge"/);
   assert.match(page, /CheckDefaultBrowser="false"/);
-  assert.match(page, /<RadioImageOption None="true"\/>/);
+  assert.match(page, /DependsOn="install-browser-choice"/);
+  assert.doesNotMatch(page, /None="true"/);
+  assert.equal((page.match(/<RadioImageOption\b/g) || []).length, 4);
+  assert.match(conf, /<CheckboxOption IsChecked="true">\s*<Text>Install or restore a browser<\/Text>\s*<Name>install-browser-choice<\/Name>/);
   assert.deepEqual([...page.matchAll(/<Name>(browser-[a-z]+)<\/Name>/g)].map((m) => m[1]),
     ['browser-edge', 'browser-firefox', 'browser-brave', 'browser-librewolf']);
   for (const browser of BROWSERS) {
@@ -49,6 +52,7 @@ test('every page option has actions and every action option has a page', async (
   const apply = files['Configuration/Tasks/apply.yml'];
   const pageOptions = new Set([...conf.matchAll(/<Name>((?:capsule|browser|pack|install-manager)-[^<]+)<\/Name>/g)].map((m) => m[1]));
   const actionOptions = new Set([...apply.matchAll(/option: '([^']+)'/g)].map((m) => m[1]));
+  assert.ok(conf.includes('<Name>install-browser-choice</Name>'), 'browser controller must exist');
   assert.deepEqual([...pageOptions].sort(), [...actionOptions].sort());
   for (const pack of packCatalog.packs) assert.ok(pageOptions.has(`pack-${pack.id}`), pack.id);
   assert.ok(pageOptions.has('capsule-repair-toolkit'));
@@ -56,6 +60,16 @@ test('every page option has actions and every action option has a page', async (
     assert.ok((page.match(/<CheckboxOption/g) || []).length <= 4);
   }
   assert.doesNotMatch(conf, /<Name>pack-[^<]+<\/Name>[\s\S]*IsChecked="true"[\s\S]*<Name>pack-/);
+});
+
+test('AME feature-page validation counts None as an option and rejects oversized pages', async () => {
+  const { validateFeaturePageLimits } = await import('../app/playbook.js');
+  assert.throws(() => validateFeaturePageLimits('<RadioImagePage><Options><RadioImageOption None="true"/>' +
+    '<RadioImageOption/>'.repeat(4) + '</Options></RadioImagePage>'), /1-4 options; found 5/);
+  assert.throws(() => validateFeaturePageLimits('<CheckboxPage><Options>' +
+    '<CheckboxOption/>'.repeat(5) + '</Options></CheckboxPage>'), /found 5/);
+  const { files } = await unified({ includeToolboxInstaller: true, toolboxInstallerFormat: 'msi' });
+  assert.doesNotThrow(() => validateFeaturePageLimits(files['playbook.conf']));
 });
 
 test('app packs are unchecked and only run fixed scripts with validated ids', async () => {

@@ -447,10 +447,17 @@ ${options}
           <GradientTopColor>${browser.top}</GradientTopColor>
           <GradientBottomColor>${browser.bottom}</GradientBottomColor>
         </RadioImageOption>`).join('\n');
-    pages.push(`    <RadioImagePage CheckDefaultBrowser="false" DefaultOption="browser-${escapeXml(extras.browsers[0].id)}" Description="Pick the browser CapsuleOS installs from its publisher through winget. Choosing Edge also brings it back if another playbook removed or blocked it.">
+    pages.push(`    <CheckboxPage Description="Leave this checked to install or restore a browser. Uncheck it to keep your current browser without installing or changing one.">
+      <Options>
+        <CheckboxOption IsChecked="true">
+          <Text>Install or restore a browser</Text>
+          <Name>install-browser-choice</Name>
+        </CheckboxOption>
+      </Options>
+    </CheckboxPage>`);
+    pages.push(`    <RadioImagePage DependsOn="install-browser-choice" CheckDefaultBrowser="false" DefaultOption="browser-${escapeXml(extras.browsers[0].id)}" Description="Pick the browser CapsuleOS installs from its publisher through winget. Choosing Edge also brings it back if another playbook removed or blocked it.">
       <TopLine Text="Choose your browser"/>
       <Options>
-        <RadioImageOption None="true"/>
 ${options}
       </Options>
       <BottomLine Text="Set it as default afterwards in Settings, Apps, Default apps"/>
@@ -551,6 +558,8 @@ Baseline restore does not remove package managers. Chocolatey's bootstrap MSI is
 use Chocolatey's supported management instructions afterwards.
 
 ## Browser choice
+Uncheck "Install or restore a browser" to keep the current browser with no browser actions.
+When checked, the dependent browser page offers these four choices (Edge is the default):
 ${extras.browsers.map((browser) => `- ${browser.name}`).join('\n')}
 - Keep my current browser
 The chosen browser is installed using its fixed winget id (Chocolatey only if winget is unavailable and Chocolatey is already installed).
@@ -665,6 +674,7 @@ export function buildPlaybook(options = {}) {
     'Configuration/Tasks/revert.yml': actionsYaml(tweaks, 'revert', false, extras),
     'README.md': readme(tweaks, includeToolboxInstaller, extras),
   };
+  validateFeaturePageLimits(files['playbook.conf']);
   if (extras) files['Executables/capsule-targets.json'] = `${JSON.stringify(capsuleTargets(tweaks, extras.browsers.some((browser) => browser.id === 'edge')), null, 2)}\n`;
   const manifest = {
     version,
@@ -685,4 +695,17 @@ export function buildPlaybook(options = {}) {
   }
   files['manifest.json'] = `${JSON.stringify(manifest, null, 2)}\n`;
   return { files, manifest };
+}
+
+export function validateFeaturePageLimits(xml) {
+  for (const match of xml.matchAll(/<(CheckboxPage|RadioPage|RadioImagePage)\b([^>]*)>([\s\S]*?)<\/\1>/g)) {
+    const [, type, , body] = match;
+    const option = type === 'CheckboxPage' ? 'CheckboxOption' : type === 'RadioPage' ? 'RadioOption' : 'RadioImageOption';
+    const count = (body.match(new RegExp(`<${option}\\b`, 'g')) || []).length;
+    const lines = (body.match(/<(?:TopLine|BottomLine)\b/g) || []).length;
+    const limit = type === 'RadioImagePage' ? 4 : 4 - lines;
+    if (count === 0 || count > limit) {
+      throw new Error(`AME ${type} requires 1-${limit} options; found ${count}.`);
+    }
+  }
 }
