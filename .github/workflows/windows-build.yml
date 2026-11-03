@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: npm
       - name: Install locked dependencies
         shell: pwsh
@@ -34,10 +34,12 @@ jobs:
       - name: Source and native regressions
         shell: pwsh
         run: |
-          $canonicalTemp = node -p "require('node:fs').realpathSync(require('node:os').tmpdir())"
+          $canonicalTemp = node -e "require('node:fs/promises').realpath(require('node:os').tmpdir()).then(p => console.log(p))"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $env:TEMP = $canonicalTemp
           $env:TMP = $canonicalTemp
+          node -e "const fs=require('node:fs/promises'),p=require('node:path'); (async()=>{const f=await fs.mkdtemp(p.join(require('node:os').tmpdir(),'capsule-ci-path-')); try { const canonical=await fs.realpath(f); console.log(JSON.stringify({requested:f,canonical,relative:p.relative(canonical,f)})); } finally { await fs.rmdir(f); }})().catch(e=>{console.error(e);process.exitCode=1;})"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           npm test
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo test --manifest-path src-tauri\Cargo.toml --lib --locked --quiet
